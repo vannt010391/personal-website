@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}Phiên Học Tập{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>Phiên Học Tập</h1>
+    <a href="{% url 'tasks:dashboard' %}">&larr; Quay lại Dashboard</a>
+</div>
+
+<div class="card">
+    <a href="{% url 'tasks:study_session_create' %}" class="btn btn-success">Thêm phiên học mới</a>
+</div>
+
+{% if sessions %}
+    {% for session in sessions %}
+    <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: start;">
+            <div>
+                <h3 style="margin: 0 0 10px 0;">{{ session.subject }}</h3>
+                <p style="color: #6c757d; margin: 5px 0;">
+                    <strong>Ngày:</strong> {{ session.date|date:"d/m/Y" }} |
+                    <strong>Thời gian:</strong> {{ session.duration_minutes }} phút
+                </p>
+                {% if session.description %}
+                <p style="margin: 10px 0;">{{ session.description }}</p>
+                {% endif %}
+                {% if session.notes %}
+                <div style="background-color: #f8f9fa; padding: 10px; border-radius: 5px; margin-top: 10px;">
+                    <strong>Ghi chú:</strong>
+                    <p style="margin: 5px 0;">{{ session.notes }}</p>
+                </div>
+                {% endif %}
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <a href="{% url 'tasks:study_session_update' session.pk %}" class="btn">Sửa</a>
+                <a href="{% url 'tasks:study_session_delete' session.pk %}" class="btn btn-danger">Xóa</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    {% if is_paginated %}
+        <div class="card" style="text-align: center;">
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1" class="btn">Đầu</a>
+                    <a href="?page={{ page_obj.previous_page_number }}" class="btn">Trước</a>
+                {% endif %}
+
+                <span style="padding: 10px;">
+                    Trang {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+                </span>
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}" class="btn">Tiếp</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}" class="btn">Cuối</a>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+{% else %}
+    <div class="card">
+        <p>Chưa có phiên học tập nào.</p>
+    </div>
+{% endif %}
+{% endblock %}

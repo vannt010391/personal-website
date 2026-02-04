@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% load knowledge_extras %}
+
+{% block title %}{{ entry.title }} - Kiến Thức{% endblock %}
+
+{% block content %}
+<div class="card">
+    <a href="{% url 'knowledge:entry_list' %}" style="color: #3498db;">&larr; Quay lại danh sách</a>
+</div>
+
+<div class="card">
+    <h1>{{ entry.title }} {% if entry.is_favorite %}⭐{% endif %}</h1>
+
+    <p style="color: #7f8c8d; font-size: 0.9em; margin-bottom: 20px;">
+        <span style="padding: 3px 8px; background-color: #e3f2fd; border-radius: 3px;">
+            {{ entry.get_entry_type_display }}
+        </span>
+        {% if entry.topic %}
+        | <strong>Chủ đề:</strong> {{ entry.topic.name }}
+        {% endif %}
+        | {{ entry.updated_at|date:"d/m/Y H:i" }}
+    </p>
+
+    {% if entry.summary %}
+    <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+        <strong>Tóm tắt:</strong>
+        <p style="margin: 5px 0 0 0;">{{ entry.summary }}</p>
+    </div>
+    {% endif %}
+
+    {% if entry.tags %}
+    <div style="margin-bottom: 20px;">
+        {% for tag in entry.tags|split:"," %}
+        <span style="padding: 4px 10px; background-color: #f0f0f0; border-radius: 3px; font-size: 0.85em; margin-right: 5px;">
+            #{{ tag|trim }}
+        </span>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="post-content" style="line-height: 1.8;">
+        {{ content_html|safe }}
+    </div>
+
+    {% if entry.source_url %}
+    <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
+        <p><strong>Nguồn:</strong> <a href="{{ entry.source_url }}" target="_blank">{{ entry.source_url }}</a></p>
+    </div>
+    {% endif %}
+
+    <p style="color: #7f8c8d; font-size: 0.85em; margin-top: 20px;">
+        Tạo: {{ entry.created_at|date:"d/m/Y H:i" }} | Cập nhật: {{ entry.updated_at|date:"d/m/Y H:i" }}
+    </p>
+</div>
+
+<div class="card">
+    <h3>Quản lý</h3>
+    <div style="display: flex; gap: 10px;">
+        <a href="{% url 'knowledge:entry_update' entry.slug %}" class="btn">Chỉnh sửa</a>
+        <a href="{% url 'knowledge:entry_delete' entry.slug %}" class="btn btn-danger">Xóa</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.post-content {
+    font-size: 1.05em;
+}
+
+.post-content h1, .post-content h2, .post-content h3 {
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+    color: #2c3e50;
+}
+
+.post-content pre {
+    background-color: #f5f5f5;
+    padding: 15px;
+    border-radius: 5px;
+    overflow-x: auto;
+    border: 1px solid #ddd;
+}
+
+.post-content code {
+    background-color: #f5f5f5;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+}
+
+.post-content blockquote {
+    border-left: 4px solid #3498db;
+    padding-left: 15px;
+    margin: 1em 0;
+    color: #555;
+    font-style: italic;
+}
+
+.post-content ul, .post-content ol {
+    margin-left: 30px;
+    margin-bottom: 1em;
+}
+</style>
+{% endblock %}

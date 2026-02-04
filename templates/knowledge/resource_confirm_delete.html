@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Xóa Tài nguyên{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>Xác nhận xóa tài nguyên</h1>
+    <a href="{% url 'knowledge:resource_list' %}">&larr; Quay lại</a>
+</div>
+
+<div class="card" style="background-color: #fff3cd; border-left: 4px solid #ffc107;">
+    <h2>{{ object.title }}</h2>
+    <p>Loại: {{ object.get_resource_type_display }} | Tác giả: {{ object.author|default:"N/A" }}</p>
+    <p><strong>Cảnh báo:</strong> Bạn có chắc chắn muốn xóa tài nguyên này?</p>
+
+    <form method="post" style="margin-top: 20px;">
+        {% csrf_token %}
+        <div style="display: flex; gap: 10px;">
+            <button type="submit" class="btn btn-danger">Xác nhận xóa</button>
+            <a href="{% url 'knowledge:resource_list' %}" class="btn">Hủy</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

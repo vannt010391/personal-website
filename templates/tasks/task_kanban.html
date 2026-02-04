@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Kanban Board - Công Việc{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/kanban.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <h1>Kanban Board</h1>
+            <a href="{% url 'tasks:dashboard' %}">&larr; Quay lại Dashboard</a>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <a href="{% url 'tasks:task_list' %}" class="btn">Chế độ danh sách</a>
+            <a href="{% url 'tasks:task_create' %}" class="btn btn-success">Thêm công việc mới</a>
+        </div>
+    </div>
+</div>
+
+<div class="kanban-board">
+    <!-- Pending Column -->
+    <div class="kanban-column">
+        <div class="kanban-column-header" style="background-color: #fff3cd; border-left: 4px solid #ffc107;">
+            <h3>Chưa làm</h3>
+            <span class="task-count">{{ pending_tasks.count }}</span>
+        </div>
+        <div class="kanban-column-body">
+            {% for task in pending_tasks %}
+            <div class="kanban-card">
+                <div class="kanban-card-header">
+                    <h4>{{ task.title }}</h4>
+                    <span class="priority-badge priority-{{ task.priority }}">
+                        {{ task.get_priority_display }}
+                    </span>
+                </div>
+
+                {% if task.description %}
+                <p class="kanban-card-description">{{ task.description|truncatewords:15 }}</p>
+                {% endif %}
+
+                <div class="kanban-card-meta">
+                    {% if task.due_date %}
+                    <span class="meta-item {% if task.due_date < today %}overdue{% endif %}">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        {{ task.due_date|date:"d/m/Y" }}
+                    </span>
+                    {% endif %}
+
+                    <span class="meta-item task-type-badge task-type-{{ task.task_type }}">
+                        {{ task.get_task_type_display }}
+                    </span>
+                </div>
+
+                <div class="kanban-card-actions">
+                    <a href="{% url 'tasks:task_update' task.pk %}" class="btn-small">Chỉnh sửa</a>
+                    <a href="{% url 'tasks:task_delete' task.pk %}" class="btn-small btn-danger">Xóa</a>
+                </div>
+            </div>
+            {% empty %}
+            <p class="empty-column">Không có công việc nào</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- In Progress Column -->
+    <div class="kanban-column">
+        <div class="kanban-column-header" style="background-color: #d1ecf1; border-left: 4px solid #17a2b8;">
+            <h3>Đang làm</h3>
+            <span class="task-count">{{ in_progress_tasks.count }}</span>
+        </div>
+        <div class="kanban-column-body">
+            {% for task in in_progress_tasks %}
+            <div class="kanban-card">
+                <div class="kanban-card-header">
+                    <h4>{{ task.title }}</h4>
+                    <span class="priority-badge priority-{{ task.priority }}">
+                        {{ task.get_priority_display }}
+                    </span>
+                </div>
+
+                {% if task.description %}
+                <p class="kanban-card-description">{{ task.description|truncatewords:15 }}</p>
+                {% endif %}
+
+                <div class="kanban-card-meta">
+                    {% if task.due_date %}
+                    <span class="meta-item {% if task.due_date < today %}overdue{% endif %}">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        {{ task.due_date|date:"d/m/Y" }}
+                    </span>
+                    {% endif %}
+
+                    <span class="meta-item task-type-badge task-type-{{ task.task_type }}">
+                        {{ task.get_task_type_display }}
+                    </span>
+                </div>
+
+                <div class="kanban-card-actions">
+                    <a href="{% url 'tasks:task_update' task.pk %}" class="btn-small">Chỉnh sửa</a>
+                    <a href="{% url 'tasks:task_delete' task.pk %}" class="btn-small btn-danger">Xóa</a>
+                </div>
+            </div>
+            {% empty %}
+            <p class="empty-column">Không có công việc nào</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Completed Column -->
+    <div class="kanban-column">
+        <div class="kanban-column-header" style="background-color: #d4edda; border-left: 4px solid #28a745;">
+            <h3>Hoàn thành</h3>
+            <span class="task-count">{{ completed_tasks.count }}</span>
+        </div>
+        <div class="kanban-column-body">
+            {% for task in completed_tasks %}
+            <div class="kanban-card completed">
+                <div class="kanban-card-header">
+                    <h4>{{ task.title }}</h4>
+                    <span class="priority-badge priority-{{ task.priority }}">
+                        {{ task.get_priority_display }}
+                    </span>
+                </div>
+
+                {% if task.description %}
+                <p class="kanban-card-description">{{ task.description|truncatewords:15 }}</p>
+                {% endif %}
+
+                <div class="kanban-card-meta">
+                    {% if task.completed_at %}
+                    <span class="meta-item">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        {{ task.completed_at|date:"d/m/Y" }}
+                    </span>
+                    {% endif %}
+
+                    <span class="meta-item task-type-badge task-type-{{ task.task_type }}">
+                        {{ task.get_task_type_display }}
+                    </span>
+                </div>
+
+                <div class="kanban-card-actions">
+                    <a href="{% url 'tasks:task_update' task.pk %}" class="btn-small">Xem</a>
+                    <a href="{% url 'tasks:task_delete' task.pk %}" class="btn-small btn-danger">Xóa</a>
+                </div>
+            </div>
+            {% empty %}
+            <p class="empty-column">Chưa hoàn thành công việc nào</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

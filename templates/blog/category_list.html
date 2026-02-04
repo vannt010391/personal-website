@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Quản lý Danh mục{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>Quản lý Danh mục</h1>
+    <a href="{% url 'blog:post_list' %}">&larr; Quay lại Blog</a>
+</div>
+
+<div class="card">
+    <a href="{% url 'blog:category_create' %}" class="btn btn-success">Thêm danh mục mới</a>
+</div>
+
+{% if categories %}
+    <div class="card">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background-color: #f5f5f5; text-align: left;">
+                    <th style="padding: 10px; border-bottom: 2px solid #ddd;">Tên</th>
+                    <th style="padding: 10px; border-bottom: 2px solid #ddd;">Slug</th>
+                    <th style="padding: 10px; border-bottom: 2px solid #ddd;">Mô tả</th>
+                    <th style="padding: 10px; border-bottom: 2px solid #ddd;">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for category in categories %}
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 10px;">{{ category.name }}</td>
+                    <td style="padding: 10px;"><code>{{ category.slug }}</code></td>
+                    <td style="padding: 10px;">{{ category.description|truncatewords:10 }}</td>
+                    <td style="padding: 10px;">
+                        <a href="{% url 'blog:category_update' category.pk %}" class="btn" style="font-size: 0.85em;">Sửa</a>
+                        <a href="{% url 'blog:category_delete' category.pk %}" class="btn btn-danger" style="font-size: 0.85em;">Xóa</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <div class="card">
+        <p>Chưa có danh mục nào.</p>
+    </div>
+{% endif %}
+{% endblock %}

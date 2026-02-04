@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block title %}Tài Nguyên Học Tập{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>Tài Nguyên Học Tập</h1>
+    <a href="{% url 'knowledge:entry_list' %}">&larr; Quay lại Kiến thức</a>
+</div>
+
+<div class="card">
+    <h3>Lọc</h3>
+    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px;">
+        <strong>Trạng thái:</strong>
+        <a href="?" class="btn {% if not request.GET.status %}btn-primary{% endif %}">Tất cả</a>
+        <a href="?status=to_read" class="btn {% if request.GET.status == 'to_read' %}btn-primary{% endif %}">Chưa đọc</a>
+        <a href="?status=reading" class="btn {% if request.GET.status == 'reading' %}btn-primary{% endif %}">Đang đọc</a>
+        <a href="?status=completed" class="btn {% if request.GET.status == 'completed' %}btn-primary{% endif %}">Hoàn thành</a>
+    </div>
+
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <strong>Loại:</strong>
+        <a href="?type=book" class="btn" style="font-size: 0.9em;">Sách</a>
+        <a href="?type=video" class="btn" style="font-size: 0.9em;">Video</a>
+        <a href="?type=course" class="btn" style="font-size: 0.9em;">Khóa học</a>
+        <a href="?type=website" class="btn" style="font-size: 0.9em;">Website</a>
+        <a href="?type=paper" class="btn" style="font-size: 0.9em;">Paper</a>
+    </div>
+</div>
+
+{% if resources %}
+    {% for resource in resources %}
+    <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: start;">
+            <div style="flex: 1;">
+                <h3 style="margin: 0 0 10px 0;">
+                    {% if resource.url %}
+                    <a href="{{ resource.url }}" target="_blank" style="color: #2c3e50; text-decoration: none;">
+                        {{ resource.title }}
+                    </a>
+                    {% else %}
+                    {{ resource.title }}
+                    {% endif %}
+                </h3>
+
+                <p style="color: #6c757d; font-size: 0.9em; margin: 5px 0;">
+                    <span style="padding: 3px 8px; background-color: #fff3cd; border-radius: 3px; font-size: 0.85em;">
+                        {{ resource.get_resource_type_display }}
+                    </span>
+                    |
+                    <span style="padding: 3px 8px; border-radius: 3px; font-size: 0.85em; background-color:
+                        {% if resource.status == 'to_read' %}#f8d7da{% elif resource.status == 'reading' %}#fff3cd{% else %}#d4edda{% endif %}">
+                        {{ resource.get_status_display }}
+                    </span>
+                    {% if resource.author %}
+                    | <strong>Tác giả:</strong> {{ resource.author }}
+                    {% endif %}
+                    {% if resource.rating %}
+                    | <strong>Đánh giá:</strong> {% for i in "12345"|make_list %}{% if forloop.counter <= resource.rating %}★{% else %}☆{% endif %}{% endfor %}
+                    {% endif %}
+                </p>
+
+                {% if resource.topic %}
+                <p style="font-size: 0.85em; color: #6c757d; margin: 5px 0;">
+                    <strong>Chủ đề:</strong> {{ resource.topic.name }}
+                </p>
+                {% endif %}
+
+                {% if resource.notes %}
+                <div style="background-color: #f8f9fa; padding: 10px; border-radius: 5px; margin-top: 10px;">
+                    <strong>Ghi chú:</strong>
+                    <p style="margin: 5px 0;">{{ resource.notes|truncatewords:30 }}</p>
+                </div>
+                {% endif %}
+            </div>
+            <div style="display: flex; gap: 5px;">
+                <a href="{% url 'knowledge:resource_update' resource.pk %}" class="btn">Sửa</a>
+                <a href="{% url 'knowledge:resource_delete' resource.pk %}" class="btn btn-danger">Xóa</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    {% if is_paginated %}
+        <div class="card" style="text-align: center;">
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1" class="btn">Đầu</a>
+                    <a href="?page={{ page_obj.previous_page_number }}" class="btn">Trước</a>
+                {% endif %}
+
+                <span style="padding: 10px;">
+                    Trang {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+                </span>
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}" class="btn">Tiếp</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}" class="btn">Cuối</a>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+{% else %}
+    <div class="card">
+        <p>Chưa có tài nguyên nào.</p>
+    </div>
+{% endif %}
+
+<div class="card">
+    <a href="{% url 'knowledge:resource_create' %}" class="btn btn-success">Thêm tài nguyên mới</a>
+</div>
+{% endblock %}

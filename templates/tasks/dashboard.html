@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard Công Việc{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>Dashboard Công Việc & Học Tập</h1>
+    <p>Quản lý công việc và theo dõi tiến độ học tập của bạn</p>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+    <div class="card" style="background-color: #fff3cd; border-left: 4px solid #ffc107;">
+        <h3>Công việc hôm nay</h3>
+        <p style="font-size: 2em; font-weight: bold; margin: 10px 0;">{{ today_tasks.count }}</p>
+    </div>
+
+    <div class="card" style="background-color: #f8d7da; border-left: 4px solid #dc3545;">
+        <h3>Quá hạn</h3>
+        <p style="font-size: 2em; font-weight: bold; margin: 10px 0;">{{ overdue_tasks.count }}</p>
+    </div>
+
+    <div class="card" style="background-color: #d1ecf1; border-left: 4px solid #17a2b8;">
+        <h3>Đang thực hiện</h3>
+        <p style="font-size: 2em; font-weight: bold; margin: 10px 0;">{{ in_progress_tasks.count }}</p>
+    </div>
+</div>
+
+{% if today_tasks %}
+<div class="card">
+    <h2>Công việc hôm nay</h2>
+    <ul style="list-style: none; padding: 0;">
+        {% for task in today_tasks %}
+        <li style="padding: 10px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <strong>{{ task.title }}</strong>
+                <span style="margin-left: 10px; padding: 3px 8px; border-radius: 3px; font-size: 0.8em; background-color:
+                    {% if task.priority == 'high' %}#f8d7da{% elif task.priority == 'medium' %}#fff3cd{% else %}#d1ecf1{% endif %}">
+                    {{ task.get_priority_display }}
+                </span>
+            </div>
+            <a href="{% url 'tasks:task_update' task.pk %}" class="btn" style="font-size: 0.9em;">Chi tiết</a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+{% if overdue_tasks %}
+<div class="card">
+    <h2>Công việc quá hạn</h2>
+    <ul style="list-style: none; padding: 0;">
+        {% for task in overdue_tasks %}
+        <li style="padding: 10px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <strong style="color: #dc3545;">{{ task.title }}</strong>
+                <span style="margin-left: 10px; font-size: 0.8em; color: #6c757d;">
+                    Hạn: {{ task.due_date|date:"d/m/Y" }}
+                </span>
+            </div>
+            <a href="{% url 'tasks:task_update' task.pk %}" class="btn btn-danger" style="font-size: 0.9em;">Xem</a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+{% if in_progress_tasks %}
+<div class="card">
+    <h2>Đang thực hiện</h2>
+    <ul style="list-style: none; padding: 0;">
+        {% for task in in_progress_tasks %}
+        <li style="padding: 10px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <strong>{{ task.title }}</strong>
+                {% if task.due_date %}
+                <span style="margin-left: 10px; font-size: 0.8em; color: #6c757d;">
+                    Hạn: {{ task.due_date|date:"d/m/Y" }}
+                </span>
+                {% endif %}
+            </div>
+            <a href="{% url 'tasks:task_update' task.pk %}" class="btn" style="font-size: 0.9em;">Chi tiết</a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+{% if recent_sessions %}
+<div class="card">
+    <h2>Phiên học gần đây</h2>
+    <ul style="list-style: none; padding: 0;">
+        {% for session in recent_sessions %}
+        <li style="padding: 10px; border-bottom: 1px solid #eee;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <strong>{{ session.subject }}</strong>
+                    <span style="color: #6c757d; font-size: 0.85em; margin-left: 10px;">{{ session.duration_minutes }} phút</span>
+                </div>
+                <div>
+                    <span style="color: #6c757d; font-size: 0.9em; margin-right: 10px;">{{ session.date|date:"d/m/Y" }}</span>
+                    <a href="{% url 'tasks:study_session_update' session.pk %}" class="btn" style="font-size: 0.85em;">Sửa</a>
+                </div>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+<div class="card">
+    <h3>Quản lý</h3>
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <a href="{% url 'tasks:task_list' %}" class="btn">Danh sách công việc</a>
+        <a href="{% url 'tasks:task_kanban' %}" class="btn">Kanban Board</a>
+        <a href="{% url 'tasks:study_session_list' %}" class="btn">Phiên học tập</a>
+        <a href="{% url 'tasks:task_create' %}" class="btn btn-success">Thêm công việc mới</a>
+        <a href="{% url 'tasks:study_session_create' %}" class="btn btn-success">Thêm phiên học</a>
+    </div>
+</div>
+{% endblock %}

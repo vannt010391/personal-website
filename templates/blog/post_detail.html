@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ post.title }} - Blog{% endblock %}
+
+{% block content %}
+<div class="card">
+    <a href="{% url 'blog:post_list' %}" style="color: #3498db;">&larr; Quay lại danh sách</a>
+</div>
+
+<div class="card">
+    <h1>{{ post.title }}</h1>
+
+    <p style="color: #7f8c8d; font-size: 0.9em; margin-bottom: 20px;">
+        Bởi {{ post.author.username }} | {{ post.published_at|date:"d/m/Y H:i" }}
+        {% if post.category %}
+            | <a href="{% url 'blog:post_list_by_category' post.category.slug %}">{{ post.category.name }}</a>
+        {% endif %}
+    </p>
+
+    {% if post.status == 'draft' %}
+        <div class="message warning">
+            Bài viết này đang ở trạng thái nháp và chưa được công bố.
+        </div>
+    {% endif %}
+
+    <div class="post-content" style="line-height: 1.8;">
+        {{ content_html|safe }}
+    </div>
+
+    <hr style="margin: 30px 0;">
+
+    <p style="color: #7f8c8d; font-size: 0.85em;">
+        Cập nhật lần cuối: {{ post.updated_at|date:"d/m/Y H:i" }}
+    </p>
+</div>
+
+{% if user.is_authenticated %}
+    <div class="card">
+        <h3>Quản lý</h3>
+        <div style="display: flex; gap: 10px;">
+            <a href="{% url 'blog:post_update' post.slug %}" class="btn btn-primary">Chỉnh sửa</a>
+            <a href="{% url 'blog:post_delete' post.slug %}" class="btn btn-danger">Xóa</a>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.post-content {
+    font-size: 1.05em;
+}
+
+.post-content h1, .post-content h2, .post-content h3 {
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+    color: #2c3e50;
+}
+
+.post-content h1 {
+    font-size: 1.8em;
+}
+
+.post-content h2 {
+    font-size: 1.5em;
+}
+
+.post-content h3 {
+    font-size: 1.3em;
+}
+
+.post-content p {
+    margin-bottom: 1em;
+}
+
+.post-content pre {
+    background-color: #f5f5f5;
+    padding: 15px;
+    border-radius: 5px;
+    overflow-x: auto;
+    border: 1px solid #ddd;
+}
+
+.post-content code {
+    background-color: #f5f5f5;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+}
+
+.post-content pre code {
+    background-color: transparent;
+    padding: 0;
+}
+
+.post-content blockquote {
+    border-left: 4px solid #3498db;
+    padding-left: 15px;
+    margin: 1em 0;
+    color: #555;
+    font-style: italic;
+}
+
+.post-content ul, .post-content ol {
+    margin-left: 30px;
+    margin-bottom: 1em;
+}
+
+.post-content img {
+    max-width: 100%;
+    height: auto;
+    margin: 20px 0;
+    border-radius: 5px;
+}
+
+.post-content table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 20px 0;
+}
+
+.post-content table th,
+.post-content table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.post-content table th {
+    background-color: #f5f5f5;
+    font-weight: bold;
+}
+</style>
+{% endblock %}

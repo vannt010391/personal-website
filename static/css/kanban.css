@@ -1,0 +1,251 @@
+/* Kanban Board Styles */
+
+.kanban-board {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+    padding-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+    .kanban-board {
+        grid-template-columns: 1fr;
+    }
+}
+
+.kanban-column {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    min-height: 400px;
+    max-height: calc(100vh - 250px);
+}
+
+.kanban-column-header {
+    padding: 15px;
+    border-radius: 8px 8px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+}
+
+.kanban-column-header h3 {
+    margin: 0;
+    font-size: 1.1em;
+    color: #2c3e50;
+}
+
+.task-count {
+    background-color: rgba(0, 0, 0, 0.1);
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.9em;
+    font-weight: bold;
+}
+
+.kanban-column-body {
+    padding: 15px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.empty-column {
+    text-align: center;
+    color: #6c757d;
+    padding: 40px 20px;
+    font-style: italic;
+}
+
+/* Kanban Cards */
+
+.kanban-card {
+    background-color: white;
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.2s, transform 0.2s;
+    border-left: 3px solid #3498db;
+}
+
+.kanban-card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+.kanban-card.completed {
+    border-left-color: #28a745;
+    opacity: 0.85;
+}
+
+.kanban-card.completed h4 {
+    text-decoration: line-through;
+    color: #6c757d;
+}
+
+.kanban-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 10px;
+    gap: 10px;
+}
+
+.kanban-card-header h4 {
+    margin: 0;
+    font-size: 1em;
+    color: #2c3e50;
+    flex: 1;
+    line-height: 1.4;
+}
+
+.kanban-card-description {
+    color: #6c757d;
+    font-size: 0.9em;
+    margin: 10px 0;
+    line-height: 1.5;
+}
+
+/* Priority Badges */
+
+.priority-badge {
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.75em;
+    font-weight: 600;
+    white-space: nowrap;
+    text-transform: uppercase;
+}
+
+.priority-high {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.priority-medium {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.priority-low {
+    background-color: #d1ecf1;
+    color: #0c5460;
+}
+
+/* Card Meta Information */
+
+.kanban-card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 12px 0;
+    font-size: 0.85em;
+}
+
+.meta-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    color: #6c757d;
+}
+
+.meta-item svg {
+    flex-shrink: 0;
+}
+
+.meta-item.overdue {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* Task Type Badges */
+
+.task-type-badge {
+    font-size: 0.75em;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.task-type-work {
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+
+.task-type-study {
+    background-color: #f3e5f5;
+    color: #7b1fa2;
+}
+
+.task-type-personal {
+    background-color: #e8f5e9;
+    color: #388e3c;
+}
+
+.task-type-other {
+    background-color: #fce4ec;
+    color: #c2185b;
+}
+
+/* Card Actions */
+
+.kanban-card-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #e9ecef;
+}
+
+.btn-small {
+    padding: 6px 12px;
+    font-size: 0.85em;
+    text-decoration: none;
+    border-radius: 4px;
+    background-color: #f8f9fa;
+    color: #495057;
+    border: 1px solid #dee2e6;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn-small:hover {
+    background-color: #e9ecef;
+}
+
+.btn-small.btn-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-color: #f5c6cb;
+}
+
+.btn-small.btn-danger:hover {
+    background-color: #f1b0b7;
+}
+
+/* Scrollbar Styling */
+
+.kanban-column-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.kanban-column-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.kanban-column-body::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+.kanban-column-body::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}

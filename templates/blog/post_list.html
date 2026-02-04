@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {% if current_category %}
+        {{ current_category.name }} - Blog
+    {% else %}
+        Blog
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>
+        {% if current_category %}
+            Danh mục: {{ current_category.name }}
+        {% else %}
+            Blog
+        {% endif %}
+    </h1>
+
+    {% if current_category and current_category.description %}
+        <p>{{ current_category.description }}</p>
+    {% endif %}
+</div>
+
+{% if user.is_authenticated %}
+<div class="card">
+    <h3>Quản lý</h3>
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <a href="{% url 'blog:post_create' %}" class="btn btn-success">Tạo bài viết mới</a>
+        <a href="{% url 'blog:category_list' %}" class="btn">Quản lý danh mục</a>
+    </div>
+</div>
+{% endif %}
+
+<div class="card">
+    <h3>Danh mục</h3>
+    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
+        <a href="{% url 'blog:post_list' %}" class="btn {% if not current_category %}btn-primary{% endif %}">
+            Tất cả
+        </a>
+        {% for category in categories %}
+            <a href="{% url 'blog:post_list_by_category' category.slug %}"
+               class="btn {% if current_category.slug == category.slug %}btn-primary{% endif %}">
+                {{ category.name }}
+            </a>
+        {% endfor %}
+    </div>
+</div>
+
+{% if posts %}
+    {% for post in posts %}
+        <div class="card">
+            <h2>
+                <a href="{% url 'blog:post_detail' post.slug %}" style="color: #2c3e50; text-decoration: none;">
+                    {{ post.title }}
+                </a>
+            </h2>
+            <p style="color: #7f8c8d; font-size: 0.9em;">
+                Bởi {{ post.author.username }} | {{ post.published_at|date:"d/m/Y" }}
+                {% if post.category %}
+                    | <a href="{% url 'blog:post_list_by_category' post.category.slug %}">{{ post.category.name }}</a>
+                {% endif %}
+            </p>
+            {% if post.excerpt %}
+                <p>{{ post.excerpt }}</p>
+            {% endif %}
+            <a href="{% url 'blog:post_detail' post.slug %}" class="btn">Đọc thêm</a>
+        </div>
+    {% endfor %}
+
+    {% if is_paginated %}
+        <div class="card" style="text-align: center;">
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1" class="btn">Đầu</a>
+                    <a href="?page={{ page_obj.previous_page_number }}" class="btn">Trước</a>
+                {% endif %}
+
+                <span style="padding: 10px;">
+                    Trang {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+                </span>
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}" class="btn">Tiếp</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}" class="btn">Cuối</a>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+{% else %}
+    <div class="card">
+        <p>Chưa có bài viết nào.</p>
+    </div>
+{% endif %}
+{% endblock %}

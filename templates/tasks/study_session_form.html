@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{% if object %}Chỉnh sửa{% else %}Tạo mới{% endif %} Phiên học{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/forms.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>{% if object %}Chỉnh sửa Phiên học{% else %}Tạo Phiên học Mới{% endif %}</h1>
+    <a href="{% url 'tasks:study_session_list' %}">&larr; Quay lại danh sách</a>
+</div>
+
+<div class="card">
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="{{ form.subject.id_for_label }}" class="form-label">Môn học / Chủ đề *</label>
+            {{ form.subject }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.description.id_for_label }}" class="form-label">Mô tả</label>
+            {{ form.description }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.duration_minutes.id_for_label }}" class="form-label">Thời lượng (phút) *</label>
+            {{ form.duration_minutes }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.date.id_for_label }}" class="form-label">Ngày *</label>
+            {{ form.date }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.notes.id_for_label }}" class="form-label">Ghi chú</label>
+            {{ form.notes }}
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-form-primary">
+                {% if object %}Cập nhật{% else %}Tạo mới{% endif %}
+            </button>
+            <a href="{% url 'tasks:study_session_list' %}" class="btn-form-secondary">Hủy</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

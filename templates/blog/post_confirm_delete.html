@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Xóa Bài viết{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>Xác nhận xóa bài viết</h1>
+    <a href="{% url 'blog:post_detail' object.slug %}">&larr; Quay lại</a>
+</div>
+
+<div class="card" style="background-color: #fff3cd; border-left: 4px solid #ffc107;">
+    <h2>{{ object.title }}</h2>
+    <p><strong>Cảnh báo:</strong> Bạn có chắc chắn muốn xóa bài viết này?</p>
+    <p>Hành động này không thể hoàn tác!</p>
+
+    <form method="post" style="margin-top: 20px;">
+        {% csrf_token %}
+        <div style="display: flex; gap: 10px;">
+            <button type="submit" class="btn btn-danger">Xác nhận xóa</button>
+            <a href="{% url 'blog:post_detail' object.slug %}" class="btn">Hủy</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

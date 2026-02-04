@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Trang Chủ - Website Cá Nhân{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>Chào mừng đến với Website Cá Nhân</h1>
+    <p>Đây là website để quản lý công việc, học tập và kiến thức cá nhân của bạn.</p>
+</div>
+
+<div class="card">
+    <h2>Các Tính Năng</h2>
+    <ul style="margin-left: 20px; margin-top: 15px;">
+        <li style="margin-bottom: 10px;">
+            <strong>Blog:</strong> Viết và quản lý các bài viết cá nhân
+        </li>
+        <li style="margin-bottom: 10px;">
+            <strong>Công Việc:</strong> Quản lý danh sách công việc và học tập hàng ngày
+        </li>
+        <li style="margin-bottom: 10px;">
+            <strong>Kiến Thức:</strong> Lưu trữ và tổ chức các nghiên cứu, kiến thức học được
+        </li>
+    </ul>
+</div>
+
+<div class="card">
+    <h2>Bắt Đầu</h2>
+    <p>Khám phá các tính năng của website:</p>
+    <div style="display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap;">
+        <a href="{% url 'blog:post_list' %}" class="btn btn-primary">Xem Blog</a>
+        <a href="{% url 'tasks:dashboard' %}" class="btn btn-primary">Quản lý Công việc</a>
+        <a href="{% url 'knowledge:entry_list' %}" class="btn btn-primary">Kho Kiến thức</a>
+    </div>
+</div>
+
+{% if user.is_authenticated %}
+<div class="card">
+    <h2>Quản lý nhanh</h2>
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <a href="{% url 'blog:post_create' %}" class="btn btn-success">Tạo bài viết</a>
+        <a href="{% url 'tasks:task_create' %}" class="btn btn-success">Thêm công việc</a>
+        <a href="{% url 'knowledge:entry_create' %}" class="btn btn-success">Thêm ghi chú</a>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

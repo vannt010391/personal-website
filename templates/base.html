@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Website Cá Nhân{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="container">
+                <h1>Website Cá Nhân</h1>
+                <ul>
+                    <li><a href="/">Trang Chủ</a></li>
+                    <li><a href="{% url 'blog:post_list' %}">Blog</a></li>
+                    <li><a href="{% url 'tasks:task_list' %}">Công Việc</a></li>
+                    <li><a href="{% url 'knowledge:entry_list' %}">Kiến Thức</a></li>
+                    {% if user.is_authenticated %}
+                        <li><a href="/logout/">Đăng Xuất</a></li>
+                    {% else %}
+                        <li><a href="/login/">Đăng Nhập</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="message {{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Website Cá Nhân. All rights reserved.</p>
+        </div>
+    </footer>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

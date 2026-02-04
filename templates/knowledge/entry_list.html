@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% load knowledge_extras %}
+
+{% block title %}Kiến Thức{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>Kho Kiến Thức</h1>
+    <p>Lưu trữ và quản lý các ghi chú, nghiên cứu của bạn</p>
+</div>
+
+<div class="card">
+    <h3>Lọc</h3>
+    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px;">
+        <strong>Loại:</strong>
+        <a href="?" class="btn {% if not request.GET.type %}btn-primary{% endif %}">Tất cả</a>
+        <a href="?type=note" class="btn {% if request.GET.type == 'note' %}btn-primary{% endif %}">Ghi chú</a>
+        <a href="?type=research" class="btn {% if request.GET.type == 'research' %}btn-primary{% endif %}">Nghiên cứu</a>
+        <a href="?type=article" class="btn {% if request.GET.type == 'article' %}btn-primary{% endif %}">Bài viết</a>
+        <a href="?type=reference" class="btn {% if request.GET.type == 'reference' %}btn-primary{% endif %}">Tham khảo</a>
+    </div>
+
+    {% if topics %}
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <strong>Chủ đề:</strong>
+        {% for topic in topics %}
+            <a href="?topic={{ topic.id }}" class="btn" style="font-size: 0.9em;">{{ topic.name }}</a>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+
+{% if entries %}
+    {% for entry in entries %}
+    <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: start;">
+            <div style="flex: 1;">
+                <h2 style="margin: 0 0 10px 0;">
+                    <a href="{% url 'knowledge:entry_detail' entry.slug %}" style="color: #2c3e50; text-decoration: none;">
+                        {{ entry.title }}
+                        {% if entry.is_favorite %}⭐{% endif %}
+                    </a>
+                </h2>
+                <p style="color: #6c757d; font-size: 0.9em; margin: 5px 0;">
+                    <span style="padding: 3px 8px; background-color: #e3f2fd; border-radius: 3px; font-size: 0.85em;">
+                        {{ entry.get_entry_type_display }}
+                    </span>
+                    {% if entry.topic %}
+                    | <strong>Chủ đề:</strong> {{ entry.topic.name }}
+                    {% endif %}
+                    | {{ entry.updated_at|date:"d/m/Y" }}
+                </p>
+                {% if entry.summary %}
+                <p style="margin: 10px 0;">{{ entry.summary }}</p>
+                {% endif %}
+                {% if entry.tags %}
+                <div style="margin-top: 10px;">
+                    {% for tag in entry.tags|split:"," %}
+                    <span style="padding: 2px 8px; background-color: #f0f0f0; border-radius: 3px; font-size: 0.8em; margin-right: 5px;">
+                        #{{ tag|trim }}
+                    </span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            <a href="{% url 'knowledge:entry_detail' entry.slug %}" class="btn">Xem</a>
+        </div>
+    </div>
+    {% endfor %}
+
+    {% if is_paginated %}
+        <div class="card" style="text-align: center;">
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1" class="btn">Đầu</a>
+                    <a href="?page={{ page_obj.previous_page_number }}" class="btn">Trước</a>
+                {% endif %}
+
+                <span style="padding: 10px;">
+                    Trang {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+                </span>
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}" class="btn">Tiếp</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}" class="btn">Cuối</a>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+{% else %}
+    <div class="card">
+        <p>Chưa có ghi chú nào.</p>
+    </div>
+{% endif %}
+
+<div class="card">
+    <div style="display: flex; gap: 10px;">
+        <a href="{% url 'knowledge:entry_create' %}" class="btn btn-success">Thêm ghi chú mới</a>
+        <a href="{% url 'knowledge:resource_list' %}" class="btn">Tài nguyên học tập</a>
+        <a href="{% url 'knowledge:topic_list' %}" class="btn">Quản lý chủ đề</a>
+    </div>
+</div>
+{% endblock %}
