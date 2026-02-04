@@ -1,0 +1,87 @@
+{% extends 'public/base.html' %}
+{% load static %}
+
+{% block title %}About Me - Vân Nguyễn{% endblock %}
+
+{% block content %}
+<div class="zen-blog">
+    <div class="zen-post-detail" style="max-width: 900px;">
+        <div class="zen-post-header" style="text-align: center; margin-bottom: 60px;">
+            <div style="width: 150px; height: 150px; border-radius: 50%; background: linear-gradient(135deg, #C9B59C 0%, #D9CFC7 100%); margin: 0 auto 30px; display: flex; align-items: center; justify-content: center; font-size: 4rem;">
+                👤
+            </div>
+            <h1 class="zen-post-detail-title" style="font-size: 3rem;">About Me</h1>
+            <p style="font-size: 1.2rem; color: #7b7268;">Developer • Learner • Knowledge Sharer</p>
+        </div>
+
+        <div class="zen-post-content">
+            <h2>Xin chào! 👋</h2>
+            <p>
+                Chào mừng bạn đến với Vân Nguyễn - nơi tôi chia sẻ những kiến thức, trải nghiệm 
+                và hành trình học tập của mình trong lĩnh vực công nghệ và lập trình.
+            </p>
+
+            <h2>Về tôi</h2>
+            <p>
+                Tôi là một developer đam mê học hỏi và chia sẻ kiến thức. Với niềm tin rằng "Học để chia sẻ, 
+                chia sẻ để học", tôi tạo ra portal này như một không gian để:
+            </p>
+            <ul>
+                <li>Ghi chép lại những điều đã học</li>
+                <li>Chia sẻ kinh nghiệm thực tế</li>
+                <li>Kết nối với cộng đồng yêu thích học tập</li>
+                <li>Truyền cảm hứng cho những người mới bắt đầu</li>
+            </ul>
+
+            <h2>Kỹ năng & Công nghệ</h2>
+            <p>
+                Tôi có kinh nghiệm và đang làm việc với các công nghệ:
+            </p>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin: 20px 0;">
+                <span style="padding: 8px 16px; background: linear-gradient(135deg, #C9B59C 0%, #D9CFC7 100%); color: white; border-radius: 20px; font-size: 0.9rem;">Python</span>
+                <span style="padding: 8px 16px; background: linear-gradient(135deg, #C9B59C 0%, #D9CFC7 100%); color: white; border-radius: 20px; font-size: 0.9rem;">Django</span>
+                <span style="padding: 8px 16px; background: linear-gradient(135deg, #C9B59C 0%, #D9CFC7 100%); color: white; border-radius: 20px; font-size: 0.9rem;">JavaScript</span>
+                <span style="padding: 8px 16px; background: linear-gradient(135deg, #C9B59C 0%, #D9CFC7 100%); color: white; border-radius: 20px; font-size: 0.9rem;">React</span>
+                <span style="padding: 8px 16px; background: linear-gradient(135deg, #C9B59C 0%, #D9CFC7 100%); color: white; border-radius: 20px; font-size: 0.9rem;">PostgreSQL</span>
+                <span style="padding: 8px 16px; background: linear-gradient(135deg, #C9B59C 0%, #D9CFC7 100%); color: white; border-radius: 20px; font-size: 0.9rem;">Docker</span>
+            </div>
+
+            <h2>Sứ mệnh</h2>
+            <blockquote>
+                "Chia sẻ kiến thức không làm giảm đi kiến thức của bạn, mà còn giúp nó được nhân lên 
+                qua những người nhận được. Mỗi bài viết, mỗi ghi chú là một hạt giống tri thức 
+                được gieo trồng trong cộng đồng."
+            </blockquote>
+
+            <h2>Nội dung trên Portal</h2>
+            <p>
+                Trên Vân Nguyễn, bạn sẽ tìm thấy:
+            </p>
+            <ul>
+                <li><strong>Blog Posts:</strong> Các bài viết chi tiết về công nghệ, lập trình, best practices</li>
+                <li><strong>Note-Taking:</strong> Ghi chú nhanh, ý tưởng, và những điều cần nhớ</li>
+                <li><strong>List 100:</strong> Tổng hợp danh sách những điều thú vị và bổ ích</li>
+            </ul>
+
+            <h2>Hãy kết nối!</h2>
+            <p>
+                Tôi luôn sẵn sàng kết nối và trao đổi với những người có cùng đam mê. 
+                Đừng ngần ngại liên hệ với tôi qua trang 
+                <a href="{% url 'contact' %}">Contact</a>.
+            </p>
+
+            <div style="text-align: center; margin-top: 60px; padding: 40px; background: linear-gradient(135deg, #C9B59C 0%, #D9CFC7 100%); border-radius: 16px; color: white;">
+                <p style="font-size: 1.3rem; margin: 0;">
+                    "Học không giới hạn, chia sẻ không ngừng nghỉ"
+                </p>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 60px;">
+            <a href="{% url 'contact' %}" class="zen-read-more" style="font-size: 1.2rem;">
+                Liên hệ với tôi
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

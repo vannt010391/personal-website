@@ -1,0 +1,111 @@
+/* Code Highlighting Enhancements */
+
+.codehilite, .highlight {
+    background: #3f372f;
+    color: #F9F8F6;
+    padding: 20px;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 20px 0;
+    font-family: 'Courier New', 'Courier', monospace;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    position: relative;
+}
+
+.codehilite pre, .highlight pre {
+    margin: 0;
+    padding: 0;
+    background: none;
+    border: none;
+}
+
+/* Syntax highlighting colors */
+.k { color: #FF79C6; }  /* Keyword */
+.kn { color: #FF79C6; } /* Keyword Namespace */
+.kp { color: #FF79C6; } /* Keyword Pseudo */
+.kr { color: #FF79C6; } /* Keyword Reserved */
+.kt { color: #8BE9FD; } /* Keyword Type */
+.n { color: #F8F8F2; }  /* Name */
+.na { color: #50FA7B; } /* Name Attribute */
+.nb { color: #8BE9FD; } /* Name Builtin */
+.nc { color: #50FA7B; } /* Name Class */
+.no { color: #FF79C6; } /* Name Constant */
+.nd { color: #50FA7B; } /* Name Decorator */
+.ne { color: #F92672; } /* Name Exception */
+.nf { color: #50FA7B; } /* Name Function */
+.nl { color: #8BE9FD; } /* Name Label */
+.nn { color: #F8F8F2; } /* Name Namespace */
+.nx { color: #50FA7B; } /* Name Other */
+.py { color: #8BE9FD; } /* Name Property */
+.nt { color: #FF79C6; } /* Name Tag */
+.nv { color: #8BE9FD; } /* Name Variable */
+.s { color: #F1FA8C; }  /* String */
+.sa { color: #F1FA8C; } /* String Affix */
+.sb { color: #F1FA8C; } /* String Backtick */
+.sc { color: #F1FA8C; } /* String Char */
+.sd { color: #F1FA8C; } /* String Doc */
+.s2 { color: #F1FA8C; } /* String Double */
+.se { color: #F1FA8C; } /* String Escape */
+.sh { color: #F1FA8C; } /* String Heredoc */
+.si { color: #F1FA8C; } /* String Interpol */
+.sx { color: #F1FA8C; } /* String Other */
+.sr { color: #F1FA8C; } /* String Regex */
+.s1 { color: #F1FA8C; } /* String Single */
+.ss { color: #F1FA8C; } /* String Symbol */
+.m { color: #BD93F9; }  /* Number */
+.mb { color: #BD93F9; } /* Number Bin */
+.mf { color: #BD93F9; } /* Number Float */
+.mh { color: #BD93F9; } /* Number Hex */
+.mi { color: #BD93F9; } /* Number Int */
+.il { color: #BD93F9; } /* Number Integer Long */
+.mo { color: #BD93F9; } /* Number Oct */
+.o { color: #FF79C6; }  /* Operator */
+.ow { color: #FF79C6; } /* Operator Word */
+.c { color: #6272A4; }  /* Comment */
+.c1 { color: #6272A4; } /* Comment Single */
+.ch { color: #6272A4; } /* Comment Hashbang */
+.cm { color: #6272A4; } /* Comment Multiline */
+.cp { color: #6272A4; } /* Comment Preproc */
+.cpf { color: #6272A4; }/* Comment Preproc File */
+
+/* Code block wrapper */
+.code-block-wrapper {
+    position: relative;
+}
+
+.copy-code-btn {
+    transition: all 0.2s ease;
+}
+
+.copy-code-btn:active {
+    transform: scale(0.95);
+}
+
+/* Inline code */
+code {
+    background: rgba(201, 181, 156, 0.15);
+    color: #C9B59C;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+}
+
+pre code {
+    background: none;
+    color: #F8F8F2;
+    padding: 0;
+}
+
+/* Line numbers (if added) */
+.lineno {
+    color: #6272A4;
+    user-select: none;
+    display: inline-block;
+    width: 40px;
+    text-align: right;
+    padding-right: 10px;
+    margin-right: 10px;
+    border-right: 1px solid #6272A4;
+}

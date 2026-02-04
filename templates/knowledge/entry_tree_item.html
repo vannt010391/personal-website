@@ -1,0 +1,26 @@
+{% load knowledge_tree %}
+
+<li class="entry-tree-item" data-entry-id="{{ entry.id }}">
+    <div class="entry-tree-node">
+        {% if entry.children.all %}
+            <button class="entry-tree-toggle" onclick="toggleEntry(this)" data-collapsed="false">
+                ▼
+            </button>
+        {% else %}
+            <span class="entry-tree-toggle entry-tree-no-children"></span>
+        {% endif %}
+        <a href="{% url 'knowledge:entry_update' entry.slug %}"
+           class="entry-tree-link {% if current_slug == entry.slug %}active{% endif %}">
+            {{ entry.title|truncatewords:4 }}
+            {% if entry.is_favorite %}<span class="entry-tree-favorite">⭐</span>{% endif %}
+        </a>
+    </div>
+    
+    {% if entry.children.all %}
+    <ul class="entry-tree-children">
+        {% for child in entry.children.all %}
+            {% include "knowledge/entry_tree_item.html" with entry=child %}
+        {% endfor %}
+    </ul>
+    {% endif %}
+</li>

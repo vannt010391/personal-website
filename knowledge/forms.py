@@ -20,11 +20,13 @@ class TopicForm(forms.ModelForm):
 class KnowledgeEntryForm(forms.ModelForm):
     class Meta:
         model = KnowledgeEntry
-        fields = ['title', 'slug', 'topic', 'entry_type', 'content', 'summary', 'source_url', 'tags', 'is_favorite']
+        fields = ['title', 'slug', 'topic', 'parent', 'order', 'entry_type', 'content', 'summary', 'source_url', 'tags', 'is_favorite']
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'Tiêu đề', 'id': 'id_title'}),
             'slug': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'Tự động tạo từ tiêu đề', 'id': 'id_slug'}),
             'topic': forms.Select(attrs={'class': 'form-select'}),
+            'parent': forms.Select(attrs={'class': 'form-select'}),
+            'order': forms.NumberInput(attrs={'class': 'form-input', 'min': 0, 'step': 1, 'placeholder': '0'}),
             'entry_type': forms.Select(attrs={'class': 'form-select'}),
             'content': forms.Textarea(attrs={'class': 'form-textarea', 'rows': 15, 'placeholder': 'Nội dung (hỗ trợ Markdown)'}),
             'summary': forms.Textarea(attrs={'class': 'form-textarea', 'rows': 3, 'placeholder': 'Tóm tắt'}),

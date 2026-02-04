@@ -1,0 +1,517 @@
+/* ================================================
+   BLOG ZEN STYLE - Minimalist & Elegant
+   ================================================ */
+
+:root {
+    --zen-primary: #C9B59C;
+    --zen-secondary: #D9CFC7;
+    --zen-accent: #C9B59C;
+    --zen-text: #3f372f;
+    --zen-text-light: #7b7268;
+    --zen-border: #D9CFC7;
+    --zen-bg: #F9F8F6;
+    --zen-bg-alt: #EFE9E3;
+    --zen-shadow: rgba(0, 0, 0, 0.08);
+    --zen-shadow-lg: rgba(0, 0, 0, 0.12);
+}
+
+/* Global Typography */
+.zen-blog {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    color: var(--zen-text);
+    line-height: 1.8;
+    background: var(--zen-bg);
+}
+
+.zen-blog h1, .zen-blog h2, .zen-blog h3 {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    color: var(--zen-primary);
+}
+
+/* Hero Section */
+.zen-hero {
+    background: linear-gradient(135deg, #C9B59C 0%, #D9CFC7 100%);
+    padding: 120px 0 100px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.zen-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    opacity: 0.3;
+}
+
+.zen-hero-content {
+    position: relative;
+    z-index: 1;
+}
+
+.zen-hero h1 {
+    font-size: 4.5rem;
+    color: white;
+    margin: 0 0 20px;
+    font-weight: 200;
+    letter-spacing: -0.03em;
+    animation: fadeInUp 0.8s ease-out;
+}
+
+.zen-hero-subtitle {
+    font-size: 1.3rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 300;
+    margin: 0 auto;
+    max-width: 600px;
+    animation: fadeInUp 0.8s ease-out 0.2s both;
+}
+
+/* Featured Posts */
+.zen-featured {
+    padding: 80px 0;
+    background: var(--zen-bg-alt);
+}
+
+.zen-section-title {
+    font-size: 2.5rem;
+    text-align: center;
+    margin: 0 0 60px;
+    font-weight: 200;
+    position: relative;
+    padding-bottom: 20px;
+}
+
+.zen-section-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #C9B59C, #D9CFC7);
+    border-radius: 3px;
+}
+
+/* Post Grid */
+.zen-posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 40px;
+    padding: 60px 0;
+}
+
+/* Post Card */
+.zen-post-card {
+    background: var(--zen-bg);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px var(--zen-shadow);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    position: relative;
+}
+
+.zen-post-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #C9B59C, #D9CFC7);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+}
+
+.zen-post-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px var(--zen-shadow-lg);
+}
+
+.zen-post-card:hover::before {
+    transform: scaleX(1);
+}
+
+.zen-post-card-content {
+    padding: 40px 30px;
+}
+
+.zen-post-meta {
+    display: flex;
+    gap: 15px;
+    font-size: 0.85rem;
+    color: var(--zen-text-light);
+    margin-bottom: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.zen-post-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.zen-post-category {
+    display: inline-block;
+    padding: 4px 12px;
+    background: linear-gradient(135deg, #C9B59C 0%, #D9CFC7 100%);
+    color: white;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.zen-post-title {
+    font-size: 1.8rem;
+    margin: 0 0 15px;
+    font-weight: 300;
+    line-height: 1.3;
+}
+
+.zen-post-title a {
+    color: var(--zen-primary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.zen-post-title a:hover {
+    color: #C9B59C;
+}
+
+.zen-post-excerpt {
+    color: var(--zen-text-light);
+    margin: 0 0 25px;
+    line-height: 1.7;
+    font-size: 1rem;
+}
+
+.zen-read-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #C9B59C;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    transition: gap 0.3s ease;
+}
+
+.zen-read-more:hover {
+    gap: 12px;
+}
+
+.zen-read-more::after {
+    content: '→';
+    font-size: 1.2rem;
+}
+
+/* Post Detail */
+.zen-post-detail {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 80px 20px;
+}
+
+.zen-post-header {
+    text-align: center;
+    margin-bottom: 60px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--zen-border);
+}
+
+.zen-post-detail-title {
+    font-size: 3.5rem;
+    margin: 0 0 25px;
+    font-weight: 200;
+    line-height: 1.2;
+}
+
+.zen-post-detail-meta {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    color: var(--zen-text-light);
+    font-size: 1rem;
+}
+
+.zen-post-content {
+    font-size: 1.15rem;
+    line-height: 1.9;
+    color: var(--zen-text);
+}
+
+.zen-post-content h1,
+.zen-post-content h2,
+.zen-post-content h3 {
+    margin-top: 2.5em;
+    margin-bottom: 0.8em;
+    font-weight: 300;
+}
+
+.zen-post-content h1 { font-size: 2.5rem; }
+.zen-post-content h2 { font-size: 2rem; }
+.zen-post-content h3 { font-size: 1.5rem; }
+
+.zen-post-content p {
+    margin-bottom: 1.8em;
+}
+
+.zen-post-content a {
+    color: #667eea;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(102, 126, 234, 0.3);
+    transition: border-color 0.3s ease;
+}
+
+.zen-post-content a:hover {
+    border-bottom-color: #667eea;
+}
+
+.zen-post-content blockquote {
+    margin: 2.5em 0;
+    padding: 30px 40px;
+    background: var(--zen-bg-alt);
+    border-left: 4px solid #C9B59C;
+    font-style: italic;
+    font-size: 1.2rem;
+    border-radius: 0 8px 8px 0;
+}
+
+.zen-post-content code {
+    background: var(--zen-bg-alt);
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-family: 'Monaco', 'Courier New', monospace;
+    color: #C9B59C;
+}
+
+.zen-post-content pre {
+    background: #EFE9E3;
+    color: #3f372f;
+    padding: 30px;
+    border-radius: 12px;
+    overflow-x: auto;
+    margin: 2em 0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.zen-post-content pre code {
+    background: none;
+    padding: 0;
+    color: inherit;
+    font-size: 0.95rem;
+}
+
+.zen-post-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    margin: 2.5em 0;
+    box-shadow: 0 4px 20px var(--zen-shadow);
+}
+
+.zen-post-content ul,
+.zen-post-content ol {
+    margin: 1.5em 0;
+    padding-left: 2em;
+}
+
+.zen-post-content li {
+    margin-bottom: 0.8em;
+}
+
+/* Category Filter */
+.zen-categories {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    padding: 40px 0;
+}
+
+.zen-category-btn {
+    padding: 10px 24px;
+    background: white;
+    color: var(--zen-text);
+    border: 2px solid var(--zen-border);
+    border-radius: 30px;
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.zen-category-btn:hover,
+.zen-category-btn.active {
+    background: linear-gradient(135deg, #C9B59C 0%, #D9CFC7 100%);
+    color: white;
+    border-color: transparent;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(201, 181, 156, 0.35);
+}
+
+/* Pagination */
+.zen-pagination {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding: 60px 0;
+}
+
+.zen-page-btn {
+    padding: 12px 20px;
+    background: white;
+    color: var(--zen-text);
+    border: 2px solid var(--zen-border);
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    min-width: 48px;
+    text-align: center;
+}
+
+.zen-page-btn:hover {
+    background: #C9B59C;
+    color: white;
+    border-color: #C9B59C;
+    transform: translateY(-2px);
+}
+
+.zen-page-current {
+    background: linear-gradient(135deg, #C9B59C 0%, #D9CFC7 100%);
+    color: white;
+    border-color: transparent;
+}
+
+/* Back Button */
+.zen-back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--zen-text-light);
+    text-decoration: none;
+    font-size: 1rem;
+    margin-bottom: 40px;
+    transition: all 0.3s ease;
+}
+
+.zen-back-btn::before {
+    content: '←';
+    font-size: 1.5rem;
+    transition: transform 0.3s ease;
+}
+
+.zen-back-btn:hover {
+    color: #C9B59C;
+}
+
+.zen-back-btn:hover::before {
+    transform: translateX(-5px);
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.zen-fade-in {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.zen-fade-in-delay-1 {
+    animation: fadeInUp 0.6s ease-out 0.1s both;
+}
+
+.zen-fade-in-delay-2 {
+    animation: fadeInUp 0.6s ease-out 0.2s both;
+}
+
+/* Empty State */
+.zen-empty-state {
+    text-align: center;
+    padding: 100px 20px;
+    color: var(--zen-text-light);
+}
+
+.zen-empty-state h3 {
+    font-size: 2rem;
+    margin-bottom: 15px;
+    font-weight: 300;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .zen-hero h1 {
+        font-size: 2.5rem;
+    }
+    
+    .zen-hero-subtitle {
+        font-size: 1.1rem;
+    }
+    
+    .zen-posts-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+        padding: 40px 0;
+    }
+    
+    .zen-post-detail-title {
+        font-size: 2.2rem;
+    }
+    
+    .zen-post-content {
+        font-size: 1.05rem;
+    }
+    
+    .zen-categories {
+        gap: 10px;
+    }
+    
+    .zen-section-title {
+        font-size: 2rem;
+    }
+}
+
+/* Loading State */
+.zen-loading {
+    text-align: center;
+    padding: 100px 20px;
+}
+
+.zen-spinner {
+    border: 3px solid var(--zen-border);
+    border-top: 3px solid #C9B59C;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

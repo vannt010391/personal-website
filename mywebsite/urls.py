@@ -16,19 +16,33 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from django.views.generic import TemplateView
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
+from . import public_views
 
 urlpatterns = [
+    # Django Admin
     path('admin/', admin.site.urls),
-    path('', TemplateView.as_view(template_name='home.html'), name='home'),
+    
+    # Public Portal
+    path('', public_views.home, name='home'),
+    path('blog/', include('blog.urls', namespace='blog')),
+    path('note-taking/', public_views.note_taking, name='note_taking'),
+    path('list-100/', public_views.list_100, name='list_100'),
+    path('about/', public_views.about, name='about'),
+    path('contact/', public_views.contact, name='contact'),
+    
+    # Admin Portal
+    path('portal/', public_views.admin_portal, name='admin_portal'),
+    path('portal/tasks/', include('tasks.urls', namespace='tasks')),
+    path('portal/knowledge/', include('knowledge.urls', namespace='knowledge')),
+    
+    # API
     path('api/', include('mywebsite.api_urls')),
     path('markdownx/', include('markdownx.urls')),
-    path('blog/', include('blog.urls', namespace='blog')),
-    path('tasks/', include('tasks.urls', namespace='tasks')),
-    path('knowledge/', include('knowledge.urls', namespace='knowledge')),
+    
+    # Auth
     path('login/', auth_views.LoginView.as_view(), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 ]

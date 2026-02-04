@@ -1,0 +1,538 @@
+/* GitBook-style Knowledge Base */
+
+.gitbook-container {
+    display: flex;
+    gap: 0;
+    min-height: calc(100vh - 200px);
+    background: #FFFFFF;
+}
+
+/* Sidebar */
+.gitbook-sidebar {
+    width: 280px;
+    background: #F9F8F6;
+    border-right: 1px solid #D9CFC7;
+    padding: 30px 20px;
+    max-height: calc(100vh - 100px);
+    overflow-y: auto;
+    position: sticky;
+    top: 100px;
+}
+
+.gitbook-sidebar h3 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #7b7268;
+    margin: 25px 0 15px 0;
+    padding: 0 10px;
+    letter-spacing: 0.5px;
+}
+
+.gitbook-sidebar h3:first-child {
+    margin-top: 0;
+}
+
+.gitbook-sidebar-item {
+    display: block;
+    padding: 8px 12px;
+    margin-bottom: 5px;
+    border-radius: 6px;
+    color: #3f372f;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+    border-left: 3px solid transparent;
+}
+
+.gitbook-sidebar-item:hover {
+    background: #EFE9E3;
+    border-left-color: #C9B59C;
+}
+
+.gitbook-sidebar-item.active {
+    background: linear-gradient(135deg, rgba(201, 181, 156, 0.1) 0%, rgba(217, 207, 199, 0.1) 100%);
+    color: #C9B59C;
+    border-left-color: #C9B59C;
+    font-weight: 600;
+}
+
+.gitbook-sidebar-nested {
+    margin-left: 0;
+    border-left: 2px solid #D9CFC7;
+    padding-left: 10px;
+    margin-top: 5px;
+}
+
+.gitbook-sidebar-nested .gitbook-sidebar-item {
+    padding-left: 8px;
+    font-size: 0.9rem;
+}
+
+/* Main Content */
+.gitbook-main {
+    flex: 1;
+    padding: 40px;
+    max-width: 900px;
+}
+
+.gitbook-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 30px;
+    border-bottom: 1px solid #D9CFC7;
+    margin-bottom: 30px;
+}
+
+.gitbook-breadcrumb {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    font-size: 0.9rem;
+    color: #7b7268;
+    margin-bottom: 20px;
+}
+
+.gitbook-breadcrumb a {
+    color: #C9B59C;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.gitbook-breadcrumb a:hover {
+    color: #3f372f;
+}
+
+.gitbook-breadcrumb span {
+    color: #D9CFC7;
+}
+
+.gitbook-title {
+    font-size: 2.5rem;
+    font-weight: 300;
+    color: #3f372f;
+    margin: 0 0 15px 0;
+    line-height: 1.2;
+}
+
+.gitbook-meta {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    font-size: 0.9rem;
+    color: #7b7268;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.gitbook-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.gitbook-summary {
+    background: linear-gradient(135deg, rgba(201, 181, 156, 0.05) 0%, rgba(217, 207, 199, 0.05) 100%);
+    padding: 20px;
+    border-left: 4px solid #C9B59C;
+    border-radius: 6px;
+    margin-bottom: 40px;
+}
+
+.gitbook-summary h4 {
+    margin: 0 0 10px 0;
+    color: #3f372f;
+    font-weight: 500;
+}
+
+.gitbook-summary p {
+    margin: 0;
+    color: #7b7268;
+    line-height: 1.6;
+}
+
+/* Table of Contents */
+.gitbook-toc {
+    background: #F9F8F6;
+    padding: 20px;
+    border-radius: 6px;
+    margin-bottom: 40px;
+}
+
+.gitbook-toc h4 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #7b7268;
+    margin: 0 0 15px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.gitbook-toc ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.gitbook-toc li {
+    margin-bottom: 8px;
+}
+
+.gitbook-toc a {
+    color: #3f372f;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+    display: block;
+    padding: 4px 0;
+}
+
+.gitbook-toc a:hover {
+    color: #C9B59C;
+}
+
+.gitbook-toc li.level-2 a {
+    padding-left: 15px;
+    font-size: 0.85rem;
+    color: #7b7268;
+}
+
+.gitbook-toc li.level-3 a {
+    padding-left: 30px;
+    font-size: 0.8rem;
+    color: #7b7268;
+}
+
+/* Content Styling */
+.gitbook-content {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: #3f372f;
+}
+
+.gitbook-content h2 {
+    font-size: 1.8rem;
+    font-weight: 500;
+    color: #3f372f;
+    margin: 40px 0 20px 0;
+    padding-top: 20px;
+    border-top: 2px solid #D9CFC7;
+}
+
+.gitbook-content h2:first-child {
+    border-top: none;
+    padding-top: 0;
+    margin-top: 0;
+}
+
+.gitbook-content h3 {
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: #3f372f;
+    margin: 30px 0 15px 0;
+}
+
+.gitbook-content h4 {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #3f372f;
+    margin: 20px 0 10px 0;
+}
+
+.gitbook-content p {
+    margin: 0 0 15px 0;
+    text-align: justify;
+}
+
+.gitbook-content a {
+    color: #C9B59C;
+    text-decoration: none;
+    border-bottom: 1px dotted #C9B59C;
+    transition: all 0.2s;
+}
+
+.gitbook-content a:hover {
+    color: #3f372f;
+    border-bottom-color: #3f372f;
+}
+
+.gitbook-content ul, .gitbook-content ol {
+    margin: 0 0 20px 0;
+    padding-left: 30px;
+}
+
+.gitbook-content li {
+    margin-bottom: 8px;
+}
+
+.gitbook-content code {
+    background: #F9F8F6;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+    color: #C9B59C;
+}
+
+.gitbook-content pre {
+    background: #2c3e50;
+    color: #ecf0f1;
+    padding: 15px;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin: 0 0 20px 0;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.gitbook-content pre code {
+    background: none;
+    padding: 0;
+    color: inherit;
+}
+
+.gitbook-content blockquote {
+    border-left: 4px solid #C9B59C;
+    padding-left: 20px;
+    margin: 20px 0;
+    color: #7b7268;
+    font-style: italic;
+}
+
+.gitbook-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+.gitbook-content table th {
+    background: #F9F8F6;
+    padding: 12px;
+    text-align: left;
+    border-bottom: 2px solid #D9CFC7;
+    font-weight: 600;
+    color: #3f372f;
+}
+
+.gitbook-content table td {
+    padding: 12px;
+    border-bottom: 1px solid #D9CFC7;
+}
+
+.gitbook-content table tr:hover {
+    background: #F9F8F6;
+}
+
+/* Tags */
+.gitbook-tags {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+}
+
+.gitbook-tag {
+    display: inline-block;
+    padding: 6px 14px;
+    background: linear-gradient(135deg, rgba(201, 181, 156, 0.1) 0%, rgba(217, 207, 199, 0.1) 100%);
+    color: #C9B59C;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    border: 1px solid #D9CFC7;
+    transition: all 0.2s;
+}
+
+.gitbook-tag:hover {
+    background: linear-gradient(135deg, rgba(201, 181, 156, 0.2) 0%, rgba(217, 207, 199, 0.2) 100%);
+    color: #3f372f;
+}
+
+/* Navigation */
+.gitbook-navigation {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 30px;
+    margin-top: 30px;
+    border-top: 1px solid #D9CFC7;
+}
+
+.gitbook-nav-button {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 12px 16px;
+    background: #F9F8F6;
+    color: #3f372f;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+}
+
+.gitbook-nav-button:hover {
+    background: #EFE9E3;
+    color: #C9B59C;
+}
+
+.gitbook-nav-label {
+    font-size: 0.8rem;
+    color: #7b7268;
+    font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .gitbook-container {
+        flex-direction: column;
+    }
+
+    .gitbook-sidebar {
+        width: 100%;
+        max-height: 400px;
+        position: relative;
+        top: 0;
+        border-right: none;
+        border-bottom: 1px solid #D9CFC7;
+    }
+
+    .gitbook-main {
+        padding: 30px 20px;
+    }
+
+    .gitbook-title {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .gitbook-sidebar {
+        padding: 20px 15px;
+        max-height: 300px;
+    }
+
+    .gitbook-main {
+        padding: 20px 15px;
+    }
+
+    .gitbook-title {
+        font-size: 1.6rem;
+    }
+
+    .gitbook-content h2 {
+        font-size: 1.4rem;
+    }
+
+    .gitbook-content h3 {
+        font-size: 1.1rem;
+    }
+}
+/* Drag and Drop Styling */
+.entry-tree-item.dragging {
+    opacity: 0.5;
+    background: #EFE9E3;
+    border-radius: 4px;
+}
+
+.entry-tree-item.drag-over {
+    border-top: 3px solid #C9B59C;
+    padding-top: 5px;
+}
+
+.entry-tree-link {
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.entry-tree-link:hover {
+    cursor: grab;
+}
+
+.entry-tree-link:active {
+    cursor: grabbing;
+}
+
+/* Table of Contents Styling */
+.toc-container {
+    padding: 20px;
+    background: #F9F8F6;
+    border-radius: 8px;
+    border-left: 4px solid #C9B59C;
+    margin: 30px 0;
+}
+
+.toc-container h3 {
+    margin: 0 0 15px 0;
+    font-size: 1rem;
+    color: #3f372f;
+}
+
+.toc-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.toc-list li {
+    margin: 8px 0;
+}
+
+.toc-list a {
+    color: #C9B59C;
+    text-decoration: none;
+    font-size: 0.95rem;
+    display: block;
+    padding: 4px 0;
+    transition: all 0.2s;
+}
+
+.toc-list a:hover {
+    color: #3f372f;
+    padding-left: 8px;
+}
+
+.toc-list li.level-2 {
+    margin-left: 20px;
+}
+
+.toc-list li.level-3 {
+    margin-left: 40px;
+}
+
+.toc-list li.level-4 {
+    margin-left: 60px;
+}
+
+/* Search Results Styling */
+.search-result-item {
+    padding: 15px;
+    border: 1px solid #D9CFC7;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    transition: all 0.2s;
+}
+
+.search-result-item:hover {
+    border-color: #C9B59C;
+    box-shadow: 0 2px 8px rgba(201, 181, 156, 0.1);
+}
+
+.search-result-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #3f372f;
+    margin-bottom: 8px;
+}
+
+.search-result-excerpt {
+    color: #7b7268;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.search-result-meta {
+    margin-top: 10px;
+    font-size: 0.85rem;
+    color: #7b7268;
+}

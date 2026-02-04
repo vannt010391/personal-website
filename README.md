@@ -1,16 +1,29 @@
 # Website Cá Nhân
 
-Website cá nhân được xây dựng bằng Django để quản lý blog, công việc và kiến thức.
+Website cá nhân được xây dựng bằng Django để quản lý blog, công việc và kiến thức với giao diện hiện đại.
+
+## ✨ Tính Năng Mới
+
+### 🎨 Blog Portal - ZEN Design
+- **Giao diện công khai cực kỳ đẹp** với phong cách ZEN minimalist
+- Hero section với gradient background
+- Post cards với animations mượt mà
+- Typography tối ưu cho trải nghiệm đọc
+- Responsive design hoàn hảo
+- **Xem tại:** http://127.0.0.1:8000/blog/
 
 ## Tính Năng
 
-### 1. Blog
-- Viết và quản lý bài viết cá nhân với hỗ trợ Markdown
-- Phân loại bài viết theo danh mục
-- Trạng thái bài viết (Draft/Published)
-- Hỗ trợ excerpt và content đầy đủ
-- Web interface để xem và đọc bài viết
-- Syntax highlighting cho code blocks
+### 1. Blog với ZEN Portal
+- ✨ **Giao diện công khai đẹp mắt** - Thiết kế ZEN minimalist
+- 📝 Viết và quản lý bài viết cá nhân với hỗ trợ Markdown
+- 🎨 Hero section với gradient và animations
+- 📂 Phân loại bài viết theo danh mục với filter đẹp
+- 📄 Trạng thái bài viết (Draft/Published)
+- 💬 Hỗ trợ excerpt và content đầy đủ
+- 🎯 Typography chuyên nghiệp, dễ đọc
+- 💻 Syntax highlighting cho code blocks
+- 📱 Responsive design cho mọi thiết bị
 
 ### 2. Quản Lý Công Việc (Tasks)
 - Dashboard tổng quan công việc hàng ngày

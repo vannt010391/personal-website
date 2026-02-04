@@ -1,79 +1,131 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load knowledge_tree %}
 
 {% block title %}{% if object %}Chỉnh sửa{% else %}Tạo mới{% endif %} Entry{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/forms.css' %}">
+<link rel="stylesheet" href="{% static 'css/gitbook-style.css' %}">
 {% endblock %}
 
 {% block content %}
-<div class="card">
-    <h1>{% if object %}Chỉnh sửa Entry{% else %}Tạo Entry Mới{% endif %}</h1>
-    <a href="{% url 'knowledge:entry_list' %}">&larr; Quay lại danh sách</a>
-</div>
+<div class="gitbook-container">
+    <!-- Sidebar Navigation -->
+    <aside class="gitbook-sidebar">
+        <h3>📚 Chủ đề</h3>
+        {% if topics %}
+            {% for topic in topics %}
+            <a href="{% url 'knowledge:entry_create' %}?topic={{ topic.id }}"
+               class="gitbook-sidebar-item {% if selected_topic_id == topic.id|stringformat:'s' %}active{% endif %}">
+                📌 {{ topic.name }}
+            </a>
+            {% endfor %}
+        {% else %}
+            <span class="gitbook-sidebar-item">Chưa có chủ đề</span>
+        {% endif %}
 
-<div class="card">
-    <form method="post">
-        {% csrf_token %}
+        <h3>📄 Pages</h3>
+        {% if sidebar_entries %}
+            {% entry_tree sidebar_entries current_slug=object.slug %}
+        {% else %}
+            <span class="gitbook-sidebar-item">Chưa có trang</span>
+        {% endif %}
 
-        <div class="form-group">
-            <label for="{{ form.title.id_for_label }}" class="form-label">Tiêu đề *</label>
-            {{ form.title }}
+        <h3>⚙️ Quản lý</h3>
+        <a href="{% url 'knowledge:entry_list' %}" class="gitbook-sidebar-item">← Danh sách</a>
+        <a href="{% url 'knowledge:topic_create' %}" class="gitbook-sidebar-item">🗂️ Tạo chủ đề</a>
+        <a href="{% url 'knowledge:topic_list' %}" class="gitbook-sidebar-item">📂 Quản lý chủ đề</a>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="gitbook-main">
+        <div class="gitbook-header">
+            <div>
+                <h1 class="gitbook-title">{% if object %}Chỉnh sửa page{% else %}Tạo page mới{% endif %}</h1>
+                <p style="color: #7b7268; margin: 0;">Soạn thảo nội dung theo cấu trúc tài liệu GitBook.</p>
+            </div>
+            {% if selected_topic_id %}
+            <a href="{% url 'knowledge:entry_create' %}?topic={{ selected_topic_id }}"
+               style="padding: 10px 18px; background: #C9B59C; color: white; border-radius: 6px; text-decoration: none; font-weight: 600;">
+                ➕ Page mới
+            </a>
+            {% endif %}
         </div>
 
-        <div class="form-group">
-            <label for="{{ form.slug.id_for_label }}" class="form-label">Slug *</label>
-            {{ form.slug }}
-            <small class="form-help">{{ form.slug.help_text }}</small>
-        </div>
+        <form method="post">
+            {% csrf_token %}
 
-        <div class="form-group">
-            <label for="{{ form.topic.id_for_label }}" class="form-label">Chủ đề</label>
-            {{ form.topic }}
-        </div>
+            <div class="form-group">
+                <label for="{{ form.title.id_for_label }}" class="form-label">Tiêu đề *</label>
+                {{ form.title }}
+            </div>
 
-        <div class="form-group">
-            <label for="{{ form.entry_type.id_for_label }}" class="form-label">Loại *</label>
-            {{ form.entry_type }}
-        </div>
+            <div class="form-group">
+                <label for="{{ form.slug.id_for_label }}" class="form-label">Slug *</label>
+                {{ form.slug }}
+                <small class="form-help">{{ form.slug.help_text }}</small>
+            </div>
 
-        <div class="form-group">
-            <label for="{{ form.summary.id_for_label }}" class="form-label">Tóm tắt</label>
-            {{ form.summary }}
-        </div>
+            <div class="form-group">
+                <label for="{{ form.topic.id_for_label }}" class="form-label">Chủ đề</label>
+                {{ form.topic }}
+            </div>
 
-        <div class="form-group">
-            <label for="{{ form.content.id_for_label }}" class="form-label">Nội dung * (Markdown)</label>
-            {{ form.content }}
-            <small class="form-help">Hỗ trợ Markdown: # Heading, **bold**, `code`, etc.</small>
-        </div>
+            <div class="form-group">
+                <label for="{{ form.parent.id_for_label }}" class="form-label">Trang cha</label>
+                {{ form.parent }}
+                <small class="form-help">Dùng để tạo mục lục nhiều cấp</small>
+            </div>
 
-        <div class="form-group">
-            <label for="{{ form.source_url.id_for_label }}" class="form-label">Nguồn URL</label>
-            {{ form.source_url }}
-        </div>
+            <div class="form-group">
+                <label for="{{ form.order.id_for_label }}" class="form-label">Thứ tự</label>
+                {{ form.order }}
+                <small class="form-help">Số nhỏ sẽ hiển thị trước</small>
+            </div>
 
-        <div class="form-group">
-            <label for="{{ form.tags.id_for_label }}" class="form-label">Tags</label>
-            {{ form.tags }}
-            <small class="form-help">Phân cách bằng dấu phẩy</small>
-        </div>
+            <div class="form-group">
+                <label for="{{ form.entry_type.id_for_label }}" class="form-label">Loại *</label>
+                {{ form.entry_type }}
+            </div>
 
-        <div class="form-group">
-            <label style="display: flex; align-items: center; gap: 8px;">
-                {{ form.is_favorite }}
-                <span>Đánh dấu yêu thích</span>
-            </label>
-        </div>
+            <div class="form-group">
+                <label for="{{ form.summary.id_for_label }}" class="form-label">Tóm tắt</label>
+                {{ form.summary }}
+            </div>
 
-        <div class="form-actions">
-            <button type="submit" class="btn-form-primary">
-                {% if object %}Cập nhật{% else %}Tạo mới{% endif %}
-            </button>
-            <a href="{% url 'knowledge:entry_list' %}" class="btn-form-secondary">Hủy</a>
-        </div>
-    </form>
+            <div class="form-group">
+                <label for="{{ form.content.id_for_label }}" class="form-label">Nội dung * (Markdown)</label>
+                {{ form.content }}
+                <small class="form-help">Hỗ trợ Markdown: # Heading, **bold**, `code`, etc.</small>
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.source_url.id_for_label }}" class="form-label">Nguồn URL</label>
+                {{ form.source_url }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.tags.id_for_label }}" class="form-label">Tags</label>
+                {{ form.tags }}
+                <small class="form-help">Phân cách bằng dấu phẩy</small>
+            </div>
+
+            <div class="form-group">
+                <label style="display: flex; align-items: center; gap: 8px;">
+                    {{ form.is_favorite }}
+                    <span>Đánh dấu yêu thích</span>
+                </label>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-form-primary">
+                    {% if object %}Cập nhật{% else %}Tạo mới{% endif %}
+                </button>
+                <a href="{% url 'knowledge:entry_list' %}" class="btn-form-secondary">Hủy</a>
+            </div>
+        </form>
+    </main>
 </div>
 {% endblock %}
 

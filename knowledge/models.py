@@ -23,6 +23,15 @@ class KnowledgeEntry(models.Model):
     title = models.CharField(max_length=200)
     slug = models.SlugField(unique=True)
     topic = models.ForeignKey(Topic, on_delete=models.SET_NULL, null=True, related_name='entries')
+    parent = models.ForeignKey(
+        'self',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='children',
+        help_text="Parent page for hierarchical structure",
+    )
+    order = models.IntegerField(default=0, help_text="Ordering within a topic or parent page")
     entry_type = models.CharField(max_length=10, choices=TYPE_CHOICES, default='note')
     content = models.TextField()
     summary = models.TextField(max_length=500, blank=True)
@@ -33,7 +42,7 @@ class KnowledgeEntry(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['-updated_at']
+        ordering = ['order', 'title']
         verbose_name_plural = "Knowledge Entries"
 
     def __str__(self):

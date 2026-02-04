@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Tìm kiếm - Kiến Thức{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/gitbook-style.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="gitbook-container">
+    <!-- Sidebar -->
+    <aside class="gitbook-sidebar">
+        <h3>🔗 Chủ đề</h3>
+        <a href="{% url 'knowledge:search' %}?q={{ query }}" class="gitbook-sidebar-item {% if not selected_topic %}active{% endif %}">
+            📚 Tất cả
+        </a>
+        {% if topics %}
+            {% for topic in topics %}
+            <a href="{% url 'knowledge:search' %}?q={{ query }}&topic={{ topic.id }}" 
+               class="gitbook-sidebar-item {% if selected_topic == topic.id|stringformat:'s' %}active{% endif %}">
+                📌 {{ topic.name }}
+            </a>
+            {% endfor %}
+        {% endif %}
+
+        <h3>🏷️ Loại</h3>
+        <a href="{% url 'knowledge:search' %}?q={{ query }}" class="gitbook-sidebar-item {% if not selected_type %}active{% endif %}">Tất cả</a>
+        <a href="{% url 'knowledge:search' %}?q={{ query }}&type=note" class="gitbook-sidebar-item {% if selected_type == 'note' %}active{% endif %}">Ghi chú</a>
+        <a href="{% url 'knowledge:search' %}?q={{ query }}&type=research" class="gitbook-sidebar-item {% if selected_type == 'research' %}active{% endif %}">Nghiên cứu</a>
+        <a href="{% url 'knowledge:search' %}?q={{ query }}&type=article" class="gitbook-sidebar-item {% if selected_type == 'article' %}active{% endif %}">Bài viết</a>
+        <a href="{% url 'knowledge:search' %}?q={{ query }}&type=reference" class="gitbook-sidebar-item {% if selected_type == 'reference' %}active{% endif %}">Tham khảo</a>
+
+        <h3>⚙️ Quản lý</h3>
+        <a href="{% url 'knowledge:entry_list' %}" class="gitbook-sidebar-item">← Danh sách</a>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="gitbook-main">
+        <!-- Search Header -->
+        <div class="gitbook-header" style="margin-bottom: 30px;">
+            <div>
+                <h1 class="gitbook-title">Tìm kiếm</h1>
+                <p style="color: #7b7268; margin: 10px 0 0 0;">Tìm kiếm trong kho kiến thức của bạn</p>
+            </div>
+        </div>
+
+        <!-- Search Form -->
+        <form method="get" style="margin-bottom: 40px;">
+            <div style="display: flex; gap: 10px;">
+                <input 
+                    type="text" 
+                    name="q" 
+                    value="{{ query }}" 
+                    placeholder="Nhập từ khóa..."
+                    style="flex: 1; padding: 12px 16px; border: 2px solid #D9CFC7; border-radius: 6px; font-size: 1rem; transition: border-color 0.2s;"
+                    onfocus="this.style.borderColor='#C9B59C'"
+                    onblur="this.style.borderColor='#D9CFC7'"
+                />
+                <button type="submit" style="padding: 12px 24px; background: linear-gradient(135deg, #C9B59C 0%, #D9CFC7 100%); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.2s;">
+                    🔍 Tìm
+                </button>
+            </div>
+            {% if selected_topic %}
+            <input type="hidden" name="topic" value="{{ selected_topic }}" />
+            {% endif %}
+            {% if selected_type %}
+            <input type="hidden" name="type" value="{{ selected_type }}" />
+            {% endif %}
+        </form>
+
+        <!-- Results Stats -->
+        {% if query %}
+        <div style="margin-bottom: 30px; padding: 15px; background: #F9F8F6; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <span style="color: #3f372f; font-weight: 600;">Tìm thấy {{ result_count }} kết quả</span>
+                <span style="color: #7b7268; font-size: 0.9rem;"> ({{ query_time|floatformat:3 }} giây)</span>
+            </div>
+            {% if results %}
+            <a href="{% url 'knowledge:entry_list' %}" style="color: #C9B59C; text-decoration: none; font-size: 0.9rem;">Xóa bộ lọc →</a>
+            {% endif %}
+        </div>
+
+        <!-- Results -->
+        {% if results %}
+            <div style="display: grid; gap: 20px;">
+                {% for result in results %}
+                <div class="search-result-item">
+                    <div class="search-result-title">
+                        <a href="{% url 'knowledge:entry_detail' result.slug %}" style="color: #C9B59C; text-decoration: none;">
+                            {{ result.title }}
+                        </a>
+                        {% if result.is_favorite %}<span style="font-size: 1.1rem;">⭐</span>{% endif %}
+                    </div>
+                    
+                    {% if result.summary %}
+                    <p class="search-result-excerpt">{{ result.summary }}</p>
+                    {% else %}
+                        {% comment %}Extract first 150 chars from content{% endcomment %}
+                        {% if result.content %}
+                        <p class="search-result-excerpt">{{ result.content|truncatewords:30 }}</p>
+                        {% endif %}
+                    {% endif %}
+                    
+                    <div class="search-result-meta">
+                        {% if result.topic %}
+                        <span style="padding: 2px 8px; background: #EFE9E3; border-radius: 3px; margin-right: 10px;">
+                            📌 {{ result.topic.name }}
+                        </span>
+                        {% endif %}
+                        <span style="padding: 2px 8px; background: linear-gradient(135deg, rgba(201, 181, 156, 0.1) 0%, rgba(217, 207, 199, 0.1) 100%); border-radius: 3px; margin-right: 10px;">
+                            {{ result.get_entry_type_display }}
+                        </span>
+                        <span>📅 {{ result.updated_at|date:"d/m/Y H:i" }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% elif query %}
+            <div style="text-align: center; padding: 60px 20px;">
+                <p style="font-size: 1.2rem; color: #7b7268; margin-bottom: 20px;">😕 Không tìm thấy kết quả nào cho "{{ query }}"</p>
+                <p style="color: #7b7268; margin-bottom: 30px;">Hãy thử các từ khóa khác hoặc quay lại danh sách.</p>
+                <a href="{% url 'knowledge:entry_list' %}" style="padding: 12px 24px; background: linear-gradient(135deg, #C9B59C 0%, #D9CFC7 100%); color: white; border-radius: 6px; text-decoration: none; font-weight: 600; display: inline-block;">
+                    ← Danh sách ghi chú
+                </a>
+            </div>
+        {% else %}
+            <div style="text-align: center; padding: 60px 20px;">
+                <p style="font-size: 1.2rem; color: #7b7268; margin-bottom: 20px;">🔍 Nhập từ khóa để tìm kiếm</p>
+                <p style="color: #7b7268; margin-bottom: 30px;">Tìm kiếm trong tiêu đề, nội dung, tóm tắt và tags của các ghi chú.</p>
+            </div>
+        {% endif %}
+    </main>
+</div>
+
+<style>
+    @media (max-width: 768px) {
+        .gitbook-header {
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        form {
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %}

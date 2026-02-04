@@ -1,0 +1,112 @@
+{% extends 'public/base.html' %}
+{% load static %}
+
+{% block title %}Note-Taking - Vân Nguyễn{% endblock %}
+
+{% block content %}
+<div class="zen-blog">
+    <!-- Hero Section -->
+    <div class="zen-hero">
+        <div class="zen-hero-content">
+            <h1>📝 Note-Taking</h1>
+            <p>Quick notes, insights, and knowledge snippets</p>
+        </div>
+    </div>
+
+    <!-- Topics Navigation -->
+    <div style="max-width: 1200px; margin: 40px auto; padding: 0 20px;">
+        <div style="background: white; border-radius: 16px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin-bottom: 40px;">
+            <h3 style="margin: 0 0 20px; font-weight: 300; color: #3f372f;">
+                📚 Topics
+            </h3>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                {% if topics %}
+                    <a href="?topic=" style="padding: 10px 20px; background: {% if not selected_topic %}linear-gradient(135deg, #C9B59C 0%, #D9CFC7 100%){% else %}#F9F8F6{% endif %}; color: {% if not selected_topic %}white{% else %}#7b7268{% endif %}; border-radius: 25px; text-decoration: none; transition: all 0.3s;">
+                        All Topics
+                    </a>
+                    {% for topic in topics %}
+                        <a href="?topic={{ topic.slug }}" style="padding: 10px 20px; background: {% if selected_topic == topic %}linear-gradient(135deg, #C9B59C 0%, #D9CFC7 100%){% else %}#F9F8F6{% endif %}; color: {% if selected_topic == topic %}white{% else %}#7b7268{% endif %}; border-radius: 25px; text-decoration: none; transition: all 0.3s;">
+                            {{ topic.name }} ({{ topic.entries_count }})
+                        </a>
+                    {% endfor %}
+                {% else %}
+                    <p style="color: #7b7268; margin: 0;">No topics yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Notes Grid -->
+    <div class="zen-posts-grid">
+        {% if entries %}
+            {% for entry in entries %}
+                <article class="zen-post-card">
+                    <div class="zen-post-card-header">
+                        {% if entry.topic %}
+                            <span class="zen-post-category">{{ entry.topic.name }}</span>
+                        {% endif %}
+                    </div>
+                    <h2 class="zen-post-card-title">{{ entry.title }}</h2>
+                    <div class="zen-post-card-excerpt">
+                        {{ entry.content|striptags|truncatewords:30 }}
+                    </div>
+                    <div class="zen-post-card-footer">
+                        <div class="zen-post-meta">
+                            <span>📅 {{ entry.created_at|date:"M d, Y" }}</span>
+                        </div>
+                        <a href="{% url 'knowledge:entry_detail' entry.slug %}" class="zen-read-more">
+                            Read note →
+                        </a>
+                    </div>
+                </article>
+            {% endfor %}
+        {% else %}
+            <div style="grid-column: 1 / -1; text-align: center; padding: 100px 20px; background: white; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
+                <div style="font-size: 4rem; margin-bottom: 20px;">📝</div>
+                <h2 style="font-weight: 300; color: #3f372f; margin: 0 0 15px;">No notes yet</h2>
+                <p style="color: #7b7268; font-size: 1.1rem;">
+                    {% if selected_topic %}
+                        No notes in this topic yet.
+                    {% else %}
+                        Start sharing your knowledge by creating your first note.
+                    {% endif %}
+                </p>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'knowledge:entry_create' %}" class="zen-read-more" style="margin-top: 20px; display: inline-block;">
+                        Create your first note →
+                    </a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Pagination -->
+    {% if is_paginated %}
+        <div style="max-width: 1200px; margin: 60px auto 0; padding: 0 20px; text-align: center;">
+            <div style="display: inline-flex; gap: 10px; align-items: center;">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1{% if selected_topic %}&topic={{ selected_topic.slug }}{% endif %}" style="padding: 10px 20px; background: white; color: #C9B59C; border-radius: 8px; text-decoration: none; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        First
+                    </a>
+                    <a href="?page={{ page_obj.previous_page_number }}{% if selected_topic %}&topic={{ selected_topic.slug }}{% endif %}" style="padding: 10px 20px; background: white; color: #C9B59C; border-radius: 8px; text-decoration: none; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        Previous
+                    </a>
+                {% endif %}
+
+                <span style="padding: 10px 20px; background: linear-gradient(135deg, #C9B59C 0%, #D9CFC7 100%); color: white; border-radius: 8px;">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                </span>
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}{% if selected_topic %}&topic={{ selected_topic.slug }}{% endif %}" style="padding: 10px 20px; background: white; color: #C9B59C; border-radius: 8px; text-decoration: none; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        Next
+                    </a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}{% if selected_topic %}&topic={{ selected_topic.slug }}{% endif %}" style="padding: 10px 20px; background: white; color: #C9B59C; border-radius: 8px; text-decoration: none; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        Last
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

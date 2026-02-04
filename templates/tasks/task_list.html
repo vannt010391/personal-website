@@ -11,6 +11,7 @@
         </div>
         <div style="display: flex; gap: 10px;">
             <a href="{% url 'tasks:task_kanban' %}" class="btn">Chế độ Kanban</a>
+            <a href="{% url 'tasks:study_session_list' %}" class="btn">Phiên học tập</a>
             <a href="{% url 'tasks:task_create' %}" class="btn btn-success">Thêm công việc mới</a>
         </div>
     </div>
@@ -30,44 +31,44 @@
     <div class="card">
         <table style="width: 100%; border-collapse: collapse;">
             <thead>
-                <tr style="background-color: #f5f5f5; text-align: left;">
-                    <th style="padding: 10px; border-bottom: 2px solid #ddd;">Công việc</th>
-                    <th style="padding: 10px; border-bottom: 2px solid #ddd;">Loại</th>
-                    <th style="padding: 10px; border-bottom: 2px solid #ddd;">Ưu tiên</th>
-                    <th style="padding: 10px; border-bottom: 2px solid #ddd;">Trạng thái</th>
-                    <th style="padding: 10px; border-bottom: 2px solid #ddd;">Hạn</th>
-                    <th style="padding: 10px; border-bottom: 2px solid #ddd;">Thao tác</th>
+                <tr style="background-color: #F9F8F6; text-align: left;">
+                    <th style="padding: 10px; border-bottom: 2px solid #D9CFC7;">Công việc</th>
+                    <th style="padding: 10px; border-bottom: 2px solid #D9CFC7;">Loại</th>
+                    <th style="padding: 10px; border-bottom: 2px solid #D9CFC7;">Ưu tiên</th>
+                    <th style="padding: 10px; border-bottom: 2px solid #D9CFC7;">Trạng thái</th>
+                    <th style="padding: 10px; border-bottom: 2px solid #D9CFC7;">Hạn</th>
+                    <th style="padding: 10px; border-bottom: 2px solid #D9CFC7;">Thao tác</th>
                 </tr>
             </thead>
             <tbody>
                 {% for task in tasks %}
-                <tr style="border-bottom: 1px solid #eee; {% if task.status == 'completed' %}opacity: 0.6;{% endif %}">
+                <tr style="border-bottom: 1px solid #D9CFC7; {% if task.status == 'completed' %}opacity: 0.6;{% endif %}">
                     <td style="padding: 10px;">
                         <strong {% if task.status == 'completed' %}style="text-decoration: line-through;"{% endif %}>{{ task.title }}</strong>
                         {% if task.description %}
-                        <br><small style="color: #6c757d;">{{ task.description|truncatewords:10 }}</small>
+                        <br><small style="color: #7b7268;">{{ task.description|truncatewords:10 }}</small>
                         {% endif %}
                     </td>
                     <td style="padding: 10px;">{{ task.get_task_type_display }}</td>
                     <td style="padding: 10px;">
                         <span style="padding: 3px 8px; border-radius: 3px; font-size: 0.8em; background-color:
-                            {% if task.priority == 'high' %}#f8d7da{% elif task.priority == 'medium' %}#fff3cd{% else %}#d1ecf1{% endif %}">
+                            {% if task.priority == 'high' %}#D9CFC7{% elif task.priority == 'medium' %}#EFE9E3{% else %}#F9F8F6{% endif %}">
                             {{ task.get_priority_display }}
                         </span>
                     </td>
                     <td style="padding: 10px;">
                         <span style="padding: 3px 8px; border-radius: 3px; font-size: 0.8em; background-color:
-                            {% if task.status == 'pending' %}#fff3cd{% elif task.status == 'in_progress' %}#d1ecf1{% else %}#d4edda{% endif %}">
+                            {% if task.status == 'pending' %}#EFE9E3{% elif task.status == 'in_progress' %}#F9F8F6{% else %}#D9CFC7{% endif %}">
                             {{ task.get_status_display }}
                         </span>
                     </td>
                     <td style="padding: 10px;">
                         {% if task.due_date %}
-                        <span {% if task.due_date < today and task.status != 'completed' %}style="color: #dc3545; font-weight: bold;"{% endif %}>
+                        <span {% if task.due_date < today and task.status != 'completed' %}style="color: #C9B59C; font-weight: bold;"{% endif %}>
                             {{ task.due_date|date:"d/m/Y" }}
                         </span>
                         {% else %}
-                        <span style="color: #6c757d;">Không có</span>
+                        <span style="color: #7b7268;">Không có</span>
                         {% endif %}
                     </td>
                     <td style="padding: 10px;">

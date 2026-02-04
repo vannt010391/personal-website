@@ -35,7 +35,7 @@
             <div style="flex: 1;">
                 <h3 style="margin: 0 0 10px 0;">
                     {% if resource.url %}
-                    <a href="{{ resource.url }}" target="_blank" style="color: #2c3e50; text-decoration: none;">
+                    <a href="{{ resource.url }}" target="_blank" style="color: #3f372f; text-decoration: none;">
                         {{ resource.title }}
                     </a>
                     {% else %}
@@ -43,13 +43,13 @@
                     {% endif %}
                 </h3>
 
-                <p style="color: #6c757d; font-size: 0.9em; margin: 5px 0;">
-                    <span style="padding: 3px 8px; background-color: #fff3cd; border-radius: 3px; font-size: 0.85em;">
+                <p style="color: #7b7268; font-size: 0.9em; margin: 5px 0;">
+                    <span style="padding: 3px 8px; background-color: #F9F8F6; border-radius: 3px; font-size: 0.85em;">
                         {{ resource.get_resource_type_display }}
                     </span>
                     |
                     <span style="padding: 3px 8px; border-radius: 3px; font-size: 0.85em; background-color:
-                        {% if resource.status == 'to_read' %}#f8d7da{% elif resource.status == 'reading' %}#fff3cd{% else %}#d4edda{% endif %}">
+                            {% if resource.status == 'to_read' %}#D9CFC7{% elif resource.status == 'reading' %}#EFE9E3{% else %}#F9F8F6{% endif %}">
                         {{ resource.get_status_display }}
                     </span>
                     {% if resource.author %}
@@ -61,7 +61,7 @@
                 </p>
 
                 {% if resource.topic %}
-                <p style="font-size: 0.85em; color: #6c757d; margin: 5px 0;">
+                    <p style="font-size: 0.85em; color: #7b7268; margin: 5px 0;">
                     <strong>Chủ đề:</strong> {{ resource.topic.name }}
                 </p>
                 {% endif %}

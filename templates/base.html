@@ -9,19 +9,26 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <header>
+    <header style="background: #F9F8F6; border-bottom: 1px solid #D9CFC7;">
         <nav>
-            <div class="container">
-                <h1>Website Cá Nhân</h1>
-                <ul>
-                    <li><a href="/">Trang Chủ</a></li>
-                    <li><a href="{% url 'blog:post_list' %}">Blog</a></li>
-                    <li><a href="{% url 'tasks:task_list' %}">Công Việc</a></li>
-                    <li><a href="{% url 'knowledge:entry_list' %}">Kiến Thức</a></li>
+            <div class="container" style="display: flex; justify-content: space-between; align-items: center; padding: 14px 0;">
+                <h1 style="margin: 0; font-weight: 300; color: #3f372f;">Website Cá Nhân</h1>
+                <ul style="list-style: none; display: flex; gap: 16px; margin: 0; padding: 0; flex-wrap: wrap;">
+                    <li><a href="/" style="color: #3f372f; text-decoration: none; padding: 6px 12px; border-radius: 10px;">Trang Chủ</a></li>
+                    <li><a href="{% url 'blog:post_list' %}" style="color: #3f372f; text-decoration: none; padding: 6px 12px; border-radius: 10px;">Blog</a></li>
+                    <li><a href="{% url 'tasks:task_list' %}" style="color: #3f372f; text-decoration: none; padding: 6px 12px; border-radius: 10px;">Công Việc</a></li>
+                    <li><a href="{% url 'knowledge:entry_list' %}" style="color: #3f372f; text-decoration: none; padding: 6px 12px; border-radius: 10px;">Kiến Thức</a></li>
                     {% if user.is_authenticated %}
-                        <li><a href="/logout/">Đăng Xuất</a></li>
+                        <li>
+                            <form method="post" action="{% url 'logout' %}" style="display: inline; margin: 0;">
+                                {% csrf_token %}
+                                <button type="submit" style="background: #EFE9E3; border: none; color: #3f372f; cursor: pointer; padding: 6px 12px; border-radius: 10px;">
+                                    Đăng Xuất
+                                </button>
+                            </form>
+                        </li>
                     {% else %}
-                        <li><a href="/login/">Đăng Nhập</a></li>
+                        <li><a href="/login/" style="color: #3f372f; text-decoration: none; padding: 6px 12px; border-radius: 10px;">Đăng Nhập</a></li>
                     {% endif %}
                 </ul>
             </div>
@@ -49,6 +56,8 @@
         </div>
     </footer>
 
+    {% load static %}
+    <script src="{% static 'js/entry-drag-drop.js' %}"></script>    <script src="{% static 'js/code-enhancements.js' %}"></script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>

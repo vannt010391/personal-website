@@ -1,0 +1,122 @@
+{% extends 'public/base.html' %}
+{% load static %}
+
+{% block title %}Vân Nguyễn{% endblock %}
+
+{% block content %}
+<div class="zen-blog">
+    <!-- Hero Section (Simplified) -->
+    <section class="zen-hero" style="padding: 80px 20px; background: white;">
+        <div class="container" style="max-width: 700px; text-align: center;">
+            <h2 style="font-size: 2rem; margin-bottom: 20px; color: #3f372f; font-weight: 300;">
+                Khám phá
+            </h2>
+            <p class="zen-hero-subtitle" style="font-size: 1.1rem; color: #7b7268; line-height: 1.8; margin-bottom: 40px;">
+                Blog, ghi chú, danh sách, và những công cụ giúp bạn học tập hiệu quả hơn.
+            </p>
+        </div>
+    </section>
+
+    <!-- Features Section (Simplified Grid) -->
+    <section style="padding: 60px 20px; background: #F9F8F6; border-top: 1px solid #D9CFC7;">
+        <div class="container" style="max-width: 900px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px;">
+                <!-- Blog Card -->
+                <a href="{% url 'blog:post_list' %}" style="text-decoration: none; color: inherit;">
+                    <div style="padding: 30px; background: white; border: 1px solid #D9CFC7; border-radius: 8px; transition: all 0.3s; cursor: pointer;">
+                        <div style="font-size: 2.5rem; margin-bottom: 15px;">📖</div>
+                        <h3 style="font-size: 1.4rem; margin: 0 0 10px 0; color: #3f372f; font-weight: 500;">Blog</h3>
+                        <p style="color: #7b7268; margin: 0; line-height: 1.6; font-size: 0.95rem;">
+                            Bài viết chi tiết về công nghệ, lập trình và những trải nghiệm.
+                        </p>
+                    </div>
+                </a>
+
+                <!-- Note-Taking Card -->
+                <a href="{% url 'note_taking' %}" style="text-decoration: none; color: inherit;">
+                    <div style="padding: 30px; background: white; border: 1px solid #D9CFC7; border-radius: 8px; transition: all 0.3s; cursor: pointer;">
+                        <div style="font-size: 2.5rem; margin-bottom: 15px;">📔</div>
+                        <h3 style="font-size: 1.4rem; margin: 0 0 10px 0; color: #3f372f; font-weight: 500;">Ghi chú</h3>
+                        <p style="color: #7b7268; margin: 0; line-height: 1.6; font-size: 0.95rem;">
+                            Ý tưởng, ghi chú nhanh, những điều cần nhớ.
+                        </p>
+                    </div>
+                </a>
+
+                <!-- List 100 Card -->
+                <a href="{% url 'list_100' %}" style="text-decoration: none; color: inherit;">
+                    <div style="padding: 30px; background: white; border: 1px solid #D9CFC7; border-radius: 8px; transition: all 0.3s; cursor: pointer;">
+                        <div style="font-size: 2.5rem; margin-bottom: 15px;">📋</div>
+                        <h3 style="font-size: 1.4rem; margin: 0 0 10px 0; color: #3f372f; font-weight: 500;">Danh sách</h3>
+                        <p style="color: #7b7268; margin: 0; line-height: 1.6; font-size: 0.95rem;">
+                            100 cuốn sách, 100 ý tưởng, 100 bài học.
+                        </p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recent Posts (Featured) -->
+    {% if recent_posts %}
+    <section style="padding: 60px 20px; background: white; border-top: 1px solid #D9CFC7;">
+        <div class="container" style="max-width: 900px;">
+            <h2 style="font-size: 1.8rem; color: #3f372f; font-weight: 300; margin: 0 0 40px 0;">Bài viết mới nhất</h2>
+            
+            <div style="display: flex; flex-direction: column; gap: 30px;">
+                {% for post in recent_posts|slice:":3" %}
+                <article style="padding-bottom: 30px; border-bottom: 1px solid #D9CFC7;">
+                    <div style="display: flex; align-items: baseline; gap: 15px; margin-bottom: 10px;">
+                        {% if post.category %}
+                        <span style="background: #EFE9E3; color: #7b7268; padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 500;">
+                            {{ post.category.name }}
+                        </span>
+                        {% endif %}
+                        <span style="color: #7b7268; font-size: 0.9rem;">{{ post.published_at|date:"d M Y" }}</span>
+                    </div>
+                    
+                    <h3 style="font-size: 1.5rem; color: #3f372f; margin: 10px 0; font-weight: 400;">
+                        <a href="{% url 'blog:post_detail' post.slug %}" style="color: #3f372f; text-decoration: none; transition: color 0.3s;">{{ post.title }}</a>
+                    </h3>
+                    
+                    {% if post.excerpt %}
+                    <p style="color: #7b7268; line-height: 1.7; margin: 15px 0;">{{ post.excerpt|truncatewords:30 }}</p>
+                    {% endif %}
+                    
+                    <a href="{% url 'blog:post_detail' post.slug %}" style="color: #C9B59C; text-decoration: none; font-weight: 500; font-size: 0.95rem; transition: color 0.3s; display: inline-block;">
+                        Đọc tiếp →
+                    </a>
+                </article>
+                {% endfor %}
+            </div>
+
+            <div style="text-align: center; margin-top: 50px;">
+                <a href="{% url 'blog:post_list' %}" style="padding: 12px 30px; background: white; color: #C9B59C; border: 1px solid #C9B59C; border-radius: 20px; text-decoration: none; font-weight: 600; display: inline-block; transition: all 0.3s; font-size: 0.95rem;">
+                    Xem tất cả bài viết →
+                </a>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- CTA Section (Simplified) -->
+    <section style="padding: 60px 20px; background: #EFE9E3; border-top: 1px solid #D9CFC7;">
+        <div class="container" style="max-width: 700px; text-align: center;">
+            <h2 style="font-size: 1.8rem; color: #3f372f; font-weight: 300; margin: 0 0 15px 0;">
+                Hãy kết nối
+            </h2>
+            <p style="color: #7b7268; font-size: 1rem; line-height: 1.7; margin: 0 0 30px 0;">
+                Theo dõi để cập nhật những bài viết mới và chia sẻ kiến thức cùng nhau.
+            </p>
+            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                <a href="{% url 'contact' %}" style="padding: 12px 30px; background: #C9B59C; color: white; border-radius: 20px; text-decoration: none; font-weight: 600; display: inline-block; font-size: 0.95rem; transition: all 0.3s;">
+                    📧 Liên hệ
+                </a>
+                <a href="{% url 'blog:post_list' %}" style="padding: 12px 30px; background: white; color: #3f372f; border: 1px solid #D9CFC7; border-radius: 20px; text-decoration: none; font-weight: 600; display: inline-block; font-size: 0.95rem; transition: all 0.3s;">
+                    Đọc bài viết
+                </a>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

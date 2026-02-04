@@ -16,16 +16,16 @@
     <div class="card">
         <table style="width: 100%; border-collapse: collapse;">
             <thead>
-                <tr style="background-color: #f5f5f5; text-align: left;">
-                    <th style="padding: 10px; border-bottom: 2px solid #ddd;">Tên</th>
-                    <th style="padding: 10px; border-bottom: 2px solid #ddd;">Slug</th>
-                    <th style="padding: 10px; border-bottom: 2px solid #ddd;">Mô tả</th>
-                    <th style="padding: 10px; border-bottom: 2px solid #ddd;">Thao tác</th>
+                <tr style="background-color: #F9F8F6; text-align: left;">
+                    <th style="padding: 10px; border-bottom: 2px solid #D9CFC7;">Tên</th>
+                    <th style="padding: 10px; border-bottom: 2px solid #D9CFC7;">Slug</th>
+                    <th style="padding: 10px; border-bottom: 2px solid #D9CFC7;">Mô tả</th>
+                    <th style="padding: 10px; border-bottom: 2px solid #D9CFC7;">Thao tác</th>
                 </tr>
             </thead>
             <tbody>
                 {% for category in categories %}
-                <tr style="border-bottom: 1px solid #eee;">
+                <tr style="border-bottom: 1px solid #D9CFC7;">
                     <td style="padding: 10px;">{{ category.name }}</td>
                     <td style="padding: 10px;"><code>{{ category.slug }}</code></td>
                     <td style="padding: 10px;">{{ category.description|truncatewords:10 }}</td>

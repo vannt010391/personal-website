@@ -1,96 +1,139 @@
-{% extends 'base.html' %}
+{% extends 'public/base.html' %}
+{% load static %}
 
 {% block title %}
     {% if current_category %}
         {{ current_category.name }} - Blog
     {% else %}
-        Blog
+        Blog - Chia sẻ kiến thức & trải nghiệm
     {% endif %}
 {% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/blog-zen.css' %}">
+{% endblock %}
+
 {% block content %}
-<div class="card">
-    <h1>
-        {% if current_category %}
-            Danh mục: {{ current_category.name }}
-        {% else %}
-            Blog
-        {% endif %}
-    </h1>
-
-    {% if current_category and current_category.description %}
-        <p>{{ current_category.description }}</p>
-    {% endif %}
-</div>
-
-{% if user.is_authenticated %}
-<div class="card">
-    <h3>Quản lý</h3>
-    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-        <a href="{% url 'blog:post_create' %}" class="btn btn-success">Tạo bài viết mới</a>
-        <a href="{% url 'blog:category_list' %}" class="btn">Quản lý danh mục</a>
-    </div>
-</div>
-{% endif %}
-
-<div class="card">
-    <h3>Danh mục</h3>
-    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
-        <a href="{% url 'blog:post_list' %}" class="btn {% if not current_category %}btn-primary{% endif %}">
-            Tất cả
-        </a>
-        {% for category in categories %}
-            <a href="{% url 'blog:post_list_by_category' category.slug %}"
-               class="btn {% if current_category.slug == category.slug %}btn-primary{% endif %}">
-                {{ category.name }}
-            </a>
-        {% endfor %}
-    </div>
-</div>
-
-{% if posts %}
-    {% for post in posts %}
-        <div class="card">
-            <h2>
-                <a href="{% url 'blog:post_detail' post.slug %}" style="color: #2c3e50; text-decoration: none;">
-                    {{ post.title }}
-                </a>
-            </h2>
-            <p style="color: #7f8c8d; font-size: 0.9em;">
-                Bởi {{ post.author.username }} | {{ post.published_at|date:"d/m/Y" }}
-                {% if post.category %}
-                    | <a href="{% url 'blog:post_list_by_category' post.category.slug %}">{{ post.category.name }}</a>
+<div class="zen-blog">
+    <!-- Hero Section -->
+    <section class="zen-hero">
+        <div class="container zen-hero-content">
+            <h1>
+                {% if current_category %}
+                    {{ current_category.name }}
+                {% else %}
+                    Blog Portal
+                {% endif %}
+            </h1>
+            <p class="zen-hero-subtitle">
+                {% if current_category and current_category.description %}
+                    {{ current_category.description }}
+                {% else %}
+                    Khám phá kiến thức, chia sẻ trải nghiệm và kết nối cùng cộng đồng
                 {% endif %}
             </p>
-            {% if post.excerpt %}
-                <p>{{ post.excerpt }}</p>
-            {% endif %}
-            <a href="{% url 'blog:post_detail' post.slug %}" class="btn">Đọc thêm</a>
         </div>
-    {% endfor %}
+    </section>
 
-    {% if is_paginated %}
-        <div class="card" style="text-align: center;">
-            <div style="display: flex; gap: 10px; justify-content: center;">
+    <!-- Admin Actions (if authenticated) -->
+    {% if user.is_authenticated %}
+    <div class="container" style="padding: 30px 20px; background: #EFE9E3; margin-top: -20px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
+        <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+            <a href="{% url 'blog:post_create' %}" class="btn btn-success" style="border-radius: 25px;">✍️ Tạo bài viết mới</a>
+            <a href="{% url 'blog:category_list' %}" class="btn" style="border-radius: 25px;">📁 Quản lý danh mục</a>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Category Filter -->
+    <div class="container">
+        <div class="zen-categories">
+            <a href="{% url 'blog:post_list' %}" class="zen-category-btn {% if not current_category %}active{% endif %}">
+                Tất cả
+            </a>
+            {% for category in categories %}
+                <a href="{% url 'blog:post_list_by_category' category.slug %}"
+                   class="zen-category-btn {% if current_category.id == category.id %}active{% endif %}">
+                    {{ category.name }}
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Posts Grid -->
+    <div class="container">
+        {% if posts %}
+            <div class="zen-posts-grid">
+                {% for post in posts %}
+                <article class="zen-post-card zen-fade-in">
+                    <div class="zen-post-card-content">
+                        {% if post.category %}
+                        <div class="zen-post-meta">
+                            <span class="zen-post-category">{{ post.category.name }}</span>
+                        </div>
+                        {% endif %}
+                        
+                        <h2 class="zen-post-title">
+                            <a href="{% url 'blog:post_detail' post.slug %}">
+                                {{ post.title }}
+                            </a>
+                        </h2>
+                        
+                        <div class="zen-post-meta">
+                            <span class="zen-post-meta-item">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                                {{ post.author.username }}
+                            </span>
+                            <span class="zen-post-meta-item">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                                {{ post.published_at|date:"d/m/Y" }}
+                            </span>
+                        </div>
+                        
+                        {% if post.excerpt %}
+                        <p class="zen-post-excerpt">{{ post.excerpt|truncatewords:30 }}</p>
+                        {% endif %}
+                        
+                        <a href="{% url 'blog:post_detail' post.slug %}" class="zen-read-more">
+                            Đọc tiếp
+                        </a>
+                    </div>
+                </article>
+                {% endfor %}
+            </div>
+
+            <!-- Pagination -->
+            {% if is_paginated %}
+            <div class="zen-pagination">
                 {% if page_obj.has_previous %}
-                    <a href="?page=1" class="btn">Đầu</a>
-                    <a href="?page={{ page_obj.previous_page_number }}" class="btn">Trước</a>
+                    <a href="?page=1" class="zen-page-btn">Đầu</a>
+                    <a href="?page={{ page_obj.previous_page_number }}" class="zen-page-btn">‹</a>
                 {% endif %}
 
-                <span style="padding: 10px;">
-                    Trang {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+                <span class="zen-page-btn zen-page-current">
+                    {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
                 </span>
 
                 {% if page_obj.has_next %}
-                    <a href="?page={{ page_obj.next_page_number }}" class="btn">Tiếp</a>
-                    <a href="?page={{ page_obj.paginator.num_pages }}" class="btn">Cuối</a>
+                    <a href="?page={{ page_obj.next_page_number }}" class="zen-page-btn">›</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}" class="zen-page-btn">Cuối</a>
                 {% endif %}
             </div>
-        </div>
-    {% endif %}
-{% else %}
-    <div class="card">
-        <p>Chưa có bài viết nào.</p>
+            {% endif %}
+        {% else %}
+            <div class="zen-empty-state">
+                <h3>📭 Chưa có bài viết nào</h3>
+                <p>Hãy quay lại sau để khám phá nội dung mới!</p>
+            </div>
+        {% endif %}
     </div>
-{% endif %}
+</div>
 {% endblock %}

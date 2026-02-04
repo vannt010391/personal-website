@@ -6,7 +6,7 @@
     display: block;
     margin-bottom: 8px;
     font-weight: 600;
-    color: #2c3e50;
+    color: #3f372f;
 }
 
 .form-input,
@@ -29,22 +29,22 @@
 .form-textarea:focus,
 .form-select:focus {
     outline: none;
-    border-color: #3498db;
-    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    border-color: #C9B59C;
+    box-shadow: 0 0 0 3px rgba(201, 181, 156, 0.2);
 }
 
 .form-help {
     display: block;
     margin-top: 5px;
     font-size: 0.85em;
-    color: #6c757d;
+    color: #7b7268;
 }
 
 .form-error {
     display: block;
     margin-top: 5px;
     font-size: 0.85em;
-    color: #e74c3c;
+    color: #C9B59C;
 }
 
 .form-actions {
@@ -56,7 +56,7 @@
 .btn-form-primary {
     flex: 1;
     padding: 12px 24px;
-    background-color: #3498db;
+    background-color: #C9B59C;
     color: white;
     border: none;
     border-radius: 4px;
@@ -66,12 +66,12 @@
 }
 
 .btn-form-primary:hover {
-    background-color: #2980b9;
+    background-color: #D9CFC7;
 }
 
 .btn-form-secondary {
     padding: 12px 24px;
-    background-color: #95a5a6;
+    background-color: #D9CFC7;
     color: white;
     border: none;
     border-radius: 4px;
@@ -84,7 +84,7 @@
 }
 
 .btn-form-secondary:hover {
-    background-color: #7f8c8d;
+    background-color: #C9B59C;
 }
 
 .errorlist {
@@ -94,6 +94,6 @@
 }
 
 .errorlist li {
-    color: #e74c3c;
+    color: #C9B59C;
     font-size: 0.85em;
 }

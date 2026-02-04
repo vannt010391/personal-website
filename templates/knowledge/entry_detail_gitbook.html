@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+{% load knowledge_extras %}
+{% load static %}
+
+{% block title %}{{ entry.title }} - Kiến Thức{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/gitbook-style.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="gitbook-container">
+    <!-- Sidebar -->
+    <aside class="gitbook-sidebar">
+        <h3>📚 Chủ đề</h3>
+        {% if entry.topic %}
+        <a href="?topic={{ entry.topic.id }}" class="gitbook-sidebar-item active">
+            {{ entry.topic.name }}
+        </a>
+        {% endif %}
+
+        <h3>📄 Bài viết khác</h3>
+        {% if entry.topic %}
+            {% for related in entry.topic.entry_set.all|slice:":5" %}
+                {% if related.slug != entry.slug %}
+                <a href="{% url 'knowledge:entry_detail' related.slug %}" class="gitbook-sidebar-item" title="{{ related.title }}">
+                    {{ related.title|truncatewords:3 }}
+                </a>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+
+        <h3>⚙️ Tùy chọn</h3>
+        <a href="{% url 'knowledge:entry_list' %}" class="gitbook-sidebar-item">
+            ← Quay lại danh sách
+        </a>
+        {% if user.is_authenticated %}
+        <a href="{% url 'knowledge:entry_update' entry.slug %}" class="gitbook-sidebar-item">
+            ✏️ Chỉnh sửa
+        </a>
+        {% endif %}
+    </aside>
+
+    <!-- Main Content -->
+    <main class="gitbook-main">
+        <!-- Breadcrumb -->
+        <div class="gitbook-breadcrumb">
+            <a href="{% url 'knowledge:entry_list' %}">Kiến Thức</a>
+            <span>/</span>
+            {% if entry.topic %}
+            <a href="?topic={{ entry.topic.id }}">{{ entry.topic.name }}</a>
+            <span>/</span>
+            {% endif %}
+            <span>{{ entry.title|truncatewords:5 }}</span>
+        </div>
+
+        <!-- Header -->
+        <div class="gitbook-header">
+            <div>
+                <h1 class="gitbook-title">
+                    {{ entry.title }}
+                    {% if entry.is_favorite %}<span style="color: #FFD700;">⭐</span>{% endif %}
+                </h1>
+                <div class="gitbook-meta">
+                    {% if entry.topic %}
+                    <span class="gitbook-meta-item">📌 {{ entry.topic.name }}</span>
+                    {% endif %}
+                    <span class="gitbook-meta-item">
+                        <span style="font-weight: 600; background: linear-gradient(135deg, rgba(201, 181, 156, 0.1) 0%, rgba(217, 207, 199, 0.1) 100%); padding: 2px 8px; border-radius: 3px;">
+                            {{ entry.get_entry_type_display }}
+                        </span>
+                    </span>
+                    <span class="gitbook-meta-item">📅 {{ entry.updated_at|date:"d/m/Y H:i" }}</span>
+                    <span class="gitbook-meta-item">✏️ {{ entry.created_at|date:"M Y" }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary -->
+        {% if entry.summary %}
+        <div class="gitbook-summary">
+            <h4>📋 Tóm tắt</h4>
+            <p>{{ entry.summary }}</p>
+        </div>
+        {% endif %}
+
+        <!-- Tags -->
+        {% if entry.tags %}
+        <div class="gitbook-tags">
+            {% for tag in entry.tags|split:"," %}
+            <span class="gitbook-tag">#{{ tag|trim }}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Content -->
+        <div class="gitbook-content">
+            {{ content_html|safe }}
+        </div>
+
+        <!-- Source Link -->
+        {% if entry.source_url %}
+        <div style="margin-top: 40px; padding: 20px; background: #F9F8F6; border-radius: 6px; border-left: 4px solid #C9B59C;">
+            <h4 style="margin: 0 0 10px 0; color: #3f372f;">🔗 Nguồn tham khảo</h4>
+            <a href="{{ entry.source_url }}" target="_blank" rel="noopener noreferrer" style="color: #C9B59C; text-decoration: none; word-break: break-all;">
+                {{ entry.source_url|truncatechars:80 }}
+            </a>
+        </div>
+        {% endif %}
+
+        <!-- Admin Actions -->
+        {% if user.is_authenticated %}
+        <div style="margin-top: 40px; padding: 20px; background: #EFE9E3; border-radius: 6px; display: flex; gap: 10px; flex-wrap: wrap;">
+            <a href="{% url 'knowledge:entry_update' entry.slug %}" style="padding: 10px 20px; background: linear-gradient(135deg, #C9B59C 0%, #D9CFC7 100%); color: white; border-radius: 6px; text-decoration: none; font-weight: 600;">
+                ✏️ Chỉnh sửa
+            </a>
+            <a href="{% url 'knowledge:entry_delete' entry.slug %}" style="padding: 10px 20px; background: #D9CFC7; color: #3f372f; border-radius: 6px; text-decoration: none; font-weight: 600;">
+                🗑️ Xóa
+            </a>
+        </div>
+        {% endif %}
+
+        <!-- Footer Navigation -->
+        <div class="gitbook-navigation">
+            <a href="{% url 'knowledge:entry_list' %}" class="gitbook-nav-button">
+                <span class="gitbook-nav-label">← Quay lại</span>
+                <span>Danh sách kiến thức</span>
+            </a>
+            {% with next_entry=entry.get_next_by_updated_at %}
+                {% if next_entry %}
+                <a href="{% url 'knowledge:entry_detail' next_entry.slug %}" class="gitbook-nav-button" style="text-align: right;">
+                    <span class="gitbook-nav-label">Tiếp theo →</span>
+                    <span>{{ next_entry.title|truncatewords:3 }}</span>
+                </a>
+                {% endif %}
+            {% endwith %}
+        </div>
+    </main>
+</div>
+
+{% endblock %}
