@@ -2,7 +2,7 @@
 
 <ul class="entry-tree">
     {% for entry in entries %}
-        {% set children = entry.children.all %}
+        {% with children=entry.children.all %}
         <li class="entry-tree-item" data-entry-id="{{ entry.id }}">
             <div class="entry-tree-node">
                 {% if children %}
@@ -18,7 +18,7 @@
                     {% if entry.is_favorite %}<span class="entry-tree-favorite">⭐</span>{% endif %}
                 </a>
             </div>
-            
+
             {% if children %}
             <ul class="entry-tree-children">
                 {% for child in children %}
@@ -27,6 +27,7 @@
             </ul>
             {% endif %}
         </li>
+        {% endwith %}
     {% endfor %}
 </ul>
 

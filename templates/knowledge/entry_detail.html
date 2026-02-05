@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load knowledge_extras %}
 
 {% block title %}{{ entry.title }} - Kiến Thức{% endblock %}
 
@@ -49,103 +50,89 @@
     </aside>
 
     <!-- Main Content -->
-    <main class="gitbook-main">
-        <!-- Breadcrumb -->
-        <div class="gitbook-breadcrumb" style="margin-bottom: 20px; font-size: 0.9rem; color: #7b7268;">
-            <a href="{% url 'knowledge:entry_list' %}" style="color: #C9B59C; text-decoration: none;">Kiến Thức</a>
-            {% if entry.topic %} / <a href="?topic={{ entry.topic.id }}" style="color: #C9B59C; text-decoration: none;">{{ entry.topic.name }}</a>{% endif %}
-            {% if entry.parent %} / <a href="{% url 'knowledge:entry_detail' entry.parent.slug %}" style="color: #C9B59C; text-decoration: none;">{{ entry.parent.title }}</a>{% endif %}
-            / <span>{{ entry.title }}</span>
+    <main class="gitbook-main" style="max-width: 900px; margin: 0 auto; padding: 40px 60px;">
+        <!-- Breadcrumb - Minimal -->
+        <div style="margin-bottom: 30px; font-size: 0.85rem; color: #7b7268;">
+            <a href="{% url 'knowledge:entry_list' %}" style="color: #7b7268; text-decoration: none; transition: color 0.2s;">Kiến Thức</a>
+            {% if entry.topic %} <span style="color: #D9CFC7;">›</span> <a href="?topic={{ entry.topic.id }}" style="color: #7b7268; text-decoration: none;">{{ entry.topic.name }}</a>{% endif %}
+            {% if entry.parent %} <span style="color: #D9CFC7;">›</span> <a href="{% url 'knowledge:entry_detail' entry.parent.slug %}" style="color: #7b7268; text-decoration: none;">{{ entry.parent.title|truncatewords:5 }}</a>{% endif %}
         </div>
 
-        <!-- Header -->
-        <div class="gitbook-header" style="margin-bottom: 40px;">
-            <div>
-                <h1 class="gitbook-title" style="margin: 0 0 10px 0;">
-                    {{ entry.title }}
-                    {% if entry.is_favorite %}<span style="font-size: 1.2rem;">⭐</span>{% endif %}
-                </h1>
-                <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px;">
-                    {% if entry.entry_type %}
-                    <span style="padding: 4px 12px; background: #F9F8F6; color: #7b7268; border-radius: 4px; font-size: 0.85rem;">
-                        📌 {{ entry.get_entry_type_display }}
-                    </span>
-                    {% endif %}
-                    <span style="padding: 4px 12px; background: #F9F8F6; color: #7b7268; border-radius: 4px; font-size: 0.85rem;">
-                        📅 {{ entry.updated_at|date:"d/m/Y H:i" }}
-                    </span>
-                </div>
-            </div>
-        </div>
+        <!-- Title - Large and Clean -->
+        <h1 style="font-size: 3rem; font-weight: 700; margin: 0 0 15px 0; color: #3f372f; line-height: 1.2;">
+            {{ entry.title }}{% if entry.is_favorite %} <span style="color: #C9B59C;">⭐</span>{% endif %}
+        </h1>
 
-        <!-- Summary -->
+        <!-- Summary - Minimal if present -->
         {% if entry.summary %}
-        <div style="background: linear-gradient(135deg, rgba(201, 181, 156, 0.1) 0%, rgba(217, 207, 199, 0.1) 100%); padding: 20px; border-left: 4px solid #C9B59C; border-radius: 6px; margin-bottom: 40px;">
-            <p style="margin: 0; line-height: 1.7; color: #3f372f;">{{ entry.summary }}</p>
-        </div>
+        <p style="font-size: 1.1rem; color: #7b7268; margin: 0 0 30px 0; line-height: 1.6;">
+            {{ entry.summary }}
+        </p>
         {% endif %}
 
-        <!-- Tags -->
-        {% if entry.tags %}
-        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 30px;">
-            {% for tag in entry.tags|split:"," %}
-            <span style="padding: 6px 14px; background: #F9F8F6; color: #7b7268; border-radius: 16px; font-size: 0.9rem;">
-                #{{ tag|trim }}
+        <!-- Meta Info - Very minimal -->
+        <div style="display: flex; gap: 15px; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid #EFE9E3; font-size: 0.85rem; color: #7b7268;">
+            {% if entry.entry_type %}
+            <span>{{ entry.get_entry_type_display }}</span>
+            {% endif %}
+            <span>•</span>
+            <span>{{ entry.updated_at|date:"d/m/Y" }}</span>
+            {% if entry.tags %}
+            <span>•</span>
+            <span>
+                {% for tag in entry.tags|split:"," %}
+                    #{{ tag|trim }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
             </span>
-            {% endfor %}
+            {% endif %}
+        </div>
+
+        <!-- Children Pages as Cards (if this is a parent page) -->
+        {% if entry.children.all %}
+        <div style="margin-bottom: 50px;">
+            <p style="color: #7b7268; font-size: 0.95rem; margin-bottom: 20px;">Các trang trong phần này:</p>
+            <div style="display: grid; gap: 15px;">
+                {% for child in entry.children.all %}
+                <a href="{% url 'knowledge:entry_detail' child.slug %}"
+                   style="display: flex; align-items: center; gap: 15px; padding: 20px; background: white; border: 1px solid #EFE9E3; border-radius: 8px; text-decoration: none; transition: all 0.2s;"
+                   onmouseover="this.style.borderColor='#C9B59C'; this.style.transform='translateX(5px)';"
+                   onmouseout="this.style.borderColor='#EFE9E3'; this.style.transform='translateX(0)';">
+                    <div style="font-size: 1.5rem;">📄</div>
+                    <div>
+                        <div style="font-weight: 600; color: #3f372f; margin-bottom: 4px;">{{ child.title }}</div>
+                        {% if child.summary %}
+                        <div style="font-size: 0.9rem; color: #7b7268;">{{ child.summary|truncatewords:15 }}</div>
+                        {% endif %}
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
         </div>
         {% endif %}
 
-        <div style="display: grid; grid-template-columns: 1fr 250px; gap: 40px;">
-            <!-- Main Content -->
-            <div>
-                <article class="gitbook-content">
-                    {{ content_html|safe }}
-                </article>
+        <!-- Main Article Content -->
+        <article class="gitbook-content" style="margin-bottom: 50px;">
+            {{ content_html|safe }}
+        </article>
 
-                <!-- Source URL -->
-                {% if entry.source_url %}
-                <div style="margin-top: 40px; padding: 20px; background: #F9F8F6; border-radius: 8px; border-left: 4px solid #C9B59C;">
-                    <h4 style="margin: 0 0 10px 0; color: #3f372f;">🔗 Nguồn</h4>
-                    <a href="{{ entry.source_url }}" target="_blank" style="color: #C9B59C; text-decoration: none; word-break: break-all;">
-                        {{ entry.source_url }}
-                    </a>
-                </div>
-                {% endif %}
-            </div>
+        <!-- Source URL - Minimal -->
+        {% if entry.source_url %}
+        <div style="margin: 40px 0; padding: 15px 20px; background: #F9F8F6; border-radius: 6px;">
+            <div style="font-size: 0.85rem; color: #7b7268; margin-bottom: 6px;">📚 Nguồn tham khảo</div>
+            <a href="{{ entry.source_url }}" target="_blank" style="color: #C9B59C; text-decoration: none; word-break: break-all; font-size: 0.9rem;">
+                {{ entry.source_url }}
+            </a>
+        </div>
+        {% endif %}
 
-            <!-- Right Sidebar: Table of Contents -->
-            <aside style="position: sticky; top: 120px; height: fit-content;">
-                {% if toc_items %}
-                <div class="toc-container">
-                    <h3 style="margin: 0 0 15px 0; font-size: 0.95rem;">📑 Mục lục</h3>
-                    <ul class="toc-list">
-                        {% for item in toc_items %}
-                        <li class="level-{{ item.level }}">
-                            <a href="#{{ item.id }}">{{ item.text }}</a>
-                        </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-                {% endif %}
-
-                <!-- Related Pages -->
-                {% if entry.children.all %}
-                <div style="margin-top: 30px; padding: 15px; background: #F9F8F6; border-radius: 8px;">
-                    <h4 style="margin: 0 0 12px 0; font-size: 0.95rem; color: #3f372f;">📚 Trang con</h4>
-                    <ul style="list-style: none; padding: 0; margin: 0;">
-                        {% for child in entry.children.all %}
-                        <li style="margin-bottom: 8px;">
-                            <a href="{% url 'knowledge:entry_detail' child.slug %}" 
-                               style="color: #C9B59C; text-decoration: none; font-size: 0.9rem;">
-                                → {{ child.title|truncatewords:3 }}
-                            </a>
-                        </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-                {% endif %}
-            </aside>
+        <!-- Edit Button - Floating at bottom -->
+        <div style="margin-top: 60px; padding-top: 30px; border-top: 1px solid #EFE9E3;">
+            <a href="{% url 'knowledge:entry_update' entry.slug %}"
+               style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: #F9F8F6; color: #7b7268; border: 1px solid #D9CFC7; border-radius: 6px; text-decoration: none; font-size: 0.9rem; transition: all 0.2s;"
+               onmouseover="this.style.background='#EFE9E3';"
+               onmouseout="this.style.background='#F9F8F6';">
+                ✏️ Chỉnh sửa trang này
+            </a>
         </div>
     </main>
 </div>

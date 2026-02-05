@@ -7,128 +7,741 @@
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/forms.css' %}">
 <link rel="stylesheet" href="{% static 'css/gitbook-style.css' %}">
+<!-- Editor.js CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest/dist/editor.min.css">
 {% endblock %}
 
 {% block content %}
-<div class="gitbook-container">
-    <!-- Sidebar Navigation -->
-    <aside class="gitbook-sidebar">
-        <h3>📚 Chủ đề</h3>
-        {% if topics %}
-            {% for topic in topics %}
-            <a href="{% url 'knowledge:entry_create' %}?topic={{ topic.id }}"
-               class="gitbook-sidebar-item {% if selected_topic_id == topic.id|stringformat:'s' %}active{% endif %}">
-                📌 {{ topic.name }}
-            </a>
-            {% endfor %}
-        {% else %}
-            <span class="gitbook-sidebar-item">Chưa có chủ đề</span>
-        {% endif %}
+<style>
+body {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+.container {
+    max-width: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+</style>
 
-        <h3>📄 Pages</h3>
-        {% if sidebar_entries %}
-            {% entry_tree sidebar_entries current_slug=object.slug %}
-        {% else %}
-            <span class="gitbook-sidebar-item">Chưa có trang</span>
-        {% endif %}
-
-        <h3>⚙️ Quản lý</h3>
-        <a href="{% url 'knowledge:entry_list' %}" class="gitbook-sidebar-item">← Danh sách</a>
-        <a href="{% url 'knowledge:topic_create' %}" class="gitbook-sidebar-item">🗂️ Tạo chủ đề</a>
-        <a href="{% url 'knowledge:topic_list' %}" class="gitbook-sidebar-item">📂 Quản lý chủ đề</a>
-    </aside>
-
-    <!-- Main Content -->
-    <main class="gitbook-main">
-        <div class="gitbook-header">
-            <div>
-                <h1 class="gitbook-title">{% if object %}Chỉnh sửa page{% else %}Tạo page mới{% endif %}</h1>
-                <p style="color: #7b7268; margin: 0;">Soạn thảo nội dung theo cấu trúc tài liệu GitBook.</p>
-            </div>
-            {% if selected_topic_id %}
-            <a href="{% url 'knowledge:entry_create' %}?topic={{ selected_topic_id }}"
-               style="padding: 10px 18px; background: #C9B59C; color: white; border-radius: 6px; text-decoration: none; font-weight: 600;">
-                ➕ Page mới
-            </a>
-            {% endif %}
+<div style="min-height: 100vh; background: #F9F8F6; margin: 0; padding: 0;">
+    <!-- Top Bar - Fixed -->
+    <div style="position: fixed; top: 0; left: 0; right: 0; width: 100%; height: 60px; background: white; border-bottom: 1px solid #D9CFC7; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; z-index: 1000; box-sizing: border-box;">
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <a href="{% url 'knowledge:entry_list' %}" style="color: #7b7268; text-decoration: none; font-size: 1.5rem;">←</a>
+            <button type="button" onclick="toggleSettings()" style="background: none; border: none; color: #7b7268; cursor: pointer; font-size: 0.95rem;">
+                ⚙️ Cài đặt
+            </button>
         </div>
+        <div style="display: flex; gap: 10px;">
+            <a href="{% url 'knowledge:entry_list' %}"
+               style="padding: 8px 20px; background: #F9F8F6; color: #7b7268; border: 1px solid #D9CFC7; border-radius: 6px; text-decoration: none; font-size: 0.9rem; transition: background 0.2s;"
+               onmouseover="this.style.background='#EFE9E3';"
+               onmouseout="this.style.background='#F9F8F6';">
+                Hủy
+            </a>
+            <button type="submit" form="entry-form"
+                    style="padding: 8px 20px; background: #C9B59C; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.9rem; font-weight: 600; transition: background 0.2s;"
+                    onmouseover="this.style.background='#B8A58B';"
+                    onmouseout="this.style.background='#C9B59C';">
+                {% if object %}💾 Cập nhật{% else %}✨ Tạo trang{% endif %}
+            </button>
+        </div>
+    </div>
 
-        <form method="post">
-            {% csrf_token %}
-
-            <div class="form-group">
-                <label for="{{ form.title.id_for_label }}" class="form-label">Tiêu đề *</label>
-                {{ form.title }}
-            </div>
-
-            <div class="form-group">
-                <label for="{{ form.slug.id_for_label }}" class="form-label">Slug *</label>
+    <!-- Settings Sidebar - Sliding from right -->
+    <div id="settings-sidebar" style="position: fixed; top: 60px; right: -350px; width: 320px; height: calc(100vh - 60px); background: white; border-left: 1px solid #D9CFC7; padding: 20px; overflow-y: auto; transition: right 0.3s; z-index: 999; box-shadow: -2px 0 10px rgba(0,0,0,0.1); box-sizing: border-box;">
+        <h3 style="margin: 0 0 20px 0; color: #3f372f; font-size: 1.1rem;">⚙️ Cài đặt nâng cao</h3>
+        <div style="display: grid; gap: 20px;">
+            <div>
+                <label style="display: block; font-size: 0.85rem; color: #7b7268; margin-bottom: 6px; font-weight: 500;">Slug (URL)</label>
                 {{ form.slug }}
-                <small class="form-help">{{ form.slug.help_text }}</small>
+                <small style="color: #7b7268; font-size: 0.75rem; display: block; margin-top: 4px;">Để trống để tự động tạo</small>
             </div>
 
-            <div class="form-group">
-                <label for="{{ form.topic.id_for_label }}" class="form-label">Chủ đề</label>
+            <div>
+                <label style="display: block; font-size: 0.85rem; color: #7b7268; margin-bottom: 6px; font-weight: 500;">Chủ đề</label>
                 {{ form.topic }}
             </div>
 
-            <div class="form-group">
-                <label for="{{ form.parent.id_for_label }}" class="form-label">Trang cha</label>
-                {{ form.parent }}
-                <small class="form-help">Dùng để tạo mục lục nhiều cấp</small>
-            </div>
-
-            <div class="form-group">
-                <label for="{{ form.order.id_for_label }}" class="form-label">Thứ tự</label>
-                {{ form.order }}
-                <small class="form-help">Số nhỏ sẽ hiển thị trước</small>
-            </div>
-
-            <div class="form-group">
-                <label for="{{ form.entry_type.id_for_label }}" class="form-label">Loại *</label>
+            <div>
+                <label style="display: block; font-size: 0.85rem; color: #7b7268; margin-bottom: 6px; font-weight: 500;">Loại</label>
                 {{ form.entry_type }}
             </div>
 
-            <div class="form-group">
-                <label for="{{ form.summary.id_for_label }}" class="form-label">Tóm tắt</label>
-                {{ form.summary }}
+            <div>
+                <label style="display: block; font-size: 0.85rem; color: #7b7268; margin-bottom: 6px; font-weight: 500;">Trang cha</label>
+                {{ form.parent }}
+                <small style="color: #7b7268; font-size: 0.75rem; display: block; margin-top: 4px;">Tạo phân cấp</small>
             </div>
 
-            <div class="form-group">
-                <label for="{{ form.content.id_for_label }}" class="form-label">Nội dung * (Markdown)</label>
-                {{ form.content }}
-                <small class="form-help">Hỗ trợ Markdown: # Heading, **bold**, `code`, etc.</small>
+            <div>
+                <label style="display: block; font-size: 0.85rem; color: #7b7268; margin-bottom: 6px; font-weight: 500;">Thứ tự</label>
+                {{ form.order }}
+                <small style="color: #7b7268; font-size: 0.75rem; display: block; margin-top: 4px;">Số nhỏ trước</small>
             </div>
 
-            <div class="form-group">
-                <label for="{{ form.source_url.id_for_label }}" class="form-label">Nguồn URL</label>
+            <div>
+                <label style="display: block; font-size: 0.85rem; color: #7b7268; margin-bottom: 6px; font-weight: 500;">Nguồn (URL)</label>
                 {{ form.source_url }}
             </div>
 
-            <div class="form-group">
-                <label for="{{ form.tags.id_for_label }}" class="form-label">Tags</label>
+            <div>
+                <label style="display: block; font-size: 0.85rem; color: #7b7268; margin-bottom: 6px; font-weight: 500;">Tags</label>
                 {{ form.tags }}
-                <small class="form-help">Phân cách bằng dấu phẩy</small>
+                <small style="color: #7b7268; font-size: 0.75rem; display: block; margin-top: 4px;">Phân cách bằng dấu phẩy</small>
             </div>
 
-            <div class="form-group">
-                <label style="display: flex; align-items: center; gap: 8px;">
+            <div>
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
                     {{ form.is_favorite }}
-                    <span>Đánh dấu yêu thích</span>
+                    <span style="font-size: 0.85rem; color: #7b7268; font-weight: 500;">⭐ Đánh dấu yêu thích</span>
                 </label>
             </div>
+        </div>
+    </div>
 
-            <div class="form-actions">
-                <button type="submit" class="btn-form-primary">
-                    {% if object %}Cập nhật{% else %}Tạo mới{% endif %}
-                </button>
-                <a href="{% url 'knowledge:entry_list' %}" class="btn-form-secondary">Hủy</a>
+    <!-- Main Editor - Fullscreen -->
+    <main style="max-width: 900px; margin: 0 auto; padding: 0 60px 40px 60px; padding-top: 80px; min-height: 100vh;">
+        <form method="post" id="entry-form">
+            {% csrf_token %}
+
+            <!-- Title Field -->
+            <div style="margin-bottom: 4px;">
+                <input type="text"
+                       name="{{ form.title.name }}"
+                       value="{{ form.title.value|default:'' }}"
+                       placeholder="Untitled"
+                       style="width: 100%; border: none; font-size: 2.8rem; font-weight: 700; padding: 0; outline: none; color: #3f372f; background: transparent; font-family: inherit;"
+                       id="{{ form.title.id_for_label }}"
+                       required>
+            </div>
+
+            <!-- Summary Field -->
+            <div style="margin-bottom: 30px;">
+                <input type="text"
+                       name="{{ form.summary.name }}"
+                       value="{{ form.summary.value|default:'' }}"
+                       placeholder="Mô tả trang (tùy chọn)..."
+                       style="width: 100%; border: none; font-size: 0.95rem; padding: 0; outline: none; color: #9B9B9B; background: transparent; font-family: inherit;"
+                       id="{{ form.summary.id_for_label }}">
+            </div>
+
+            <!-- Hidden Fields -->
+            <textarea name="{{ form.content.name }}"
+                      id="{{ form.content.id_for_label }}"
+                      style="display: none;"
+                      required>{{ form.content.value|default:'' }}</textarea>
+
+            <!-- Editor Container -->
+            <div id="editorjs" style="min-height: 500px; outline: none; background: white; border-radius: 8px; padding: 20px;">
+                <div id="editor-loading" style="text-align: center; padding: 40px; color: #7b7268;">
+                    <div style="font-size: 2rem; margin-bottom: 10px;">⏳</div>
+                    <div>Đang tải editor...</div>
+                </div>
             </div>
         </form>
     </main>
 </div>
+
+<script>
+function toggleSettings() {
+    const sidebar = document.getElementById('settings-sidebar');
+    if (sidebar.style.right === '0px') {
+        sidebar.style.right = '-350px';
+    } else {
+        sidebar.style.right = '0px';
+    }
+}
+
+// Close settings when clicking outside
+document.addEventListener('click', function(event) {
+    const sidebar = document.getElementById('settings-sidebar');
+    const settingsBtn = event.target.closest('button[onclick="toggleSettings()"]');
+    const clickedInside = sidebar.contains(event.target) || settingsBtn;
+
+    if (!clickedInside && sidebar.style.right === '0px') {
+        sidebar.style.right = '-350px';
+    }
+});
+
+// Debug: Check if Editor.js loaded
+window.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded');
+    console.log('EditorJS available:', typeof EditorJS !== 'undefined');
+    console.log('Header available:', typeof Header !== 'undefined');
+});
+</script>
 {% endblock %}
 
 {% block extra_js %}
 <script src="{% static 'js/slug-generator.js' %}"></script>
+
+<!-- Editor.js Core -->
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@2.29.0/dist/editorjs.umd.min.js"></script>
+
+<!-- Editor.js Plugins -->
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/header@2.8.1/dist/header.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/list@1.9.0/dist/list.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/quote@2.6.0/dist/quote.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/code@2.9.0/dist/code.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/table@2.3.0/dist/table.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/checklist@1.6.0/dist/checklist.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/delimiter@1.4.0/dist/delimiter.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/inline-code@1.5.0/dist/inline-code.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/marker@1.4.0/dist/marker.umd.min.js"></script>
+
+<script>
+// Wait for all scripts to load
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('=== Starting Editor.js initialization ===');
+
+    const contentTextarea = document.getElementById('{{ form.content.id_for_label }}');
+    const initialMarkdown = contentTextarea.value || '';
+
+    console.log('Content textarea found:', !!contentTextarea);
+    console.log('Initial markdown:', initialMarkdown ? `${initialMarkdown.length} characters` : 'empty');
+
+    // Wait for all Editor.js plugins to load
+    function waitForPlugins(callback, maxAttempts = 50) {
+        let attempts = 0;
+        const checkPlugins = setInterval(function() {
+            attempts++;
+            console.log(`Checking plugins... attempt ${attempts}`);
+
+            if (typeof EditorJS !== 'undefined' &&
+                typeof Header !== 'undefined' &&
+                typeof List !== 'undefined' &&
+                typeof Quote !== 'undefined' &&
+                typeof CodeTool !== 'undefined' &&
+                typeof Checklist !== 'undefined' &&
+                typeof Delimiter !== 'undefined' &&
+                typeof InlineCode !== 'undefined' &&
+                typeof Marker !== 'undefined' &&
+                typeof Table !== 'undefined') {
+
+                clearInterval(checkPlugins);
+                console.log('✓ All plugins loaded successfully');
+                callback();
+            } else if (attempts >= maxAttempts) {
+                clearInterval(checkPlugins);
+                console.error('Timeout waiting for plugins to load');
+                console.log('EditorJS:', typeof EditorJS);
+                console.log('Header:', typeof Header);
+                console.log('List:', typeof List);
+                console.log('Quote:', typeof Quote);
+                console.log('CodeTool:', typeof CodeTool);
+                callback(); // Try anyway
+            }
+        }, 100);
+    }
+
+    // Initialize editor after plugins are loaded
+    waitForPlugins(function() {
+
+    // Convert Markdown to Editor.js blocks (simple conversion)
+    function markdownToBlocks(markdown) {
+        if (!markdown || markdown.trim() === '') {
+            return [];
+        }
+
+        const lines = markdown.split('\n');
+        const blocks = [];
+        let currentParagraph = [];
+
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i];
+
+            // Headers
+            if (line.startsWith('# ')) {
+                if (currentParagraph.length > 0) {
+                    blocks.push({ type: 'paragraph', data: { text: currentParagraph.join('<br>') } });
+                    currentParagraph = [];
+                }
+                blocks.push({ type: 'header', data: { text: line.substring(2), level: 1 } });
+            } else if (line.startsWith('## ')) {
+                if (currentParagraph.length > 0) {
+                    blocks.push({ type: 'paragraph', data: { text: currentParagraph.join('<br>') } });
+                    currentParagraph = [];
+                }
+                blocks.push({ type: 'header', data: { text: line.substring(3), level: 2 } });
+            } else if (line.startsWith('### ')) {
+                if (currentParagraph.length > 0) {
+                    blocks.push({ type: 'paragraph', data: { text: currentParagraph.join('<br>') } });
+                    currentParagraph = [];
+                }
+                blocks.push({ type: 'header', data: { text: line.substring(4), level: 3 } });
+            }
+            // Code blocks
+            else if (line.startsWith('```')) {
+                if (currentParagraph.length > 0) {
+                    blocks.push({ type: 'paragraph', data: { text: currentParagraph.join('<br>') } });
+                    currentParagraph = [];
+                }
+                const codeLines = [];
+                i++;
+                while (i < lines.length && !lines[i].startsWith('```')) {
+                    codeLines.push(lines[i]);
+                    i++;
+                }
+                blocks.push({ type: 'code', data: { code: codeLines.join('\n') } });
+            }
+            // Lists
+            else if (line.match(/^[\-\*] /)) {
+                if (currentParagraph.length > 0) {
+                    blocks.push({ type: 'paragraph', data: { text: currentParagraph.join('<br>') } });
+                    currentParagraph = [];
+                }
+                const items = [line.substring(2)];
+                while (i + 1 < lines.length && lines[i + 1].match(/^[\-\*] /)) {
+                    i++;
+                    items.push(lines[i].substring(2));
+                }
+                blocks.push({ type: 'list', data: { style: 'unordered', items: items } });
+            }
+            // Quote
+            else if (line.startsWith('> ')) {
+                if (currentParagraph.length > 0) {
+                    blocks.push({ type: 'paragraph', data: { text: currentParagraph.join('<br>') } });
+                    currentParagraph = [];
+                }
+                blocks.push({ type: 'quote', data: { text: line.substring(2) } });
+            }
+            // Delimiter
+            else if (line.trim() === '---') {
+                if (currentParagraph.length > 0) {
+                    blocks.push({ type: 'paragraph', data: { text: currentParagraph.join('<br>') } });
+                    currentParagraph = [];
+                }
+                blocks.push({ type: 'delimiter', data: {} });
+            }
+            // Empty line - end paragraph
+            else if (line.trim() === '') {
+                if (currentParagraph.length > 0) {
+                    blocks.push({ type: 'paragraph', data: { text: currentParagraph.join('<br>') } });
+                    currentParagraph = [];
+                }
+            }
+            // Regular paragraph text
+            else {
+                currentParagraph.push(line);
+            }
+        }
+
+        // Add remaining paragraph
+        if (currentParagraph.length > 0) {
+            blocks.push({ type: 'paragraph', data: { text: currentParagraph.join('<br>') } });
+        }
+
+        return blocks;
+    }
+
+    // Convert Editor.js blocks to Markdown
+    function blocksToMarkdown(blocks) {
+        let markdown = '';
+
+        blocks.forEach((block, index) => {
+            switch (block.type) {
+                case 'header':
+                    const hashes = '#'.repeat(block.data.level);
+                    markdown += `${hashes} ${block.data.text}\n\n`;
+                    break;
+
+                case 'paragraph':
+                    markdown += `${block.data.text.replace(/<br>/g, '\n')}\n\n`;
+                    break;
+
+                case 'list':
+                    block.data.items.forEach(item => {
+                        const prefix = block.data.style === 'ordered' ? '1.' : '-';
+                        markdown += `${prefix} ${item}\n`;
+                    });
+                    markdown += '\n';
+                    break;
+
+                case 'checklist':
+                    block.data.items.forEach(item => {
+                        const checkbox = item.checked ? '[x]' : '[ ]';
+                        markdown += `- ${checkbox} ${item.text}\n`;
+                    });
+                    markdown += '\n';
+                    break;
+
+                case 'quote':
+                    markdown += `> ${block.data.text}\n\n`;
+                    break;
+
+                case 'code':
+                    markdown += `\`\`\`\n${block.data.code}\n\`\`\`\n\n`;
+                    break;
+
+                case 'delimiter':
+                    markdown += `---\n\n`;
+                    break;
+
+                case 'table':
+                    if (block.data.content && block.data.content.length > 0) {
+                        // Header row
+                        markdown += '| ' + block.data.content[0].join(' | ') + ' |\n';
+                        markdown += '| ' + block.data.content[0].map(() => '---').join(' | ') + ' |\n';
+                        // Data rows
+                        for (let i = 1; i < block.data.content.length; i++) {
+                            markdown += '| ' + block.data.content[i].join(' | ') + ' |\n';
+                        }
+                        markdown += '\n';
+                    }
+                    break;
+
+                default:
+                    // Fallback for unknown types
+                    if (block.data.text) {
+                        markdown += `${block.data.text}\n\n`;
+                    }
+            }
+        });
+
+        return markdown.trim();
+    }
+
+    // Initialize Editor.js with error handling
+    let editor;
+
+    try {
+        console.log('Initializing Editor.js...');
+        console.log('Initial markdown length:', initialMarkdown.length);
+
+        // Check if all required libraries are loaded
+        if (typeof EditorJS === 'undefined') {
+            throw new Error('EditorJS library not loaded');
+        }
+        if (typeof Header === 'undefined') {
+            throw new Error('Header plugin not loaded');
+        }
+        if (typeof List === 'undefined') {
+            throw new Error('List plugin not loaded');
+        }
+
+        editor = new EditorJS({
+            holder: 'editorjs',
+            placeholder: 'Nhấn Tab để bắt đầu viết hoặc nhập / để chọn block...',
+            autofocus: true,
+
+            tools: {
+                header: {
+                    class: Header,
+                    config: {
+                        placeholder: 'Tiêu đề',
+                        levels: [1, 2, 3, 4],
+                        defaultLevel: 2
+                    }
+                },
+                list: {
+                    class: List,
+                    inlineToolbar: true,
+                    config: {
+                        defaultStyle: 'unordered'
+                    }
+                },
+                checklist: {
+                    class: Checklist,
+                    inlineToolbar: true
+                },
+                quote: {
+                    class: Quote,
+                    inlineToolbar: true,
+                    config: {
+                        quotePlaceholder: 'Nhập trích dẫn',
+                        captionPlaceholder: 'Tác giả'
+                    }
+                },
+                code: {
+                    class: CodeTool,
+                    placeholder: 'Nhập code'
+                },
+                delimiter: Delimiter,
+                inlineCode: {
+                    class: InlineCode,
+                    shortcut: 'CMD+SHIFT+M'
+                },
+                marker: {
+                    class: Marker,
+                    shortcut: 'CMD+SHIFT+H'
+                },
+                table: {
+                    class: Table,
+                    inlineToolbar: true
+                }
+            },
+
+            data: {
+                blocks: markdownToBlocks(initialMarkdown)
+            },
+
+            onReady: () => {
+                console.log('✓ Editor.js is ready');
+                // Remove loading message
+                const loadingMsg = document.getElementById('editor-loading');
+                if (loadingMsg) {
+                    loadingMsg.remove();
+                }
+            },
+
+            onChange: (api, event) => {
+                console.log('Editor content changed');
+            }
+        });
+
+        console.log('✓ Editor.js initialized successfully');
+
+    } catch (error) {
+        console.error('✗ Error initializing Editor.js:', error);
+
+        // Show error in the editor container
+        const editorContainer = document.getElementById('editorjs');
+        editorContainer.innerHTML = `
+            <div style="text-align: center; padding: 40px; color: #C9B59C;">
+                <div style="font-size: 2rem; margin-bottom: 10px;">⚠️</div>
+                <div style="font-weight: 600; margin-bottom: 10px;">Không thể tải editor</div>
+                <div style="font-size: 0.9rem; color: #7b7268;">${error.message}</div>
+                <div style="margin-top: 20px; font-size: 0.85rem; color: #7b7268;">
+                    Vui lòng kiểm tra kết nối internet và tải lại trang
+                </div>
+            </div>
+        `;
+    }
+
+    // Custom styling for Editor.js - Clean GitBook style
+    const editorStyle = document.createElement('style');
+    editorStyle.textContent = `
+        /* Editor Container */
+        .codex-editor__redactor {
+            padding-bottom: 200px !important;
+        }
+
+        .ce-block__content {
+            max-width: 100%;
+        }
+
+        .ce-toolbar__content {
+            max-width: 100%;
+        }
+
+        /* Hide default toolbar - use inline tools only */
+        .ce-toolbar__plus {
+            color: #9B9B9B;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .ce-block:hover .ce-toolbar__plus {
+            opacity: 1;
+        }
+
+        .ce-toolbar__settings-btn {
+            color: #9B9B9B;
+        }
+
+        .ce-toolbar__plus:hover,
+        .ce-toolbar__settings-btn:hover {
+            background-color: transparent;
+        }
+
+        /* Block Styling */
+        .ce-block {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-size: 1rem;
+            line-height: 1.7;
+            color: #3f372f;
+            padding: 3px 0;
+        }
+
+        .ce-block--focused {
+            background: transparent;
+        }
+
+        /* Paragraph */
+        .ce-paragraph {
+            color: #3f372f;
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+
+        .ce-paragraph[data-placeholder]:empty::before {
+            color: #9B9B9B;
+            font-weight: 400;
+        }
+
+        /* Headers */
+        .ce-header {
+            font-weight: 700;
+            color: #3f372f;
+            padding: 4px 0;
+            margin: 0;
+        }
+
+        /* Lists */
+        .cdx-list {
+            color: #3f372f;
+        }
+
+        .cdx-list__item {
+            padding: 3px 0;
+            line-height: 1.7;
+        }
+
+        /* Checklist */
+        .cdx-checklist__item {
+            color: #3f372f;
+        }
+
+        /* Quote */
+        .cdx-quote {
+            border-left: 4px solid #D9CFC7;
+            padding-left: 20px;
+            color: #7b7268;
+            font-style: italic;
+            margin: 10px 0;
+        }
+
+        /* Code */
+        .ce-code__textarea {
+            background: #F9F8F6;
+            color: #3f372f;
+            border: 1px solid #EFE9E3;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.9rem;
+            padding: 15px;
+        }
+
+        /* Inline Code */
+        .inline-code {
+            background-color: #F9F8F6;
+            color: #C9B59C;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        /* Marker (Highlight) */
+        .cdx-marker {
+            background-color: #FFF4CC;
+            color: #3f372f;
+        }
+
+        /* Table */
+        .tc-wrap {
+            border: 1px solid #D9CFC7;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .tc-table {
+            border-collapse: collapse;
+        }
+
+        .tc-table__cell {
+            border: 1px solid #D9CFC7;
+            padding: 10px;
+        }
+
+        .tc-table__cell--selected {
+            background-color: #F9F8F6;
+        }
+
+        /* Popover/Menu */
+        .ce-popover {
+            border: 1px solid #D9CFC7;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        .ce-popover__item {
+            color: #3f372f;
+            padding: 10px 14px;
+        }
+
+        .ce-popover__item:hover {
+            background-color: #F9F8F6;
+        }
+
+        .ce-popover__item-icon {
+            background-color: transparent;
+            color: #7b7268;
+        }
+
+        /* Inline Toolbar */
+        .ce-inline-toolbar {
+            background: white;
+            border: 1px solid #D9CFC7;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        .ce-inline-tool {
+            color: #3f372f;
+        }
+
+        .ce-inline-tool:hover {
+            background-color: #F9F8F6;
+        }
+
+        /* Conversion Toolbar */
+        .ce-conversion-toolbar {
+            background: white;
+            border: 1px solid #D9CFC7;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .ce-conversion-tool:hover {
+            background-color: #F9F8F6;
+        }
+
+        /* Delimiter */
+        .ce-delimiter {
+            line-height: 1.6em;
+            width: 100%;
+            text-align: center;
+            color: #D9CFC7;
+        }
+
+        /* Remove default focus outline */
+        .codex-editor--narrow .ce-toolbox {
+            display: none;
+        }
+    `;
+    document.head.appendChild(editorStyle);
+
+    // Sync content to hidden textarea on form submission
+    const form = document.querySelector('form');
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        if (!editor) {
+            console.error('Editor not initialized');
+            alert('Editor chưa được khởi tạo. Vui lòng tải lại trang.');
+            return;
+        }
+
+        try {
+            console.log('Saving editor content...');
+            const outputData = await editor.save();
+            console.log('Editor data:', outputData);
+
+            const markdown = blocksToMarkdown(outputData.blocks);
+            console.log('Converted to markdown:', markdown.substring(0, 100));
+
+            contentTextarea.value = markdown;
+            form.submit();
+        } catch (error) {
+            console.error('Error saving editor content:', error);
+            alert('Có lỗi khi lưu nội dung: ' + error.message);
+        }
+    });
+
+    console.log('=== Editor.js initialization complete ===');
+    }); // End of waitForPlugins callback
+}); // End of DOMContentLoaded
+</script>
 {% endblock %}

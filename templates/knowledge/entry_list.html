@@ -53,95 +53,95 @@
     </aside>
 
     <!-- Main Content -->
-    <main class="gitbook-main">
-        <div class="gitbook-header">
-            <div>
-                <h1 class="gitbook-title">Kho Kiến Thức</h1>
-                <p style="color: #7b7268; margin: 0;">Lưu trữ và quản lý các ghi chú, nghiên cứu của bạn</p>
-            </div>
-            <a href="{% url 'knowledge:entry_create' %}" style="padding: 12px 24px; background: linear-gradient(135deg, #C9B59C 0%, #D9CFC7 100%); color: white; border-radius: 6px; text-decoration: none; font-weight: 600; white-space: nowrap;">
-                ➕ Thêm ghi chú
-            </a>
+    <main class="gitbook-main" style="max-width: 900px; margin: 0 auto; padding: 40px 60px;">
+        <div style="margin-bottom: 40px;">
+            <h1 style="font-size: 2.5rem; font-weight: 700; margin: 0 0 8px 0; color: #3f372f;">Kho Kiến Thức</h1>
+            <p style="color: #7b7268; margin: 0; font-size: 1rem;">Lưu trữ và quản lý các ghi chú, nghiên cứu của bạn</p>
         </div>
 
         {% if entries %}
-            <div style="display: grid; gap: 20px;">
+            <div style="display: grid; gap: 2px; background: #EFE9E3; border-radius: 8px; overflow: hidden;">
                 {% for entry in entries %}
-                <div style="padding: 20px; border: 1px solid #D9CFC7; border-radius: 8px; transition: all 0.3s; hover-shadow: 0 4px 12px rgba(0,0,0,0.05);">
-                    <div style="display: flex; justify-content: space-between; align-items: start; gap: 15px;">
-                        <div style="flex: 1;">
-                            <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px;">
-                                <span style="padding: 4px 10px; background: linear-gradient(135deg, rgba(201, 181, 156, 0.1) 0%, rgba(217, 207, 199, 0.1) 100%); color: #C9B59C; border-radius: 4px; font-size: 0.8rem; font-weight: 600;">
-                                    {{ entry.get_entry_type_display }}
-                                </span>
-                                {% if entry.is_favorite %}
-                                <span style="font-size: 1.2rem;">⭐</span>
-                                {% endif %}
-                                {% if entry.topic %}
-                                <span style="padding: 4px 10px; background: #EFE9E3; color: #7b7268; border-radius: 4px; font-size: 0.8rem;">
-                                    📌 {{ entry.topic.name }}
-                                </span>
-                                {% endif %}
-                            </div>
+                <a href="{% url 'knowledge:entry_detail' entry.slug %}"
+                   style="display: block; padding: 20px 24px; background: white; text-decoration: none; transition: all 0.2s; border-left: 3px solid transparent;"
+                   onmouseover="this.style.background='#F9F8F6'; this.style.borderLeftColor='#C9B59C'; this.style.paddingLeft='28px';"
+                   onmouseout="this.style.background='white'; this.style.borderLeftColor='transparent'; this.style.paddingLeft='24px';">
 
-                            <h2 style="margin: 0 0 10px 0; font-size: 1.4rem;">
-                                <a href="{% url 'knowledge:entry_detail' entry.slug %}" style="color: #3f372f; text-decoration: none;">
-                                    {{ entry.title }}
-                                </a>
-                            </h2>
-
-                            {% if entry.summary %}
-                            <p style="color: #7b7268; margin: 10px 0; line-height: 1.6;">
-                                {{ entry.summary }}
-                            </p>
-                            {% endif %}
-
-                            {% if entry.tags %}
-                            <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px;">
-                                {% for tag in entry.tags|split:"," %}
-                                <span style="padding: 3px 10px; background: #F9F8F6; color: #7b7268; border-radius: 12px; font-size: 0.85rem;">
-                                    #{{ tag|trim }}
-                                </span>
-                                {% endfor %}
-                            </div>
-                            {% endif %}
-
-                            <p style="color: #7b7268; font-size: 0.9rem; margin: 12px 0 0 0;">
-                                🕒 {{ entry.updated_at|date:"d/m/Y H:i" }}
-                            </p>
-                        </div>
-                        <a href="{% url 'knowledge:entry_detail' entry.slug %}" style="padding: 10px 20px; background: #F9F8F6; color: #C9B59C; border-radius: 6px; text-decoration: none; font-weight: 600; white-space: nowrap; transition: all 0.2s;">
-                            Xem →
-                        </a>
+                    <!-- Title and Star -->
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+                        <h2 style="margin: 0; font-size: 1.3rem; font-weight: 600; color: #3f372f; flex: 1;">
+                            {{ entry.title }}
+                        </h2>
+                        {% if entry.is_favorite %}
+                        <span style="color: #C9B59C; font-size: 1.1rem;">⭐</span>
+                        {% endif %}
                     </div>
-                </div>
+
+                    <!-- Summary -->
+                    {% if entry.summary %}
+                    <p style="color: #7b7268; margin: 6px 0 12px 0; line-height: 1.5; font-size: 0.95rem;">
+                        {{ entry.summary|truncatewords:20 }}
+                    </p>
+                    {% endif %}
+
+                    <!-- Meta Info - Minimal -->
+                    <div style="display: flex; gap: 12px; align-items: center; font-size: 0.85rem; color: #7b7268;">
+                        {% if entry.topic %}
+                        <span>📌 {{ entry.topic.name }}</span>
+                        <span>•</span>
+                        {% endif %}
+                        <span>{{ entry.get_entry_type_display }}</span>
+                        <span>•</span>
+                        <span>{{ entry.updated_at|date:"d/m/Y" }}</span>
+                        {% if entry.tags %}
+                        <span>•</span>
+                        <span>
+                            {% for tag in entry.tags|split:"," %}
+                                #{{ tag|trim }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </span>
+                        {% endif %}
+                    </div>
+                </a>
                 {% endfor %}
             </div>
 
             {% if is_paginated %}
-            <div style="text-align: center; margin-top: 40px; padding-top: 30px; border-top: 1px solid #D9CFC7;">
-                <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+            <div style="margin-top: 40px; padding-top: 30px; border-top: 1px solid #EFE9E3;">
+                <div style="display: flex; gap: 10px; justify-content: center; align-items: center;">
                     {% if page_obj.has_previous %}
-                        <a href="?page=1" class="gitbook-nav-button">« Đầu</a>
-                        <a href="?page={{ page_obj.previous_page_number }}" class="gitbook-nav-button">‹ Trước</a>
+                        <a href="?page={{ page_obj.previous_page_number }}"
+                           style="padding: 8px 16px; background: #F9F8F6; color: #7b7268; border-radius: 6px; text-decoration: none; font-size: 0.9rem; transition: background 0.2s;"
+                           onmouseover="this.style.background='#EFE9E3';"
+                           onmouseout="this.style.background='#F9F8F6';">
+                            ← Trước
+                        </a>
                     {% endif %}
 
-                    <span style="padding: 10px 15px; color: #7b7268;">
+                    <span style="padding: 8px 16px; color: #7b7268; font-size: 0.9rem;">
                         Trang {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
                     </span>
 
                     {% if page_obj.has_next %}
-                        <a href="?page={{ page_obj.next_page_number }}" class="gitbook-nav-button">Tiếp ›</a>
-                        <a href="?page={{ page_obj.paginator.num_pages }}" class="gitbook-nav-button">Cuối »</a>
+                        <a href="?page={{ page_obj.next_page_number }}"
+                           style="padding: 8px 16px; background: #F9F8F6; color: #7b7268; border-radius: 6px; text-decoration: none; font-size: 0.9rem; transition: background 0.2s;"
+                           onmouseover="this.style.background='#EFE9E3';"
+                           onmouseout="this.style.background='#F9F8F6';">
+                            Tiếp →
+                        </a>
                     {% endif %}
                 </div>
             </div>
             {% endif %}
         {% else %}
-            <div style="text-align: center; padding: 60px 20px;">
-                <p style="font-size: 1.2rem; color: #7b7268; margin-bottom: 20px;">📚 Không có ghi chú nào</p>
-                <a href="{% url 'knowledge:entry_create' %}" style="padding: 12px 24px; background: linear-gradient(135deg, #C9B59C 0%, #D9CFC7 100%); color: white; border-radius: 6px; text-decoration: none; font-weight: 600; display: inline-block;">
-                    ➕ Tạo ghi chú đầu tiên
+            <div style="text-align: center; padding: 80px 20px;">
+                <div style="font-size: 3rem; margin-bottom: 20px;">📚</div>
+                <p style="font-size: 1.2rem; color: #7b7268; margin-bottom: 30px;">Chưa có ghi chú nào</p>
+                <a href="{% url 'knowledge:entry_create' %}"
+                   style="padding: 12px 30px; background: #C9B59C; color: white; border-radius: 6px; text-decoration: none; font-weight: 600; display: inline-block; transition: background 0.2s;"
+                   onmouseover="this.style.background='#B8A58B';"
+                   onmouseout="this.style.background='#C9B59C';">
+                    ✨ Tạo ghi chú đầu tiên
                 </a>
             </div>
         {% endif %}
