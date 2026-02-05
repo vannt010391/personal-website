@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}{% if object %}Chỉnh sửa{% else %}Tạo mới{% endif %} Bài viết{% endblock %}
+{% block title %}{% if object %}Edit{% else %}Create{% endif %} Post{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/forms.css' %}">
@@ -9,8 +9,8 @@
 
 {% block content %}
 <div class="card">
-    <h1>{% if object %}Chỉnh sửa Bài viết{% else %}Tạo Bài viết Mới{% endif %}</h1>
-    <a href="{% url 'blog:post_list' %}">&larr; Quay lại danh sách</a>
+    <h1>{% if object %}Edit Post{% else %}Create New Post{% endif %}</h1>
+    <a href="{% url 'blog:post_list' %}">&larr; Back to list</a>
 </div>
 
 <div class="card">
@@ -24,7 +24,7 @@
         {% endif %}
 
         <div class="form-group">
-            <label for="{{ form.title.id_for_label }}" class="form-label">Tiêu đề *</label>
+            <label for="{{ form.title.id_for_label }}" class="form-label">Title *</label>
             {{ form.title }}
             {% if form.title.errors %}
                 <ul class="errorlist">
@@ -45,7 +45,7 @@
         </div>
 
         <div class="form-group">
-            <label for="{{ form.category.id_for_label }}" class="form-label">Danh mục</label>
+            <label for="{{ form.category.id_for_label }}" class="form-label">Category</label>
             {{ form.category }}
             {% if form.category.errors %}
                 <ul class="errorlist">
@@ -55,9 +55,9 @@
         </div>
 
         <div class="form-group">
-            <label for="{{ form.excerpt.id_for_label }}" class="form-label">Tóm tắt</label>
+            <label for="{{ form.excerpt.id_for_label }}" class="form-label">Excerpt</label>
             {{ form.excerpt }}
-            <small class="form-help">Mô tả ngắn gọn về bài viết</small>
+            <small class="form-help">Short description of the post</small>
             {% if form.excerpt.errors %}
                 <ul class="errorlist">
                     {% for error in form.excerpt.errors %}<li>{{ error }}</li>{% endfor %}
@@ -66,9 +66,9 @@
         </div>
 
         <div class="form-group">
-            <label for="{{ form.content.id_for_label }}" class="form-label">Nội dung * (Markdown)</label>
+            <label for="{{ form.content.id_for_label }}" class="form-label">Content * (Markdown)</label>
             {{ form.content }}
-            <small class="form-help">Hỗ trợ Markdown: # Heading, **bold**, *italic*, `code`, etc.</small>
+            <small class="form-help">Supports Markdown: # Heading, **bold**, *italic*, `code`, etc.</small>
             {% if form.content.errors %}
                 <ul class="errorlist">
                     {% for error in form.content.errors %}<li>{{ error }}</li>{% endfor %}
@@ -77,7 +77,7 @@
         </div>
 
         <div class="form-group">
-            <label for="{{ form.status.id_for_label }}" class="form-label">Trạng thái *</label>
+            <label for="{{ form.status.id_for_label }}" class="form-label">Status *</label>
             {{ form.status }}
             {% if form.status.errors %}
                 <ul class="errorlist">
@@ -87,9 +87,9 @@
         </div>
 
         <div class="form-group">
-            <label for="{{ form.published_at.id_for_label }}" class="form-label">Ngày xuất bản</label>
+            <label for="{{ form.published_at.id_for_label }}" class="form-label">Published Date</label>
             {{ form.published_at }}
-            <small class="form-help">Để trống sẽ tự động đặt khi chuyển sang "Published"</small>
+            <small class="form-help">Leave blank to set automatically when switched to "Published"</small>
             {% if form.published_at.errors %}
                 <ul class="errorlist">
                     {% for error in form.published_at.errors %}<li>{{ error }}</li>{% endfor %}
@@ -99,9 +99,9 @@
 
         <div class="form-actions">
             <button type="submit" class="btn-form-primary">
-                {% if object %}Cập nhật{% else %}Tạo mới{% endif %}
+                {% if object %}Update{% else %}Create{% endif %}
             </button>
-            <a href="{% url 'blog:post_list' %}" class="btn-form-secondary">Hủy</a>
+            <a href="{% url 'blog:post_list' %}" class="btn-form-secondary">Cancel</a>
         </div>
     </form>
 </div>

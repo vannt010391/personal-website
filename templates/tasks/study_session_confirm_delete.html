@@ -1,23 +1,23 @@
 {% extends 'base.html' %}
 
-{% block title %}Xóa Phiên học{% endblock %}
+{% block title %}Delete Study Session{% endblock %}
 
 {% block content %}
 <div class="card">
-    <h1>Xác nhận xóa phiên học</h1>
-    <a href="{% url 'tasks:study_session_list' %}">&larr; Quay lại</a>
+    <h1>Confirm Study Session Deletion</h1>
+    <a href="{% url 'tasks:study_session_list' %}">&larr; Back</a>
 </div>
 
 <div class="card" style="background-color: #EFE9E3; border-left: 4px solid #C9B59C;">
     <h2>{{ object.subject }}</h2>
-    <p>Ngày: {{ object.date|date:"d/m/Y" }} | Thời lượng: {{ object.duration_minutes }} phút</p>
-    <p><strong>Cảnh báo:</strong> Bạn có chắc chắn muốn xóa phiên học này?</p>
+    <p>Date: {{ object.date|date:"d/m/Y" }} | Duration: {{ object.duration_minutes }} min</p>
+    <p><strong>Warning:</strong> Are you sure you want to delete this study session?</p>
 
     <form method="post" style="margin-top: 20px;">
         {% csrf_token %}
         <div style="display: flex; gap: 10px;">
-            <button type="submit" class="btn btn-danger">Xác nhận xóa</button>
-            <a href="{% url 'tasks:study_session_list' %}" class="btn">Hủy</a>
+            <button type="submit" class="btn btn-danger">Confirm Delete</button>
+            <a href="{% url 'tasks:study_session_list' %}" class="btn">Cancel</a>
         </div>
     </form>
 </div>

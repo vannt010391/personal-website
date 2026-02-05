@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Kanban Board - Công Việc{% endblock %}
+{% block title %}Kanban Board - Tasks{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/kanban.css' %}">
@@ -12,11 +12,11 @@
     <div style="display: flex; justify-content: space-between; align-items: center;">
         <div>
             <h1>Kanban Board</h1>
-            <a href="{% url 'tasks:dashboard' %}">&larr; Quay lại Dashboard</a>
+            <a href="{% url 'tasks:dashboard' %}">&larr; Back to Dashboard</a>
         </div>
         <div style="display: flex; gap: 10px;">
-            <a href="{% url 'tasks:task_list' %}" class="btn">Chế độ danh sách</a>
-            <a href="{% url 'tasks:task_create' %}" class="btn btn-success">Thêm công việc mới</a>
+            <a href="{% url 'tasks:task_list' %}" class="btn">List View</a>
+            <a href="{% url 'tasks:task_create' %}" class="btn btn-success">Create Task</a>
         </div>
     </div>
 </div>
@@ -25,7 +25,7 @@
     <!-- Pending Column -->
     <div class="kanban-column">
         <div class="kanban-column-header" style="background-color: #EFE9E3; border-left: 4px solid #C9B59C;">
-            <h3>Chưa làm</h3>
+            <h3>Pending</h3>
             <span class="task-count">{{ pending_tasks.count }}</span>
         </div>
         <div class="kanban-column-body">
@@ -61,12 +61,12 @@
                 </div>
 
                 <div class="kanban-card-actions">
-                    <a href="{% url 'tasks:task_update' task.pk %}" class="btn-small">Chỉnh sửa</a>
-                    <a href="{% url 'tasks:task_delete' task.pk %}" class="btn-small btn-danger">Xóa</a>
+                    <a href="{% url 'tasks:task_update' task.pk %}" class="btn-small">Edit</a>
+                    <a href="{% url 'tasks:task_delete' task.pk %}" class="btn-small btn-danger">Delete</a>
                 </div>
             </div>
             {% empty %}
-            <p class="empty-column">Không có công việc nào</p>
+            <p class="empty-column">No tasks</p>
             {% endfor %}
         </div>
     </div>
@@ -74,7 +74,7 @@
     <!-- In Progress Column -->
     <div class="kanban-column">
         <div class="kanban-column-header" style="background-color: #F9F8F6; border-left: 4px solid #C9B59C;">
-            <h3>Đang làm</h3>
+            <h3>In Progress</h3>
             <span class="task-count">{{ in_progress_tasks.count }}</span>
         </div>
         <div class="kanban-column-body">
@@ -110,12 +110,12 @@
                 </div>
 
                 <div class="kanban-card-actions">
-                    <a href="{% url 'tasks:task_update' task.pk %}" class="btn-small">Chỉnh sửa</a>
-                    <a href="{% url 'tasks:task_delete' task.pk %}" class="btn-small btn-danger">Xóa</a>
+                    <a href="{% url 'tasks:task_update' task.pk %}" class="btn-small">Edit</a>
+                    <a href="{% url 'tasks:task_delete' task.pk %}" class="btn-small btn-danger">Delete</a>
                 </div>
             </div>
             {% empty %}
-            <p class="empty-column">Không có công việc nào</p>
+            <p class="empty-column">No tasks</p>
             {% endfor %}
         </div>
     </div>
@@ -123,7 +123,7 @@
     <!-- Completed Column -->
     <div class="kanban-column">
         <div class="kanban-column-header" style="background-color: #D9CFC7; border-left: 4px solid #C9B59C;">
-            <h3>Hoàn thành</h3>
+            <h3>Completed</h3>
             <span class="task-count">{{ completed_tasks.count }}</span>
         </div>
         <div class="kanban-column-body">
@@ -156,12 +156,12 @@
                 </div>
 
                 <div class="kanban-card-actions">
-                    <a href="{% url 'tasks:task_update' task.pk %}" class="btn-small">Xem</a>
-                    <a href="{% url 'tasks:task_delete' task.pk %}" class="btn-small btn-danger">Xóa</a>
+                    <a href="{% url 'tasks:task_update' task.pk %}" class="btn-small">View</a>
+                    <a href="{% url 'tasks:task_delete' task.pk %}" class="btn-small btn-danger">Delete</a>
                 </div>
             </div>
             {% empty %}
-            <p class="empty-column">Chưa hoàn thành công việc nào</p>
+            <p class="empty-column">No completed tasks yet</p>
             {% endfor %}
         </div>
     </div>

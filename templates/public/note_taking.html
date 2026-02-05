@@ -8,100 +8,119 @@
     <!-- Hero Section -->
     <div class="zen-hero">
         <div class="zen-hero-content">
-            <h1>📝 Note-Taking</h1>
-            <p>Quick notes, insights, and knowledge snippets</p>
+            <h1>Note-Taking</h1>
+            <p class="zen-hero-subtitle">Personal notes and knowledge insights</p>
         </div>
     </div>
 
     <!-- Topics Navigation -->
     <div style="max-width: 1200px; margin: 40px auto; padding: 0 20px;">
-        <div style="background: white; border-radius: 16px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin-bottom: 40px;">
-            <h3 style="margin: 0 0 20px; font-weight: 300; color: #3f372f;">
-                📚 Topics
+        <div style="background: white; border-radius: 12px; padding: 30px; box-shadow: 0 4px 20px var(--zen-shadow); margin-bottom: 40px;">
+            <h3 style="margin: 0 0 20px; font-weight: 300; color: var(--zen-text); font-size: 1.1rem; letter-spacing: 0.03em;">
+                TOPICS
             </h3>
             <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                 {% if topics %}
-                    <a href="?topic=" style="padding: 10px 20px; background: {% if not selected_topic %}linear-gradient(135deg, #C9B59C 0%, #D9CFC7 100%){% else %}#F9F8F6{% endif %}; color: {% if not selected_topic %}white{% else %}#7b7268{% endif %}; border-radius: 25px; text-decoration: none; transition: all 0.3s;">
-                        All Topics
+                    <a href="?topic=" style="padding: 8px 18px; background: {% if not selected_topic %}var(--zen-primary){% else %}var(--zen-bg){% endif %}; color: {% if not selected_topic %}white{% else %}var(--zen-text-light){% endif %}; border-radius: 20px; text-decoration: none; transition: all 0.3s; font-size: 0.9rem; font-weight: 500;">
+                        All
                     </a>
                     {% for topic in topics %}
-                        <a href="?topic={{ topic.slug }}" style="padding: 10px 20px; background: {% if selected_topic == topic %}linear-gradient(135deg, #C9B59C 0%, #D9CFC7 100%){% else %}#F9F8F6{% endif %}; color: {% if selected_topic == topic %}white{% else %}#7b7268{% endif %}; border-radius: 25px; text-decoration: none; transition: all 0.3s;">
-                            {{ topic.name }} ({{ topic.entries_count }})
+                        {% if topic.entries_count > 0 %}
+                        <a href="?topic={{ topic.slug }}" style="padding: 8px 18px; background: {% if selected_topic == topic %}var(--zen-primary){% else %}var(--zen-bg){% endif %}; color: {% if selected_topic == topic %}white{% else %}var(--zen-text-light){% endif %}; border-radius: 20px; text-decoration: none; transition: all 0.3s; font-size: 0.9rem; font-weight: 500;">
+                            {{ topic.name }} <span style="opacity: 0.7; font-size: 0.85rem;">({{ topic.entries_count }})</span>
                         </a>
+                        {% endif %}
                     {% endfor %}
                 {% else %}
-                    <p style="color: #7b7268; margin: 0;">No topics yet.</p>
+                    <p style="color: var(--zen-text-light); margin: 0; font-size: 0.95rem;">No topics available.</p>
                 {% endif %}
             </div>
         </div>
     </div>
 
     <!-- Notes Grid -->
-    <div class="zen-posts-grid">
+    <div class="zen-posts-grid" style="max-width: 1200px; margin: 0 auto; padding: 0 20px 60px;">
         {% if entries %}
             {% for entry in entries %}
                 <article class="zen-post-card">
-                    <div class="zen-post-card-header">
-                        {% if entry.topic %}
-                            <span class="zen-post-category">{{ entry.topic.name }}</span>
-                        {% endif %}
-                    </div>
-                    <h2 class="zen-post-card-title">{{ entry.title }}</h2>
-                    <div class="zen-post-card-excerpt">
-                        {{ entry.content|striptags|truncatewords:30 }}
-                    </div>
-                    <div class="zen-post-card-footer">
-                        <div class="zen-post-meta">
-                            <span>📅 {{ entry.created_at|date:"M d, Y" }}</span>
+                    <div class="zen-post-card-content">
+                        <div style="margin-bottom: 15px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
+                            {% if entry.topic %}
+                                <span class="zen-post-category">
+                                    {{ entry.topic.name }}
+                                </span>
+                            {% endif %}
+                            {% if entry.entry_type %}
+                            <span style="display: inline-block; background: var(--zen-bg-alt); padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; color: var(--zen-text-light); text-transform: uppercase; letter-spacing: 0.05em;">
+                                {{ entry.get_entry_type_display }}
+                            </span>
+                            {% endif %}
                         </div>
-                        <a href="{% url 'knowledge:entry_detail' entry.slug %}" class="zen-read-more">
-                            Read note →
-                        </a>
+                        
+                        <h2 class="zen-post-card-title">
+                            <a href="{% url 'knowledge:entry_detail' entry.slug %}">{{ entry.title }}</a>
+                        </h2>
+                        
+                        {% if entry.summary %}
+                        <div style="color: var(--zen-text); font-size: 1rem; margin-bottom: 15px; line-height: 1.7;">
+                            {{ entry.summary }}
+                        </div>
+                        {% endif %}
+                        
+                        <div class="zen-post-card-excerpt">
+                            {{ entry.content|striptags|truncatewords:25 }}
+                        </div>
+                        
+                        <div class="zen-post-card-footer">
+                            <div class="zen-post-meta">
+                                <span class="zen-post-meta-item">{{ entry.created_at|date:"M d, Y" }}</span>
+                                {% if entry.tags %}
+                                <span class="zen-post-meta-item">{{ entry.tags }}</span>
+                                {% endif %}
+                            </div>
+                            <a href="{% url 'knowledge:entry_detail' entry.slug %}" class="zen-read-more">
+                                Read more →
+                            </a>
+                        </div>
                     </div>
                 </article>
             {% endfor %}
         {% else %}
-            <div style="grid-column: 1 / -1; text-align: center; padding: 100px 20px; background: white; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
-                <div style="font-size: 4rem; margin-bottom: 20px;">📝</div>
-                <h2 style="font-weight: 300; color: #3f372f; margin: 0 0 15px;">No notes yet</h2>
-                <p style="color: #7b7268; font-size: 1.1rem;">
+            <div style="grid-column: 1 / -1; text-align: center; padding: 100px 20px; background: white; border-radius: 16px; box-shadow: 0 4px 20px var(--zen-shadow);">
+                <h2 style="font-weight: 300; color: var(--zen-primary); margin: 0 0 15px; font-size: 2rem;">No notes yet</h2>
+                <p style="color: var(--zen-text-light); font-size: 1.1rem; margin: 0;">
                     {% if selected_topic %}
-                        No notes in this topic yet.
+                        No notes in this topic.
                     {% else %}
-                        Start sharing your knowledge by creating your first note.
+                        No notes available.
                     {% endif %}
                 </p>
-                {% if user.is_authenticated %}
-                    <a href="{% url 'knowledge:entry_create' %}" class="zen-read-more" style="margin-top: 20px; display: inline-block;">
-                        Create your first note →
-                    </a>
-                {% endif %}
             </div>
         {% endif %}
     </div>
 
     <!-- Pagination -->
     {% if is_paginated %}
-        <div style="max-width: 1200px; margin: 60px auto 0; padding: 0 20px; text-align: center;">
+        <div style="max-width: 1200px; margin: 0 auto 60px; padding: 0 20px; text-align: center;">
             <div style="display: inline-flex; gap: 10px; align-items: center;">
                 {% if page_obj.has_previous %}
-                    <a href="?page=1{% if selected_topic %}&topic={{ selected_topic.slug }}{% endif %}" style="padding: 10px 20px; background: white; color: #C9B59C; border-radius: 8px; text-decoration: none; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <a href="?page=1{% if selected_topic %}&topic={{ selected_topic.slug }}{% endif %}" class="zen-read-more" style="padding: 10px 20px;">
                         First
                     </a>
-                    <a href="?page={{ page_obj.previous_page_number }}{% if selected_topic %}&topic={{ selected_topic.slug }}{% endif %}" style="padding: 10px 20px; background: white; color: #C9B59C; border-radius: 8px; text-decoration: none; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <a href="?page={{ page_obj.previous_page_number }}{% if selected_topic %}&topic={{ selected_topic.slug }}{% endif %}" class="zen-read-more" style="padding: 10px 20px;">
                         Previous
                     </a>
                 {% endif %}
 
-                <span style="padding: 10px 20px; background: linear-gradient(135deg, #C9B59C 0%, #D9CFC7 100%); color: white; border-radius: 8px;">
-                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                <span style="padding: 10px 20px; background: var(--zen-primary); color: white; border-radius: 6px; font-size: 0.9rem;">
+                    {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
                 </span>
 
                 {% if page_obj.has_next %}
-                    <a href="?page={{ page_obj.next_page_number }}{% if selected_topic %}&topic={{ selected_topic.slug }}{% endif %}" style="padding: 10px 20px; background: white; color: #C9B59C; border-radius: 8px; text-decoration: none; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <a href="?page={{ page_obj.next_page_number }}{% if selected_topic %}&topic={{ selected_topic.slug }}{% endif %}" class="zen-read-more" style="padding: 10px 20px;">
                         Next
                     </a>
-                    <a href="?page={{ page_obj.paginator.num_pages }}{% if selected_topic %}&topic={{ selected_topic.slug }}{% endif %}" style="padding: 10px 20px; background: white; color: #C9B59C; border-radius: 8px; text-decoration: none; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <a href="?page={{ page_obj.paginator.num_pages }}{% if selected_topic %}&topic={{ selected_topic.slug }}{% endif %}" class="zen-read-more" style="padding: 10px 20px;">
                         Last
                     </a>
                 {% endif %}

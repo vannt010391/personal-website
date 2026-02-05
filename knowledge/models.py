@@ -19,6 +19,11 @@ class KnowledgeEntry(models.Model):
         ('reference', 'Reference'),
     ]
 
+    STATUS_CHOICES = [
+        ('private', 'Private'),
+        ('public', 'Public'),
+    ]
+
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='knowledge_entries')
     title = models.CharField(max_length=200)
     slug = models.SlugField(unique=True)
@@ -33,6 +38,7 @@ class KnowledgeEntry(models.Model):
     )
     order = models.IntegerField(default=0, help_text="Ordering within a topic or parent page")
     entry_type = models.CharField(max_length=10, choices=TYPE_CHOICES, default='note')
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='private')
     content = models.TextField()
     summary = models.TextField(max_length=500, blank=True)
     source_url = models.URLField(blank=True)

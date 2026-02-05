@@ -14,4 +14,10 @@ urlpatterns = [
     path('study-session/new/', views.StudySessionCreateView.as_view(), name='study_session_create'),
     path('study-session/<int:pk>/edit/', views.StudySessionUpdateView.as_view(), name='study_session_update'),
     path('study-session/<int:pk>/delete/', views.StudySessionDeleteView.as_view(), name='study_session_delete'),
+    
+    # List100 admin URLs
+    path('list100/admin/', views.list100_admin, name='list100_admin'),
+    path('list100/new/', views.List100ItemCreateView.as_view(), name='list100_create'),
+    path('list100/<int:pk>/edit/', views.List100ItemUpdateView.as_view(), name='list100_update'),
+    path('list100/<int:pk>/delete/', views.List100ItemDeleteView.as_view(), name='list100_delete'),
 ]

@@ -1,33 +1,33 @@
 {% extends 'base.html' %}
 
-{% block title %}Dashboard Công Việc{% endblock %}
+{% block title %}Task Dashboard{% endblock %}
 
 {% block content %}
 <div class="card">
-    <h1>Dashboard Công Việc & Học Tập</h1>
-    <p>Quản lý công việc và theo dõi tiến độ học tập của bạn</p>
+    <h1>Task & Study Dashboard</h1>
+    <p>Manage tasks and track your study progress</p>
 </div>
 
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
     <div class="card" style="background-color: #EFE9E3; border-left: 4px solid #C9B59C;">
-        <h3>Công việc hôm nay</h3>
+        <h3>Today's Tasks</h3>
         <p style="font-size: 2em; font-weight: bold; margin: 10px 0;">{{ today_tasks.count }}</p>
     </div>
 
     <div class="card" style="background-color: #D9CFC7; border-left: 4px solid #C9B59C;">
-        <h3>Quá hạn</h3>
+        <h3>Overdue</h3>
         <p style="font-size: 2em; font-weight: bold; margin: 10px 0;">{{ overdue_tasks.count }}</p>
     </div>
 
     <div class="card" style="background-color: #F9F8F6; border-left: 4px solid #C9B59C;">
-        <h3>Đang thực hiện</h3>
+        <h3>In Progress</h3>
         <p style="font-size: 2em; font-weight: bold; margin: 10px 0;">{{ in_progress_tasks.count }}</p>
     </div>
 </div>
 
 {% if today_tasks %}
 <div class="card">
-    <h2>Công việc hôm nay</h2>
+    <h2>Today's Tasks</h2>
     <ul style="list-style: none; padding: 0;">
         {% for task in today_tasks %}
         <li style="padding: 10px; border-bottom: 1px solid #D9CFC7; display: flex; justify-content: space-between; align-items: center;">
@@ -38,7 +38,7 @@
                     {{ task.get_priority_display }}
                 </span>
             </div>
-            <a href="{% url 'tasks:task_update' task.pk %}" class="btn" style="font-size: 0.9em;">Chi tiết</a>
+            <a href="{% url 'tasks:task_update' task.pk %}" class="btn" style="font-size: 0.9em;">Details</a>
         </li>
         {% endfor %}
     </ul>
@@ -47,17 +47,17 @@
 
 {% if overdue_tasks %}
 <div class="card">
-    <h2>Công việc quá hạn</h2>
+    <h2>Overdue Tasks</h2>
     <ul style="list-style: none; padding: 0;">
         {% for task in overdue_tasks %}
         <li style="padding: 10px; border-bottom: 1px solid #D9CFC7; display: flex; justify-content: space-between; align-items: center;">
             <div>
                 <strong style="color: #C9B59C;">{{ task.title }}</strong>
                 <span style="margin-left: 10px; font-size: 0.8em; color: #7b7268;">
-                    Hạn: {{ task.due_date|date:"d/m/Y" }}
+                    Due: {{ task.due_date|date:"d/m/Y" }}
                 </span>
             </div>
-            <a href="{% url 'tasks:task_update' task.pk %}" class="btn btn-danger" style="font-size: 0.9em;">Xem</a>
+            <a href="{% url 'tasks:task_update' task.pk %}" class="btn btn-danger" style="font-size: 0.9em;">View</a>
         </li>
         {% endfor %}
     </ul>
@@ -66,7 +66,7 @@
 
 {% if in_progress_tasks %}
 <div class="card">
-    <h2>Đang thực hiện</h2>
+    <h2>In Progress</h2>
     <ul style="list-style: none; padding: 0;">
         {% for task in in_progress_tasks %}
         <li style="padding: 10px; border-bottom: 1px solid #D9CFC7; display: flex; justify-content: space-between; align-items: center;">
@@ -74,11 +74,11 @@
                 <strong>{{ task.title }}</strong>
                 {% if task.due_date %}
                 <span style="margin-left: 10px; font-size: 0.8em; color: #7b7268;">
-                    Hạn: {{ task.due_date|date:"d/m/Y" }}
+                    Due: {{ task.due_date|date:"d/m/Y" }}
                 </span>
                 {% endif %}
             </div>
-            <a href="{% url 'tasks:task_update' task.pk %}" class="btn" style="font-size: 0.9em;">Chi tiết</a>
+            <a href="{% url 'tasks:task_update' task.pk %}" class="btn" style="font-size: 0.9em;">Details</a>
         </li>
         {% endfor %}
     </ul>
@@ -87,18 +87,18 @@
 
 {% if recent_sessions %}
 <div class="card">
-    <h2>Phiên học gần đây</h2>
+    <h2>Recent Study Sessions</h2>
     <ul style="list-style: none; padding: 0;">
         {% for session in recent_sessions %}
         <li style="padding: 10px; border-bottom: 1px solid #D9CFC7;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <div>
                     <strong>{{ session.subject }}</strong>
-                    <span style="color: #7b7268; font-size: 0.85em; margin-left: 10px;">{{ session.duration_minutes }} phút</span>
+                    <span style="color: #7b7268; font-size: 0.85em; margin-left: 10px;">{{ session.duration_minutes }} min</span>
                 </div>
                 <div>
                     <span style="color: #7b7268; font-size: 0.9em; margin-right: 10px;">{{ session.date|date:"d/m/Y" }}</span>
-                    <a href="{% url 'tasks:study_session_update' session.pk %}" class="btn" style="font-size: 0.85em;">Sửa</a>
+                    <a href="{% url 'tasks:study_session_update' session.pk %}" class="btn" style="font-size: 0.85em;">Edit</a>
                 </div>
             </div>
         </li>
@@ -108,13 +108,13 @@
 {% endif %}
 
 <div class="card">
-    <h3>Quản lý</h3>
+    <h3>Management</h3>
     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-        <a href="{% url 'tasks:task_list' %}" class="btn">Danh sách công việc</a>
+        <a href="{% url 'tasks:task_list' %}" class="btn">Task List</a>
         <a href="{% url 'tasks:task_kanban' %}" class="btn">Kanban Board</a>
-        <a href="{% url 'tasks:study_session_list' %}" class="btn">Phiên học tập</a>
-        <a href="{% url 'tasks:task_create' %}" class="btn btn-success">Thêm công việc mới</a>
-        <a href="{% url 'tasks:study_session_create' %}" class="btn btn-success">Thêm phiên học</a>
+        <a href="{% url 'tasks:study_session_list' %}" class="btn">Study Sessions</a>
+        <a href="{% url 'tasks:task_create' %}" class="btn btn-success">Create Task</a>
+        <a href="{% url 'tasks:study_session_create' %}" class="btn btn-success">Create Study Session</a>
     </div>
 </div>
 {% endblock %}

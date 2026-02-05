@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Tìm kiếm - Kiến Thức{% endblock %}
+{% block title %}Search - Knowledge{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/gitbook-style.css' %}">
@@ -14,16 +14,16 @@
         <div style="margin-bottom: 20px;">
             <a href="{% url 'knowledge:entry_create' %}"
                style="display: block; padding: 10px; background: linear-gradient(135deg, #C9B59C 0%, #D9CFC7 100%); color: white; text-align: center; border-radius: 6px; text-decoration: none; font-weight: 600; transition: all 0.2s;">
-                ➕ Trang mới
+                New Page
             </a>
         </div>
 
-        <h3>📚 Tất cả Pages</h3>
+        <h3>All Pages</h3>
 
         <!-- Search Box for Sidebar -->
         {% if all_entries %}
         <div style="margin-bottom: 15px;">
-            <input type="text" id="sidebar-page-search" placeholder="🔍 Lọc trang..."
+            <input type="text" id="sidebar-page-search" placeholder="Filter pages..."
                    style="width: 100%; padding: 8px 12px; border: 1px solid #D9CFC7; border-radius: 6px; font-size: 0.85rem; color: #3f372f; background: white; transition: all 0.2s;"
                    onkeyup="filterSidebarPages(this.value)"
                    onfocus="this.style.borderColor='#C9B59C'; this.style.boxShadow='0 0 0 3px rgba(201, 181, 156, 0.1)';"
@@ -35,17 +35,17 @@
                 {% include "knowledge/entry_tree_item_sidebar.html" with entry=entry %}
             {% endfor %}
             <div id="sidebar-no-results" style="display: none; padding: 15px; text-align: center; color: #7b7268; font-size: 0.85rem; background: #F9F8F6; border-radius: 6px; margin-top: 10px;">
-                Không tìm thấy trang nào
+                No pages found
             </div>
         </div>
         {% else %}
-            <p style="color: #7b7268; font-size: 0.9rem; padding: 10px;">Chưa có trang nào</p>
+            <p style="color: #7b7268; font-size: 0.9rem; padding: 10px;">No pages yet</p>
         {% endif %}
 
-        <h3>⚙️ Quản lý</h3>
-        <a href="{% url 'knowledge:entry_list' %}" class="gitbook-sidebar-item">📋 Danh sách</a>
-        <a href="{% url 'knowledge:topic_list' %}" class="gitbook-sidebar-item">📌 Chủ đề</a>
-        <a href="{% url 'knowledge:resource_list' %}" class="gitbook-sidebar-item">📖 Tài liệu</a>
+        <h3>Management</h3>
+        <a href="{% url 'knowledge:entry_list' %}" class="gitbook-sidebar-item">List</a>
+        <a href="{% url 'knowledge:topic_list' %}" class="gitbook-sidebar-item">Topics</a>
+        <a href="{% url 'knowledge:resource_list' %}" class="gitbook-sidebar-item">Resources</a>
     </aside>
 
     <!-- Main Content -->
@@ -53,8 +53,8 @@
         <!-- Header -->
         <div class="gitbook-header" style="margin-bottom: 20px;">
             <div>
-                <h1 class="gitbook-title" style="font-size: 2.2rem; margin: 0 0 10px 0;">🔍 Tìm kiếm</h1>
-                <p style="color: #7b7268; margin: 0;">Tìm kiếm trong kho kiến thức của bạn</p>
+                <h1 class="gitbook-title" style="font-size: 2.2rem; margin: 0 0 10px 0;">Search</h1>
+                <p style="color: #7b7268; margin: 0;">Search your knowledge base</p>
             </div>
         </div>
 
@@ -67,13 +67,13 @@
                         type="text"
                         name="q"
                         value="{{ query }}"
-                        placeholder="Nhập từ khóa tìm kiếm..."
+                        placeholder="Enter search keywords..."
                         style="flex: 1; padding: 12px 16px; border: 2px solid #D9CFC7; border-radius: 6px; font-size: 1rem; transition: border-color 0.2s;"
                         onfocus="this.style.borderColor='#C9B59C'"
                         onblur="this.style.borderColor='#D9CFC7'"
                     />
                     <button type="submit" style="padding: 12px 24px; background: linear-gradient(135deg, #C9B59C 0%, #D9CFC7 100%); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.2s; white-space: nowrap;">
-                        🔍 Tìm kiếm
+                        Search
                     </button>
                 </div>
                 {% if selected_topic %}
@@ -86,13 +86,13 @@
 
             <!-- Filters -->
             <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
-                <span style="color: #7b7268; font-weight: 600; font-size: 0.9rem;">Bộ lọc:</span>
+                <span style="color: #7b7268; font-weight: 600; font-size: 0.9rem;">Filters:</span>
 
                 <!-- Topic Filter -->
                 <div style="display: flex; gap: 6px; flex-wrap: wrap;">
                     <a href="{% url 'knowledge:search' %}?q={{ query }}"
                        class="filter-chip {% if not selected_topic %}active{% endif %}">
-                        📚 Tất cả
+                        All Topics
                     </a>
                     {% for topic in topics %}
                     <a href="{% url 'knowledge:search' %}?q={{ query }}&topic={{ topic.id }}{% if selected_type %}&type={{ selected_type }}{% endif %}"
@@ -108,23 +108,23 @@
                 <div style="display: flex; gap: 6px; flex-wrap: wrap;">
                     <a href="{% url 'knowledge:search' %}?q={{ query }}{% if selected_topic %}&topic={{ selected_topic }}{% endif %}"
                        class="filter-chip {% if not selected_type %}active{% endif %}">
-                        Tất cả loại
+                        All Types
                     </a>
                     <a href="{% url 'knowledge:search' %}?q={{ query }}&type=note{% if selected_topic %}&topic={{ selected_topic }}{% endif %}"
                        class="filter-chip {% if selected_type == 'note' %}active{% endif %}">
-                        Ghi chú
+                        Notes
                     </a>
                     <a href="{% url 'knowledge:search' %}?q={{ query }}&type=research{% if selected_topic %}&topic={{ selected_topic }}{% endif %}"
                        class="filter-chip {% if selected_type == 'research' %}active{% endif %}">
-                        Nghiên cứu
+                        Research
                     </a>
                     <a href="{% url 'knowledge:search' %}?q={{ query }}&type=article{% if selected_topic %}&topic={{ selected_topic }}{% endif %}"
                        class="filter-chip {% if selected_type == 'article' %}active{% endif %}">
-                        Bài viết
+                        Articles
                     </a>
                     <a href="{% url 'knowledge:search' %}?q={{ query }}&type=reference{% if selected_topic %}&topic={{ selected_topic }}{% endif %}"
                        class="filter-chip {% if selected_type == 'reference' %}active{% endif %}">
-                        Tham khảo
+                        References
                     </a>
                 </div>
             </div>
@@ -134,11 +134,11 @@
         {% if query %}
         <div style="margin-bottom: 30px; padding: 15px; background: white; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #EFE9E3;">
             <div>
-                <span style="color: #3f372f; font-weight: 600;">Tìm thấy {{ result_count }} kết quả</span>
-                <span style="color: #7b7268; font-size: 0.9rem;"> trong {{ query_time|floatformat:3 }} giây</span>
+                <span style="color: #3f372f; font-weight: 600;">Found {{ result_count }} results</span>
+                <span style="color: #7b7268; font-size: 0.9rem;"> in {{ query_time|floatformat:3 }} seconds</span>
             </div>
             {% if results %}
-            <a href="{% url 'knowledge:search' %}" style="color: #C9B59C; text-decoration: none; font-size: 0.9rem; font-weight: 600;">Xóa tìm kiếm →</a>
+            <a href="{% url 'knowledge:search' %}" style="color: #C9B59C; text-decoration: none; font-size: 0.9rem; font-weight: 600;">Clear Search →</a>
             {% endif %}
         </div>
 
@@ -178,25 +178,25 @@
             </div>
         {% else %}
             <div style="text-align: center; padding: 60px 20px; background: #F9F8F6; border-radius: 8px;">
-                <div style="font-size: 3rem; margin-bottom: 15px;">😕</div>
-                <p style="font-size: 1.2rem; color: #3f372f; margin-bottom: 10px; font-weight: 600;">Không tìm thấy kết quả nào</p>
-                <p style="color: #7b7268; margin-bottom: 30px;">Không tìm thấy kết quả cho "{{ query }}". Hãy thử từ khóa khác hoặc xóa bộ lọc.</p>
+                <div style="font-size: 3rem; margin-bottom: 15px;"></div>
+                <p style="font-size: 1.2rem; color: #3f372f; margin-bottom: 10px; font-weight: 600;">No results found</p>
+                <p style="color: #7b7268; margin-bottom: 30px;">No results found for "{{ query }}". Try different keywords or clear filters.</p>
                 <a href="{% url 'knowledge:search' %}" style="padding: 12px 24px; background: linear-gradient(135deg, #C9B59C 0%, #D9CFC7 100%); color: white; border-radius: 6px; text-decoration: none; font-weight: 600; display: inline-block;">
-                    ← Tìm kiếm mới
+                    ← New Search
                 </a>
             </div>
         {% endif %}
         {% else %}
             <div style="text-align: center; padding: 60px 20px; background: #F9F8F6; border-radius: 8px;">
-                <div style="font-size: 3rem; margin-bottom: 15px;">🔍</div>
-                <p style="font-size: 1.2rem; color: #3f372f; margin-bottom: 10px; font-weight: 600;">Bắt đầu tìm kiếm</p>
-                <p style="color: #7b7268; margin-bottom: 30px;">Nhập từ khóa để tìm kiếm trong tiêu đề, nội dung, tóm tắt và tags của các ghi chú.</p>
+                <div style="font-size: 3rem; margin-bottom: 15px;"></div>
+                <p style="font-size: 1.2rem; color: #3f372f; margin-bottom: 10px; font-weight: 600;">Start Searching</p>
+                <p style="color: #7b7268; margin-bottom: 30px;">Enter keywords to search in titles, content, summaries and tags of entries.</p>
                 <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
                     <a href="{% url 'knowledge:entry_list' %}" style="padding: 12px 24px; background: white; border: 2px solid #D9CFC7; color: #3f372f; border-radius: 6px; text-decoration: none; font-weight: 600; display: inline-block;">
-                        📋 Xem danh sách
+                        View List
                     </a>
                     <a href="{% url 'knowledge:entry_create' %}" style="padding: 12px 24px; background: linear-gradient(135deg, #C9B59C 0%, #D9CFC7 100%); color: white; border-radius: 6px; text-decoration: none; font-weight: 600; display: inline-block;">
-                        ➕ Tạo trang mới
+                        Create New Page
                     </a>
                 </div>
             </div>

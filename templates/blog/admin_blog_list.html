@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Blog Management{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/blog-zen.css' %}">
+<link rel="stylesheet" href="{% static 'css/admin-portal.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="list100-admin">
+    <div class="container" style="max-width: 1200px;">
+        <div class="page-header">
+            <h1>Blog Management</h1>
+            <div style="display: flex; gap: 10px;">
+                <a href="{% url 'blog:post_create' %}" class="btn btn-primary">+ Create Post</a>
+                <a href="{% url 'blog:category_list' %}" class="btn btn-secondary">Categories</a>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
+            <div class="stat-card">
+                <div class="stat-number">{{ total_posts }}</div>
+                <div class="stat-label">Total</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" style="color: #059669;">{{ published_posts }}</div>
+                <div class="stat-label">Published</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" style="color: #F59E0B;">{{ draft_posts }}</div>
+                <div class="stat-label">Draft</div>
+            </div>
+        </div>
+
+        <!-- Category Filter -->
+        {% if categories %}
+        <div style="background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 30px;">
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <a href="{% url 'blog:admin_blog_list' %}" 
+                   style="padding: 6px 16px; background: {% if not current_category %}var(--zen-primary){% else %}var(--zen-bg){% endif %}; color: {% if not current_category %}white{% else %}var(--zen-text-light){% endif %}; border-radius: 20px; text-decoration: none; font-size: 0.9rem; transition: all 0.2s;">
+                    All
+                </a>
+                {% for category in categories %}
+                <a href="{% url 'blog:admin_blog_by_category' category.slug %}"
+                   style="padding: 6px 16px; background: {% if current_category.id == category.id %}var(--zen-primary){% else %}var(--zen-bg){% endif %}; color: {% if current_category.id == category.id %}white{% else %}var(--zen-text-light){% endif %}; border-radius: 20px; text-decoration: none; font-size: 0.9rem; transition: all 0.2s;">
+                    {{ category.name }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Posts Table -->
+        <div class="items-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th style="width: 150px;">Category</th>
+                        <th style="width: 100px;">Status</th>
+                        <th style="width: 120px;">Created Date</th>
+                        <th style="width: 120px;">Published</th>
+                        <th style="width: 140px;"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for post in posts %}
+                    <tr>
+                        <td>
+                            <strong style="color: var(--zen-text);">{{ post.title }}</strong>
+                            {% if post.excerpt %}
+                            <div style="color: var(--zen-text-light); font-size: 0.85rem; margin-top: 4px;">
+                                {{ post.excerpt|truncatewords:15 }}
+                            </div>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if post.category %}
+                            <span style="background: var(--zen-bg); padding: 4px 10px; border-radius: 12px; font-size: 0.85rem;">
+                                {{ post.category.name }}
+                            </span>
+                            {% else %}
+                            <span style="color: var(--zen-text-light); font-size: 0.85rem;">—</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if post.status == 'published' %}
+                            <span class="status-badge status-completed">Published</span>
+                            {% else %}
+                            <span class="status-badge status-in_progress">Draft</span>
+                            {% endif %}
+                        </td>
+                        <td style="font-size: 0.9rem; color: var(--zen-text-light);">
+                            {{ post.created_at|date:"d/m/Y" }}
+                        </td>
+                        <td style="font-size: 0.9rem; color: var(--zen-text-light);">
+                            {% if post.published_at %}
+                                {{ post.published_at|date:"d/m/Y" }}
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <a href="{% url 'blog:post_detail' post.slug %}" class="btn" style="background: #10B981; color: white; padding: 6px 12px; font-size: 0.85rem;" title="View">View</a>
+                                <a href="{% url 'blog:post_update' post.slug %}" class="btn btn-edit" style="padding: 6px 12px; font-size: 0.85rem;">Edit</a>
+                                <a href="{% url 'blog:post_delete' post.slug %}" class="btn btn-delete" style="padding: 6px 12px; font-size: 0.85rem;">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 60px 20px; color: var(--zen-text-light);">
+                            <p style="font-size: 1.1rem; margin: 0;">
+                                {% if current_category %}
+                                    No posts in this category yet.
+                                {% else %}
+                                    No posts yet. Create your first post!
+                                {% endif %}
+                            </p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        {% if is_paginated %}
+        <div style="display: flex; justify-content: center; margin-top: 30px; gap: 10px;">
+            {% if page_obj.has_previous %}
+                <a href="?page=1" class="btn btn-secondary">First</a>
+                <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-secondary">← Previous</a>
+            {% endif %}
+            
+            <span style="padding: 10px 20px; background: white; border-radius: 8px; font-weight: 500;">
+                Page {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+            </span>
+            
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}" class="btn btn-secondary">Next →</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}" class="btn btn-secondary">Last</a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

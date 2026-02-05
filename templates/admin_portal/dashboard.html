@@ -7,9 +7,6 @@
 <div style="max-width: 1200px; margin: 0 auto; padding: 40px 20px;">
     <!-- Header -->
     <div style="text-align: center; margin-bottom: 60px;">
-        <div style="width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, #C9B59C 0%, #D9CFC7 100%); margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 3rem;">
-            🎛️
-        </div>
         <h1 style="font-family: Georgia, serif; font-weight: 300; font-size: 3rem; margin: 0 0 15px; color: #3f372f;">
             Admin Portal
         </h1>
@@ -19,15 +16,14 @@
     </div>
 
     <!-- Dashboard Cards -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; margin-bottom: 60px;">
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; margin-bottom: 60px;">
         <!-- Blog Management -->
         <a href="{% url 'blog:post_list' %}" style="text-decoration: none; color: inherit;">
-            <div style="background: white; border-radius: 16px; padding: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); transition: all 0.3s; border-left: 4px solid #C9B59C;">
-                <div style="font-size: 3rem; margin-bottom: 20px;">📝</div>
+            <div style="background: white; border-radius: 16px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); transition: all 0.3s; border-left: 4px solid #C9B59C; display: flex; flex-direction: column; height: 100%;">
                 <h2 style="font-family: Georgia, serif; font-weight: 300; font-size: 2rem; margin: 0 0 15px;">
                     Blog
                 </h2>
-                <p style="color: #7b7268; margin: 0 0 20px; line-height: 1.8;">
+                <p style="color: #7b7268; margin: 0 0 20px; line-height: 1.8; flex-grow: 1;">
                     Create and manage your blog posts, categories, and published content.
                 </p>
                 <div style="display: flex; gap: 15px; margin-bottom: 20px;">
@@ -44,7 +40,7 @@
                         <div style="font-size: 0.9rem; color: #7b7268; margin-top: 5px;">Categories</div>
                     </div>
                 </div>
-                <div style="color: #C9B59C; font-weight: 600;">
+                <div style="color: #C9B59C; font-weight: 600; margin-top: auto;">
                     Manage Blog →
                 </div>
             </div>
@@ -52,12 +48,11 @@
 
         <!-- Knowledge Management -->
         <a href="{% url 'knowledge:entry_list' %}" style="text-decoration: none; color: inherit;">
-            <div style="background: white; border-radius: 16px; padding: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); transition: all 0.3s; border-left: 4px solid #D9CFC7;">
-                <div style="font-size: 3rem; margin-bottom: 20px;">💡</div>
+            <div style="background: white; border-radius: 16px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); transition: all 0.3s; border-left: 4px solid #D9CFC7; display: flex; flex-direction: column; height: 100%;">
                 <h2 style="font-family: Georgia, serif; font-weight: 300; font-size: 2rem; margin: 0 0 15px;">
                     Knowledge
                 </h2>
-                <p style="color: #7b7268; margin: 0 0 20px; line-height: 1.8;">
+                <p style="color: #7b7268; margin: 0 0 20px; line-height: 1.8; flex-grow: 1;">
                     Organize your knowledge entries, topics, and learning resources.
                 </p>
                 <div style="display: flex; gap: 15px; margin-bottom: 20px;">
@@ -74,7 +69,7 @@
                         <div style="font-size: 0.9rem; color: #7b7268; margin-top: 5px;">Topics</div>
                     </div>
                 </div>
-                <div style="color: #D9CFC7; font-weight: 600;">
+                <div style="color: #D9CFC7; font-weight: 600; margin-top: auto;">
                     Manage Knowledge →
                 </div>
             </div>
@@ -82,12 +77,11 @@
 
         <!-- Tasks Management -->
         <a href="{% url 'tasks:task_list' %}" style="text-decoration: none; color: inherit;">
-            <div style="background: white; border-radius: 16px; padding: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); transition: all 0.3s; border-left: 4px solid #C9B59C;">
-                <div style="font-size: 3rem; margin-bottom: 20px;">✅</div>
+            <div style="background: white; border-radius: 16px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); transition: all 0.3s; border-left: 4px solid #C9B59C; display: flex; flex-direction: column; height: 100%;">
                 <h2 style="font-family: Georgia, serif; font-weight: 300; font-size: 2rem; margin: 0 0 15px;">
                     Tasks
                 </h2>
-                <p style="color: #7b7268; margin: 0 0 20px; line-height: 1.8;">
+                <p style="color: #7b7268; margin: 0 0 20px; line-height: 1.8; flex-grow: 1;">
                     Track your tasks, projects, and study sessions efficiently.
                 </p>
                 <div style="display: flex; gap: 15px; margin-bottom: 20px;">
@@ -104,8 +98,37 @@
                         <div style="font-size: 0.9rem; color: #7b7268; margin-top: 5px;">Active</div>
                     </div>
                 </div>
-                <div style="color: #C9B59C; font-weight: 600;">
+                <div style="color: #C9B59C; font-weight: 600; margin-top: auto;">
                     Manage Tasks →
+                </div>
+            </div>
+        </a>
+
+        <!-- List 100 Management -->
+        <a href="{% url 'tasks:list100_admin' %}" style="text-decoration: none; color: inherit;">
+            <div style="background: white; border-radius: 16px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); transition: all 0.3s; border-left: 4px solid #D9CFC7; display: flex; flex-direction: column; height: 100%;">
+                <h2 style="font-family: Georgia, serif; font-weight: 300; font-size: 2rem; margin: 0 0 15px;">
+                    List 100
+                </h2>
+                <p style="color: #7b7268; margin: 0 0 20px; line-height: 1.8; flex-grow: 1;">
+                    Manage your 100 goals and track progress.
+                </p>
+                <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+                    <div style="flex: 1; background: #F9F8F6; padding: 15px; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 1.5rem; font-weight: 600; color: #D9CFC7;">
+                            {{ list100_count|default:0 }}
+                        </div>
+                        <div style="font-size: 0.9rem; color: #7b7268; margin-top: 5px;">Total</div>
+                    </div>
+                    <div style="flex: 1; background: #F9F8F6; padding: 15px; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 1.5rem; font-weight: 600; color: #059669;">
+                            {{ list100_completed|default:0 }}
+                        </div>
+                        <div style="font-size: 0.9rem; color: #7b7268; margin-top: 5px;">Completed</div>
+                    </div>
+                </div>
+                <div style="color: #D9CFC7; font-weight: 600; margin-top: auto;">
+                    Manage List 100 →
                 </div>
             </div>
         </a>
@@ -114,20 +137,23 @@
     <!-- Quick Actions -->
     <div style="background: white; border-radius: 16px; padding: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
         <h2 style="font-family: Georgia, serif; font-weight: 300; font-size: 2rem; margin: 0 0 30px; color: #3f372f;">
-            ⚡ Quick Actions
+            Quick Actions
         </h2>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
             <a href="{% url 'blog:post_create' %}" style="padding: 20px; background: linear-gradient(135deg, #C9B59C 0%, #D9CFC7 100%); color: white; border-radius: 12px; text-decoration: none; text-align: center; font-weight: 600; transition: all 0.3s;">
-                📝 New Blog Post
+                New Blog Post
             </a>
             <a href="{% url 'knowledge:entry_create' %}" style="padding: 20px; background: linear-gradient(135deg, #D9CFC7 0%, #C9B59C 100%); color: white; border-radius: 12px; text-decoration: none; text-align: center; font-weight: 600; transition: all 0.3s;">
-                💡 New Note
+                New Note
             </a>
             <a href="{% url 'tasks:task_create' %}" style="padding: 20px; background: linear-gradient(135deg, #C9B59C 0%, #D9CFC7 100%); color: white; border-radius: 12px; text-decoration: none; text-align: center; font-weight: 600; transition: all 0.3s;">
-                ✅ New Task
+                New Task
+            </a>
+            <a href="{% url 'tasks:list100_create' %}" style="padding: 20px; background: linear-gradient(135deg, #D9CFC7 0%, #C9B59C 100%); color: white; border-radius: 12px; text-decoration: none; text-align: center; font-weight: 600; transition: all 0.3s;">
+                New List 100 Item
             </a>
             <a href="{% url 'home' %}" style="padding: 20px; background: #F9F8F6; color: #7b7268; border-radius: 12px; text-decoration: none; text-align: center; font-weight: 600; transition: all 0.3s;">
-                🏠 View Public Site
+                View Public Site
             </a>
         </div>
     </div>

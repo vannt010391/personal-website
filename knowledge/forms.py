@@ -26,6 +26,14 @@ class KnowledgeEntryForm(forms.ModelForm):
             self.fields['parent'].queryset = KnowledgeEntry.objects.filter(user=self.user).order_by('title')
         if 'content' in self.fields:
             self.fields['content'].required = False
+        # Make topic required
+        self.fields['topic'].required = True
+
+    def clean_topic(self):
+        topic = self.cleaned_data.get('topic')
+        if not topic:
+            raise forms.ValidationError('Please select a topic for this entry')
+        return topic
 
     def clean_slug(self):
         slug = self.cleaned_data.get('slug')
@@ -42,7 +50,7 @@ class KnowledgeEntryForm(forms.ModelForm):
         return slug
     class Meta:
         model = KnowledgeEntry
-        fields = ['title', 'slug', 'topic', 'parent', 'order', 'entry_type', 'content', 'summary', 'source_url', 'tags', 'is_favorite']
+        fields = ['title', 'slug', 'topic', 'parent', 'order', 'entry_type', 'status', 'content', 'summary', 'source_url', 'tags', 'is_favorite']
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'Tiêu đề', 'id': 'id_title'}),
             'slug': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'Tự động tạo từ tiêu đề', 'id': 'id_slug'}),
@@ -50,6 +58,7 @@ class KnowledgeEntryForm(forms.ModelForm):
             'parent': forms.Select(attrs={'class': 'form-select'}),
             'order': forms.NumberInput(attrs={'class': 'form-input', 'min': 0, 'step': 1, 'placeholder': '0'}),
             'entry_type': forms.Select(attrs={'class': 'form-select'}),
+            'status': forms.Select(attrs={'class': 'form-select'}),
             'content': forms.Textarea(attrs={'class': 'form-textarea', 'rows': 15, 'placeholder': 'Nội dung (hỗ trợ Markdown)'}),
             'summary': forms.Textarea(attrs={'class': 'form-textarea', 'rows': 3, 'placeholder': 'Tóm tắt'}),
             'source_url': forms.URLInput(attrs={'class': 'form-input', 'placeholder': 'https://...'}),

@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/blog-zen.css' %}">
+<link rel="stylesheet" href="{% static 'css/admin-portal.css' %}">
+{% endblock %}
+
+{% block title %}Manage List 100{% endblock %}
+
+{% block content %}
+<div class="list100-admin">
+    <div class="container" style="max-width: 1200px;">
+        <div class="page-header">
+            <h2>List 100 Items</h2>
+            <a href="{% url 'tasks:list100_create' %}" class="btn btn-primary">+ Create Item</a>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">{{ stats.total }}</div>
+                <div class="stat-label">Total</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ stats.not_started }}</div>
+                <div class="stat-label">Not Started</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ stats.in_progress }}</div>
+                <div class="stat-label">In Progress</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ stats.completed }}</div>
+                <div class="stat-label">Completed</div>
+            </div>
+        </div>
+
+        <div class="items-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 40px;">Order</th>
+                        <th>Title</th>
+                        <th style="width: 90px;">Status</th>
+                        <th style="width: 85px;">Updated</th>
+                        <th style="width: 100px;"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td style="color: var(--zen-text-light);"><strong>{{ item.order }}</strong></td>
+                        <td>{{ item.title }}</td>
+                        <td>
+                            <span class="status-badge status-{{ item.status }}">
+                                {{ item.get_status_display }}
+                            </span>
+                        </td>
+                        <td style="color: var(--zen-text-light); font-size: 0.75rem;">
+                            {{ item.updated_at|date:"d/m" }}
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <a href="{% url 'tasks:list100_update' item.pk %}" class="btn btn-edit">Edit</a>
+                                <a href="{% url 'tasks:list100_delete' item.pk %}" class="btn btn-delete">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 24px; color: var(--zen-text-light); font-size: 0.85rem;">
+                            No items yet
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

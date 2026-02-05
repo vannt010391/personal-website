@@ -8,8 +8,8 @@ class TopicAdmin(admin.ModelAdmin):
 
 @admin.register(KnowledgeEntry)
 class KnowledgeEntryAdmin(admin.ModelAdmin):
-    list_display = ['title', 'user', 'topic', 'entry_type', 'is_favorite', 'created_at', 'updated_at']
-    list_filter = ['entry_type', 'topic', 'is_favorite', 'created_at']
+    list_display = ['title', 'user', 'topic', 'entry_type', 'status', 'is_favorite', 'created_at', 'updated_at']
+    list_filter = ['entry_type', 'status', 'topic', 'is_favorite', 'created_at']
     search_fields = ['title', 'content', 'tags']
     prepopulated_fields = {'slug': ('title',)}
     date_hierarchy = 'created_at'

@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
 
-{% block title %}Quản lý Chủ đề{% endblock %}
+{% block title %}Manage Topics{% endblock %}
 
 {% block content %}
 <div class="card">
-    <h1>Quản lý Chủ đề</h1>
-    <a href="{% url 'knowledge:entry_list' %}">&larr; Quay lại Kiến thức</a>
+    <h1>Manage Topics</h1>
+    <a href="{% url 'knowledge:entry_list' %}">&larr; Back to Knowledge</a>
 </div>
 
 <div class="card">
-    <a href="{% url 'knowledge:topic_create' %}" class="btn btn-success">Thêm chủ đề mới</a>
+    <a href="{% url 'knowledge:topic_create' %}" class="btn btn-success">Add New Topic</a>
 </div>
 
 {% if topics %}
@@ -17,10 +17,10 @@
         <table style="width: 100%; border-collapse: collapse;">
             <thead>
                 <tr style="background-color: #F9F8F6; text-align: left;">
-                    <th style="padding: 10px; border-bottom: 2px solid #D9CFC7;">Tên</th>
+                    <th style="padding: 10px; border-bottom: 2px solid #D9CFC7;">Name</th>
                     <th style="padding: 10px; border-bottom: 2px solid #D9CFC7;">Slug</th>
                     <th style="padding: 10px; border-bottom: 2px solid #D9CFC7;">Parent</th>
-                    <th style="padding: 10px; border-bottom: 2px solid #D9CFC7;">Thao tác</th>
+                    <th style="padding: 10px; border-bottom: 2px solid #D9CFC7;">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -30,8 +30,8 @@
                     <td style="padding: 10px;"><code>{{ topic.slug }}</code></td>
                     <td style="padding: 10px;">{{ topic.parent.name|default:"-" }}</td>
                     <td style="padding: 10px;">
-                        <a href="{% url 'knowledge:topic_update' topic.pk %}" class="btn" style="font-size: 0.85em;">Sửa</a>
-                        <a href="{% url 'knowledge:topic_delete' topic.pk %}" class="btn btn-danger" style="font-size: 0.85em;">Xóa</a>
+                        <a href="{% url 'knowledge:topic_update' topic.pk %}" class="btn" style="font-size: 0.85em;">Edit</a>
+                        <a href="{% url 'knowledge:topic_delete' topic.pk %}" class="btn btn-danger" style="font-size: 0.85em;">Delete</a>
                     </td>
                 </tr>
                 {% endfor %}
@@ -40,7 +40,7 @@
     </div>
 {% else %}
     <div class="card">
-        <p>Chưa có chủ đề nào.</p>
+        <p>No topics yet.</p>
     </div>
 {% endif %}
 {% endblock %}

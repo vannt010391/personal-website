@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Task, StudySession
+from .models import Task, StudySession, List100Item
 
 @admin.register(Task)
 class TaskAdmin(admin.ModelAdmin):
@@ -14,3 +14,11 @@ class StudySessionAdmin(admin.ModelAdmin):
     list_filter = ['date']
     search_fields = ['subject', 'description', 'notes']
     date_hierarchy = 'date'
+
+@admin.register(List100Item)
+class List100ItemAdmin(admin.ModelAdmin):
+    list_display = ['order', 'title', 'status', 'updated_at', 'completed_at']
+    list_filter = ['status']
+    search_fields = ['title', 'description']
+    list_editable = ['status']
+    ordering = ['order', 'created_at']

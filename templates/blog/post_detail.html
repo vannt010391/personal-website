@@ -17,7 +17,7 @@
     <div class="zen-post-detail">
         <!-- Back Button -->
         <a href="{% url 'blog:post_list' %}" class="zen-back-btn">
-            Quay lại danh sách
+            Back to list
         </a>
 
         <!-- Post Header -->
@@ -53,7 +53,7 @@
 
             {% if post.status == 'draft' %}
                 <div style="background: #F9F8F6; padding: 15px; border-radius: 8px; margin-top: 20px; border-left: 4px solid #C9B59C;">
-                    <strong>⚠️ Nháp:</strong> Bài viết này chưa được công bố
+                    <strong>Draft:</strong> This post is not published yet
                 </div>
             {% endif %}
         </header>
@@ -70,22 +70,22 @@
                     <circle cx="12" cy="12" r="10"></circle>
                     <polyline points="12 6 12 12 16 14"></polyline>
                 </svg>
-                Cập nhật lần cuối: {{ post.updated_at|date:"d/m/Y H:i" }}
+                Last updated: {{ post.updated_at|date:"d/m/Y H:i" }}
             </p>
         </footer>
 
         <!-- Admin Actions -->
         {% if user.is_authenticated %}
         <div style="background: linear-gradient(135deg, #C9B59C 0%, #D9CFC7 100%); padding: 30px; border-radius: 16px; margin-top: 60px; text-align: center; box-shadow: 0 8px 30px rgba(201, 181, 156, 0.3);">
-            <h3 style="color: white; margin: 0 0 20px; font-weight: 300; font-size: 1.5rem;">Quản lý bài viết</h3>
+            <h3 style="color: white; margin: 0 0 20px; font-weight: 300; font-size: 1.5rem;">Post Management</h3>
             <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
                 <a href="{% url 'blog:post_update' post.slug %}" 
                    style="padding: 12px 30px; background: white; color: #C9B59C; border-radius: 25px; text-decoration: none; font-weight: 500; transition: all 0.3s; display: inline-block;">
-                    ✏️ Chỉnh sửa
+                    Edit
                 </a>
                 <a href="{% url 'blog:post_delete' post.slug %}" 
                    style="padding: 12px 30px; background: rgba(255,255,255,0.2); color: white; border: 2px solid white; border-radius: 25px; text-decoration: none; font-weight: 500; transition: all 0.3s; display: inline-block;">
-                    🗑️ Xóa
+                    Delete
                 </a>
             </div>
         </div>
@@ -94,7 +94,7 @@
         <!-- Navigation -->
         <div style="margin-top: 60px; text-align: center;">
             <a href="{% url 'blog:post_list' %}" class="zen-read-more" style="font-size: 1.1rem;">
-                Xem thêm bài viết khác
+                View more posts
             </a>
         </div>
     </div>

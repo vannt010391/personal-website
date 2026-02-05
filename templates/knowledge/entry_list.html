@@ -2,109 +2,207 @@
 {% load knowledge_extras %}
 {% load static %}
 
-{% block title %}Kiến Thức{% endblock %}
+{% block title %}Knowledge{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/gitbook-style.css' %}">
 {% endblock %}
 
 {% block content %}
-<div class="gitbook-container">
+<div class="gitbook-container" style="background: #F9F8F6; min-height: 100vh;">
     <!-- Sidebar Navigation -->
-    <aside class="gitbook-sidebar">
-        <!-- Search Box -->
-        <form method="get" action="{% url 'knowledge:search' %}" style="margin-bottom: 25px;">
-            <input 
-                type="text" 
-                name="q" 
-                placeholder="Tìm kiếm..." 
-                style="width: 100%; padding: 10px; border: 2px solid #D9CFC7; border-radius: 6px; font-size: 0.95rem; transition: border-color 0.2s;"
-                onfocus="this.style.borderColor='#C9B59C'"
-                onblur="this.style.borderColor='#D9CFC7'"
-            />
-        </form>
-
-        <h3>🔗 Chủ đề</h3>
-        <a href="?" class="gitbook-sidebar-item {% if not request.GET.topic %}active{% endif %}">
-            📚 Tất cả
-        </a>
-        {% if topics %}
-            {% for topic in topics %}
-            <a href="?topic={{ topic.id }}" class="gitbook-sidebar-item {% if request.GET.topic == topic.id|stringformat:'s' %}active{% endif %}">
-                📌 {{ topic.name }}
-            </a>
-            {% endfor %}
-        {% endif %}
-
-        <h3>🏷️ Loại</h3>
-        <a href="?" class="gitbook-sidebar-item {% if not request.GET.type %}active{% endif %}">Tất cả</a>
-        <a href="?type=note" class="gitbook-sidebar-item {% if request.GET.type == 'note' %}active{% endif %}">Ghi chú</a>
-        <a href="?type=research" class="gitbook-sidebar-item {% if request.GET.type == 'research' %}active{% endif %}">Nghiên cứu</a>
-        <a href="?type=article" class="gitbook-sidebar-item {% if request.GET.type == 'article' %}active{% endif %}">Bài viết</a>
-        <a href="?type=reference" class="gitbook-sidebar-item {% if request.GET.type == 'reference' %}active{% endif %}">Tham khảo</a>
-
-        <h3>⭐ Yêu thích</h3>
-        <a href="?favorite=true" class="gitbook-sidebar-item">Ghi chú yêu thích</a>
-
-        <h3>⚙️ Quản lý</h3>
-        <a href="{% url 'knowledge:entry_create' %}" class="gitbook-sidebar-item">➕ Tạo ghi chú</a>
-        <a href="{% url 'knowledge:topic_create' %}" class="gitbook-sidebar-item">🗂️ Tạo chủ đề</a>
-        <a href="{% url 'knowledge:topic_list' %}" class="gitbook-sidebar-item">📂 Quản lý chủ đề</a>
+    <aside class="gitbook-sidebar" style="width: 230px; padding: 20px;">
+        <h3 style="margin-top: 10px;">Management</h3>
+        <a href="{% url 'knowledge:entry_create' %}" class="gitbook-sidebar-item">Create Note</a>
+        <a href="{% url 'knowledge:topic_create' %}" class="gitbook-sidebar-item">Create Topic</a>
+        <a href="{% url 'knowledge:topic_list' %}" class="gitbook-sidebar-item">Manage Topics</a>
+        <a href="?favorite=true" class="gitbook-sidebar-item">Favorite Notes</a>
     </aside>
 
     <!-- Main Content -->
-    <main class="gitbook-main" style="max-width: 900px; margin: 0 auto; padding: 40px 60px;">
+    <main class="gitbook-main" style="max-width: 1200px; margin: 0 auto; padding: 20px 40px 40px 40px;">
         <div style="margin-bottom: 40px;">
-            <h1 style="font-size: 2.5rem; font-weight: 700; margin: 0 0 8px 0; color: #3f372f;">Kho Kiến Thức</h1>
-            <p style="color: #7b7268; margin: 0; font-size: 1rem;">Lưu trữ và quản lý các ghi chú, nghiên cứu của bạn</p>
+            <h1 style="font-size: 2.5rem; font-weight: 700; margin: 0 0 8px 0; color: #3f372f;">Knowledge Base</h1>
+            <p style="color: #7b7268; margin: 0; font-size: 1rem;">Store and manage your notes and research</p>
+        </div>
+
+        <div style="background: white; border: 1px solid #EFE9E3; border-radius: 12px; padding: 20px; margin-bottom: 30px;">
+            <form method="get" action="{% url 'knowledge:search' %}" style="margin-bottom: 16px;">
+                <input 
+                    type="text" 
+                    name="q" 
+                    placeholder="Search notes..." 
+                    style="width: 100%; padding: 12px 14px; border: 1px solid #D9CFC7; border-radius: 8px; font-size: 0.95rem; transition: border-color 0.2s;"
+                    onfocus="this.style.borderColor='#C9B59C'"
+                    onblur="this.style.borderColor='#D9CFC7'"
+                />
+            </form>
+
+            <div style="display: grid; gap: 14px;">
+                <div>
+                    <div style="font-size: 0.85rem; font-weight: 600; color: #7b7268; margin-bottom: 8px;">Topics</div>
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                        <a href="?" style="padding: 6px 12px; border-radius: 999px; border: 1px solid #D9CFC7; text-decoration: none; font-size: 0.85rem; color: #7b7268; background: {% if not request.GET.topic %}#EFE9E3{% else %}white{% endif %};">All</a>
+                        {% if topics %}
+                            {% for topic in topics %}
+                            <a href="?topic={{ topic.id }}" style="padding: 6px 12px; border-radius: 999px; border: 1px solid #D9CFC7; text-decoration: none; font-size: 0.85rem; color: #7b7268; background: {% if request.GET.topic == topic.id|stringformat:'s' %}#EFE9E3{% else %}white{% endif %};">
+                                {{ topic.name }}
+                            </a>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div>
+                    <div style="font-size: 0.85rem; font-weight: 600; color: #7b7268; margin-bottom: 8px;">Type</div>
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                        <a href="?" style="padding: 6px 12px; border-radius: 999px; border: 1px solid #D9CFC7; text-decoration: none; font-size: 0.85rem; color: #7b7268; background: {% if not request.GET.type %}#EFE9E3{% else %}white{% endif %};">All</a>
+                        <a href="?type=note" style="padding: 6px 12px; border-radius: 999px; border: 1px solid #D9CFC7; text-decoration: none; font-size: 0.85rem; color: #7b7268; background: {% if request.GET.type == 'note' %}#EFE9E3{% else %}white{% endif %};">Note</a>
+                        <a href="?type=research" style="padding: 6px 12px; border-radius: 999px; border: 1px solid #D9CFC7; text-decoration: none; font-size: 0.85rem; color: #7b7268; background: {% if request.GET.type == 'research' %}#EFE9E3{% else %}white{% endif %};">Research</a>
+                        <a href="?type=article" style="padding: 6px 12px; border-radius: 999px; border: 1px solid #D9CFC7; text-decoration: none; font-size: 0.85rem; color: #7b7268; background: {% if request.GET.type == 'article' %}#EFE9E3{% else %}white{% endif %};">Article</a>
+                        <a href="?type=reference" style="padding: 6px 12px; border-radius: 999px; border: 1px solid #D9CFC7; text-decoration: none; font-size: 0.85rem; color: #7b7268; background: {% if request.GET.type == 'reference' %}#EFE9E3{% else %}white{% endif %};">Reference</a>
+                    </div>
+                </div>
+            </div>
         </div>
 
         {% if entries %}
-            <div style="display: grid; gap: 2px; background: #EFE9E3; border-radius: 8px; overflow: hidden;">
-                {% for entry in entries %}
-                <a href="{% url 'knowledge:entry_detail' entry.slug %}"
-                   style="display: block; padding: 20px 24px; background: white; text-decoration: none; transition: all 0.2s; border-left: 3px solid transparent;"
-                   onmouseover="this.style.background='#F9F8F6'; this.style.borderLeftColor='#C9B59C'; this.style.paddingLeft='28px';"
-                   onmouseout="this.style.background='white'; this.style.borderLeftColor='transparent'; this.style.paddingLeft='24px';">
+            <style>
+                .knowledge-section {
+                    background: white;
+                    border: 1px solid #EFE9E3;
+                    border-radius: 12px;
+                    padding: 20px;
+                    margin-bottom: 16px;
+                }
+                .knowledge-section.compact {
+                    padding: 16px;
+                }
+                .knowledge-section-header {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    cursor: pointer;
+                    user-select: none;
+                }
+                .knowledge-section-title {
+                    font-size: 1.1rem;
+                    font-weight: 700;
+                    color: #3f372f;
+                    margin: 0;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                }
+                .knowledge-section-count {
+                    font-size: 0.85rem;
+                    color: #7b7268;
+                    font-weight: 400;
+                    margin-left: 6px;
+                }
+                .knowledge-section-toggle {
+                    background: none;
+                    border: none;
+                    color: #7b7268;
+                    cursor: pointer;
+                    font-size: 0.9rem;
+                    padding: 4px 8px;
+                    transition: all 0.2s;
+                }
+                .knowledge-section-toggle:hover {
+                    color: #C9B59C;
+                }
+                .knowledge-section-content {
+                    margin-top: 12px;
+                }
+                .knowledge-section-content.collapsed {
+                    display: none;
+                }
+                .knowledge-tree {
+                    list-style: none;
+                    padding: 0;
+                    margin: 0;
+                }
+                .knowledge-tree-node {
+                    padding: 8px 0;
+                    border-bottom: 1px solid #F3EEE8;
+                }
+                .knowledge-tree-node:last-child {
+                    border-bottom: none;
+                }
+                .knowledge-tree-link {
+                    text-decoration: none;
+                    color: #3f372f;
+                    font-weight: 600;
+                    transition: color 0.2s;
+                }
+                .knowledge-tree-link:hover {
+                    color: #C9B59C;
+                }
+                .knowledge-tree-meta {
+                    font-size: 0.8rem;
+                    color: #7b7268;
+                    margin-top: 4px;
+                }
+                .knowledge-tree-children {
+                    list-style: none;
+                    padding-left: 16px;
+                    margin: 6px 0 0 0;
+                    border-left: 2px solid #EFE9E3;
+                }
+            </style>
 
-                    <!-- Title and Star -->
-                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
-                        <h2 style="margin: 0; font-size: 1.3rem; font-weight: 600; color: #3f372f; flex: 1;">
-                            {{ entry.title }}
-                        </h2>
-                        {% if entry.is_favorite %}
-                        <span style="color: #C9B59C; font-size: 1.1rem;">⭐</span>
-                        {% endif %}
+            {% regroup entries by topic as topic_groups %}
+            {% for group in topic_groups %}
+                {% with root_entries=group.list|filter_root_entries %}
+                <section class="knowledge-section">
+                    <div class="knowledge-section-header" onclick="toggleSection(this)">
+                        <div class="knowledge-section-title">
+                            📚 {{ group.grouper.name|default:"No Topic" }}
+                            <span class="knowledge-section-count">({{ root_entries|length }})</span>
+                        </div>
+                        <button class="knowledge-section-toggle" onclick="event.stopPropagation(); toggleSection(this.parentElement)">
+                            ▼
+                        </button>
                     </div>
-
-                    <!-- Summary -->
-                    {% if entry.summary %}
-                    <p style="color: #7b7268; margin: 6px 0 12px 0; line-height: 1.5; font-size: 0.95rem;">
-                        {{ entry.summary|truncatewords:20 }}
-                    </p>
-                    {% endif %}
-
-                    <!-- Meta Info - Minimal -->
-                    <div style="display: flex; gap: 12px; align-items: center; font-size: 0.85rem; color: #7b7268;">
-                        {% if entry.topic %}
-                        <span>📌 {{ entry.topic.name }}</span>
-                        <span>•</span>
-                        {% endif %}
-                        <span>{{ entry.get_entry_type_display }}</span>
-                        <span>•</span>
-                        <span>{{ entry.updated_at|date:"d/m/Y" }}</span>
-                        {% if entry.tags %}
-                        <span>•</span>
-                        <span>
-                            {% for tag in entry.tags|split:"," %}
-                                #{{ tag|trim }}{% if not forloop.last %}, {% endif %}
+                    <div class="knowledge-section-content">
+                        <ul class="knowledge-tree">
+                            {% for entry in root_entries %}
+                                {% include "knowledge/entry_tree_item_list.html" with entry=entry allowed_entries=group.list %}
                             {% endfor %}
-                        </span>
-                        {% endif %}
+                        </ul>
                     </div>
-                </a>
-                {% endfor %}
-            </div>
+                </section>
+                {% endwith %}
+            {% endfor %}
+
+            <script>
+                function toggleSection(header) {
+                    const content = header.nextElementSibling;
+                    const toggle = header.querySelector('.knowledge-section-toggle');
+                    
+                    if (content.classList.contains('collapsed')) {
+                        content.classList.remove('collapsed');
+                        toggle.textContent = '▼';
+                    } else {
+                        content.classList.add('collapsed');
+                        toggle.textContent = '▶';
+                    }
+                }
+                
+                function toggleTreeNode(button) {
+                    const children = button.parentElement.parentElement.querySelector('.knowledge-tree-children');
+                    if (children) {
+                        if (children.style.display === 'none') {
+                            children.style.display = 'block';
+                            button.textContent = '▼';
+                        } else {
+                            children.style.display = 'none';
+                            button.textContent = '▶';
+                        }
+                    }
+                }
+            </script>
 
             {% if is_paginated %}
             <div style="margin-top: 40px; padding-top: 30px; border-top: 1px solid #EFE9E3;">
@@ -114,12 +212,12 @@
                            style="padding: 8px 16px; background: #F9F8F6; color: #7b7268; border-radius: 6px; text-decoration: none; font-size: 0.9rem; transition: background 0.2s;"
                            onmouseover="this.style.background='#EFE9E3';"
                            onmouseout="this.style.background='#F9F8F6';">
-                            ← Trước
+                            ← Previous
                         </a>
                     {% endif %}
 
                     <span style="padding: 8px 16px; color: #7b7268; font-size: 0.9rem;">
-                        Trang {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+                        Page {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
                     </span>
 
                     {% if page_obj.has_next %}
@@ -127,7 +225,7 @@
                            style="padding: 8px 16px; background: #F9F8F6; color: #7b7268; border-radius: 6px; text-decoration: none; font-size: 0.9rem; transition: background 0.2s;"
                            onmouseover="this.style.background='#EFE9E3';"
                            onmouseout="this.style.background='#F9F8F6';">
-                            Tiếp →
+                            Next →
                         </a>
                     {% endif %}
                 </div>
@@ -136,12 +234,12 @@
         {% else %}
             <div style="text-align: center; padding: 80px 20px;">
                 <div style="font-size: 3rem; margin-bottom: 20px;">📚</div>
-                <p style="font-size: 1.2rem; color: #7b7268; margin-bottom: 30px;">Chưa có ghi chú nào</p>
+                <p style="font-size: 1.2rem; color: #7b7268; margin-bottom: 30px;">No notes yet</p>
                 <a href="{% url 'knowledge:entry_create' %}"
                    style="padding: 12px 30px; background: #C9B59C; color: white; border-radius: 6px; text-decoration: none; font-weight: 600; display: inline-block; transition: background 0.2s;"
                    onmouseover="this.style.background='#B8A58B';"
                    onmouseout="this.style.background='#C9B59C';">
-                    ✨ Tạo ghi chú đầu tiên
+                    Create your first note
                 </a>
             </div>
         {% endif %}

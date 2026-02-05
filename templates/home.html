@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Trang Chủ - Website Cá Nhân{% endblock %}
+{% block title %}Home - Personal Website{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -74,50 +74,50 @@
 
 {% block content %}
 <div class="hero-section">
-    <h1>🎨 Chào mừng đến với Website Cá Nhân</h1>
-    <p>Nơi chia sẻ kiến thức, quản lý công việc và tổ chức học tập</p>
+    <h1>Welcome to the Personal Website</h1>
+    <p>A place to share knowledge, manage tasks, and organize learning</p>
 </div>
 
 <div class="feature-grid">
     <div class="feature-card">
-        <h2>📝 Blog Portal</h2>
-        <p>Khám phá và đọc các bài viết được chia sẻ công khai. Giao diện ZEN tối giản, thanh lịch và dễ đọc.</p>
-        <a href="{% url 'blog:post_list' %}" class="btn-fancy">Khám phá Blog →</a>
+        <h2>Blog Portal</h2>
+        <p>Explore and read publicly shared posts. A minimalist, elegant, and readable ZEN interface.</p>
+        <a href="{% url 'blog:post_list' %}" class="btn-fancy">Explore Blog →</a>
     </div>
 
     <div class="feature-card">
-        <h2>✅ Quản Lý Công Việc</h2>
-        <p>Theo dõi công việc hàng ngày với dashboard trực quan và kanban board hiện đại.</p>
-        <a href="{% url 'tasks:dashboard' %}" class="btn btn-primary">Xem Dashboard →</a>
+        <h2>Task Management</h2>
+        <p>Track daily work with an intuitive dashboard and a modern kanban board.</p>
+        <a href="{% url 'tasks:dashboard' %}" class="btn btn-primary">View Dashboard →</a>
     </div>
 
     <div class="feature-card">
-        <h2>📚 Kho Kiến Thức</h2>
-        <p>Lưu trữ và tổ chức ghi chú, tài liệu học tập với hệ thống phân loại thông minh.</p>
-        <a href="{% url 'knowledge:entry_list' %}" class="btn btn-primary">Vào Kho Kiến Thức →</a>
+        <h2>Knowledge Base</h2>
+        <p>Store and organize notes and learning materials with a smart classification system.</p>
+        <a href="{% url 'knowledge:entry_list' %}" class="btn btn-primary">Open Knowledge Base →</a>
     </div>
 </div>
 
 {% if user.is_authenticated %}
 <div class="card" style="background: linear-gradient(135deg, #C9B59C 0%, #D9CFC7 100%); color: white; border: none;">
-    <h2 style="color: white; margin-bottom: 20px;">⚡ Thao tác nhanh</h2>
+    <h2 style="color: white; margin-bottom: 20px;">Quick actions</h2>
     <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-        <a href="{% url 'blog:post_create' %}" style="padding: 10px 20px; background: white; color: #C9B59C; border-radius: 20px; text-decoration: none; font-weight: 500;">✍️ Viết bài</a>
-        <a href="{% url 'tasks:task_create' %}" style="padding: 10px 20px; background: white; color: #C9B59C; border-radius: 20px; text-decoration: none; font-weight: 500;">➕ Thêm task</a>
-        <a href="{% url 'knowledge:entry_create' %}" style="padding: 10px 20px; background: white; color: #C9B59C; border-radius: 20px; text-decoration: none; font-weight: 500;">📝 Ghi chú</a>
+        <a href="{% url 'blog:post_create' %}" style="padding: 10px 20px; background: white; color: #C9B59C; border-radius: 20px; text-decoration: none; font-weight: 500;">Write post</a>
+        <a href="{% url 'tasks:task_create' %}" style="padding: 10px 20px; background: white; color: #C9B59C; border-radius: 20px; text-decoration: none; font-weight: 500;">Add task</a>
+        <a href="{% url 'knowledge:entry_create' %}" style="padding: 10px 20px; background: white; color: #C9B59C; border-radius: 20px; text-decoration: none; font-weight: 500;">Add note</a>
     </div>
 </div>
 {% else %}
 <div class="card" style="text-align: center; background: #F9F8F6;">
-    <h3>🔐 Đăng nhập để sử dụng đầy đủ tính năng</h3>
-    <p style="color: #7b7268; margin: 15px 0;">Quản lý công việc, tạo nội dung và nhiều hơn nữa</p>
-    <a href="/login/" class="btn-fancy">Đăng nhập ngay →</a>
+    <h3>Login to access all features</h3>
+    <p style="color: #7b7268; margin: 15px 0;">Manage tasks, create content, and more</p>
+    <a href="/login/" class="btn-fancy">Login now →</a>
 </div>
 {% endif %}
 
 <div class="card" style="background: linear-gradient(135deg, #C9B59C 0%, #D9CFC7 100%); color: white; text-align: center; border: none;">
-    <h2 style="color: white; margin-bottom: 15px;">🚀 API Documentation</h2>
-    <p style="opacity: 0.9; margin-bottom: 20px;">Tích hợp với ứng dụng của bạn thông qua RESTful API</p>
-    <a href="/api/" style="padding: 12px 28px; background: white; color: #C9B59C; border-radius: 25px; text-decoration: none; font-weight: 500; display: inline-block;">Xem API Docs →</a>
+    <h2 style="color: white; margin-bottom: 15px;">API Documentation</h2>
+    <p style="opacity: 0.9; margin-bottom: 20px;">Integrate with your app via the RESTful API</p>
+    <a href="/api/" style="padding: 12px 28px; background: white; color: #C9B59C; border-radius: 25px; text-decoration: none; font-weight: 500; display: inline-block;">View API Docs →</a>
 </div>
 {% endblock %}

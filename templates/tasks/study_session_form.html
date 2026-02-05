@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}{% if object %}Chỉnh sửa{% else %}Tạo mới{% endif %} Phiên học{% endblock %}
+{% block title %}{% if object %}Edit{% else %}Create{% endif %} Study Session{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/forms.css' %}">
@@ -9,8 +9,8 @@
 
 {% block content %}
 <div class="card">
-    <h1>{% if object %}Chỉnh sửa Phiên học{% else %}Tạo Phiên học Mới{% endif %}</h1>
-    <a href="{% url 'tasks:study_session_list' %}">&larr; Quay lại danh sách</a>
+    <h1>{% if object %}Edit Study Session{% else %}Create Study Session{% endif %}</h1>
+    <a href="{% url 'tasks:study_session_list' %}">&larr; Back to List</a>
 </div>
 
 <div class="card">
@@ -18,35 +18,35 @@
         {% csrf_token %}
 
         <div class="form-group">
-            <label for="{{ form.subject.id_for_label }}" class="form-label">Môn học / Chủ đề *</label>
+            <label for="{{ form.subject.id_for_label }}" class="form-label">Subject / Topic *</label>
             {{ form.subject }}
         </div>
 
         <div class="form-group">
-            <label for="{{ form.description.id_for_label }}" class="form-label">Mô tả</label>
+            <label for="{{ form.description.id_for_label }}" class="form-label">Description</label>
             {{ form.description }}
         </div>
 
         <div class="form-group">
-            <label for="{{ form.duration_minutes.id_for_label }}" class="form-label">Thời lượng (phút) *</label>
+            <label for="{{ form.duration_minutes.id_for_label }}" class="form-label">Duration (min) *</label>
             {{ form.duration_minutes }}
         </div>
 
         <div class="form-group">
-            <label for="{{ form.date.id_for_label }}" class="form-label">Ngày *</label>
+            <label for="{{ form.date.id_for_label }}" class="form-label">Date *</label>
             {{ form.date }}
         </div>
 
         <div class="form-group">
-            <label for="{{ form.notes.id_for_label }}" class="form-label">Ghi chú</label>
+            <label for="{{ form.notes.id_for_label }}" class="form-label">Notes</label>
             {{ form.notes }}
         </div>
 
         <div class="form-actions">
             <button type="submit" class="btn-form-primary">
-                {% if object %}Cập nhật{% else %}Tạo mới{% endif %}
+                {% if object %}Update{% else %}Create{% endif %}
             </button>
-            <a href="{% url 'tasks:study_session_list' %}" class="btn-form-secondary">Hủy</a>
+            <a href="{% url 'tasks:study_session_list' %}" class="btn-form-secondary">Cancel</a>
         </div>
     </form>
 </div>

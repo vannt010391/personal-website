@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}{% if object %}Chỉnh sửa{% else %}Tạo mới{% endif %} Chủ đề{% endblock %}
+{% block title %}{% if object %}Edit{% else %}Create{% endif %} Topic{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/forms.css' %}">
@@ -9,8 +9,8 @@
 
 {% block content %}
 <div class="card">
-    <h1>{% if object %}Chỉnh sửa Chủ đề{% else %}Tạo Chủ đề Mới{% endif %}</h1>
-    <a href="{% url 'knowledge:topic_list' %}">&larr; Quay lại danh sách</a>
+    <h1>{% if object %}Edit Topic{% else %}Create New Topic{% endif %}</h1>
+    <a href="{% url 'knowledge:topic_list' %}">&larr; Back to List</a>
 </div>
 
 <div class="card">
@@ -18,7 +18,7 @@
         {% csrf_token %}
 
         <div class="form-group">
-            <label for="{{ form.name.id_for_label }}" class="form-label">Tên chủ đề *</label>
+            <label for="{{ form.name.id_for_label }}" class="form-label">Topic Name *</label>
             {{ form.name }}
         </div>
 
@@ -29,21 +29,21 @@
         </div>
 
         <div class="form-group">
-            <label for="{{ form.description.id_for_label }}" class="form-label">Mô tả</label>
+            <label for="{{ form.description.id_for_label }}" class="form-label">Description</label>
             {{ form.description }}
         </div>
 
         <div class="form-group">
-            <label for="{{ form.parent.id_for_label }}" class="form-label">Chủ đề cha</label>
+            <label for="{{ form.parent.id_for_label }}" class="form-label">Parent Topic</label>
             {{ form.parent }}
-            <small class="form-help">Để trống nếu đây là chủ đề gốc</small>
+            <small class="form-help">Leave empty if this is a root topic</small>
         </div>
 
         <div class="form-actions">
             <button type="submit" class="btn-form-primary">
-                {% if object %}Cập nhật{% else %}Tạo mới{% endif %}
+                {% if object %}Update{% else %}Create{% endif %}
             </button>
-            <a href="{% url 'knowledge:topic_list' %}" class="btn-form-secondary">Hủy</a>
+            <a href="{% url 'knowledge:topic_list' %}" class="btn-form-secondary">Cancel</a>
         </div>
     </form>
 </div>

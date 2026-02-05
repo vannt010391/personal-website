@@ -2,7 +2,7 @@
 {% load knowledge_extras %}
 {% load static %}
 
-{% block title %}{{ entry.title }} - Kiến Thức{% endblock %}
+{% block title %}{{ entry.title }} - Knowledge{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/gitbook-style.css' %}">
@@ -12,14 +12,14 @@
 <div class="gitbook-container">
     <!-- Sidebar -->
     <aside class="gitbook-sidebar">
-        <h3>📚 Chủ đề</h3>
+        <h3>Topics</h3>
         {% if entry.topic %}
         <a href="?topic={{ entry.topic.id }}" class="gitbook-sidebar-item active">
             {{ entry.topic.name }}
         </a>
         {% endif %}
 
-        <h3>📄 Bài viết khác</h3>
+        <h3>Related Articles</h3>
         {% if entry.topic %}
             {% for related in entry.topic.entry_set.all|slice:":5" %}
                 {% if related.slug != entry.slug %}
@@ -30,13 +30,13 @@
             {% endfor %}
         {% endif %}
 
-        <h3>⚙️ Tùy chọn</h3>
+        <h3>Options</h3>
         <a href="{% url 'knowledge:entry_list' %}" class="gitbook-sidebar-item">
-            ← Quay lại danh sách
+            Back to List
         </a>
         {% if user.is_authenticated %}
         <a href="{% url 'knowledge:entry_update' entry.slug %}" class="gitbook-sidebar-item">
-            ✏️ Chỉnh sửa
+            Edit
         </a>
         {% endif %}
     </aside>
@@ -45,7 +45,7 @@
     <main class="gitbook-main">
         <!-- Breadcrumb -->
         <div class="gitbook-breadcrumb">
-            <a href="{% url 'knowledge:entry_list' %}">Kiến Thức</a>
+            <a href="{% url 'knowledge:entry_list' %}">Knowledge</a>
             <span>/</span>
             {% if entry.topic %}
             <a href="?topic={{ entry.topic.id }}">{{ entry.topic.name }}</a>
@@ -59,7 +59,7 @@
             <div>
                 <h1 class="gitbook-title">
                     {{ entry.title }}
-                    {% if entry.is_favorite %}<span style="color: #FFD700;">⭐</span>{% endif %}
+                    {% if entry.is_favorite %}<span style="color: #FFD700;">Favorite</span>{% endif %}
                 </h1>
                 <div class="gitbook-meta">
                     {% if entry.topic %}
@@ -79,7 +79,7 @@
         <!-- Summary -->
         {% if entry.summary %}
         <div class="gitbook-summary">
-            <h4>📋 Tóm tắt</h4>
+            <h4>Summary</h4>
             <p>{{ entry.summary }}</p>
         </div>
         {% endif %}
@@ -101,7 +101,7 @@
         <!-- Source Link -->
         {% if entry.source_url %}
         <div style="margin-top: 40px; padding: 20px; background: #F9F8F6; border-radius: 6px; border-left: 4px solid #C9B59C;">
-            <h4 style="margin: 0 0 10px 0; color: #3f372f;">🔗 Nguồn tham khảo</h4>
+            <h4 style="margin: 0 0 10px 0; color: #3f372f;">Reference Source</h4>
             <a href="{{ entry.source_url }}" target="_blank" rel="noopener noreferrer" style="color: #C9B59C; text-decoration: none; word-break: break-all;">
                 {{ entry.source_url|truncatechars:80 }}
             </a>
@@ -112,10 +112,10 @@
         {% if user.is_authenticated %}
         <div style="margin-top: 40px; padding: 20px; background: #EFE9E3; border-radius: 6px; display: flex; gap: 10px; flex-wrap: wrap;">
             <a href="{% url 'knowledge:entry_update' entry.slug %}" style="padding: 10px 20px; background: linear-gradient(135deg, #C9B59C 0%, #D9CFC7 100%); color: white; border-radius: 6px; text-decoration: none; font-weight: 600;">
-                ✏️ Chỉnh sửa
+                Edit
             </a>
             <a href="{% url 'knowledge:entry_delete' entry.slug %}" style="padding: 10px 20px; background: #D9CFC7; color: #3f372f; border-radius: 6px; text-decoration: none; font-weight: 600;">
-                🗑️ Xóa
+                Delete
             </a>
         </div>
         {% endif %}
@@ -123,13 +123,13 @@
         <!-- Footer Navigation -->
         <div class="gitbook-navigation">
             <a href="{% url 'knowledge:entry_list' %}" class="gitbook-nav-button">
-                <span class="gitbook-nav-label">← Quay lại</span>
-                <span>Danh sách kiến thức</span>
+                <span class="gitbook-nav-label">← Back</span>
+                <span>Knowledge List</span>
             </a>
             {% with next_entry=entry.get_next_by_updated_at %}
                 {% if next_entry %}
                 <a href="{% url 'knowledge:entry_detail' next_entry.slug %}" class="gitbook-nav-button" style="text-align: right;">
-                    <span class="gitbook-nav-label">Tiếp theo →</span>
+                    <span class="gitbook-nav-label">Next →</span>
                     <span>{{ next_entry.title|truncatewords:3 }}</span>
                 </a>
                 {% endif %}

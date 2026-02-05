@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
 
-{% block title %}Phiên Học Tập{% endblock %}
+{% block title %}Study Sessions{% endblock %}
 
 {% block content %}
 <div class="card">
-    <h1>Phiên Học Tập</h1>
-    <a href="{% url 'tasks:dashboard' %}">&larr; Quay lại Dashboard</a>
+    <h1>Study Sessions</h1>
+    <a href="{% url 'tasks:dashboard' %}">&larr; Back to Dashboard</a>
 </div>
 
 <div class="card">
-    <a href="{% url 'tasks:study_session_create' %}" class="btn btn-success">Thêm phiên học mới</a>
+    <a href="{% url 'tasks:study_session_create' %}" class="btn btn-success">Create Study Session</a>
 </div>
 
 {% if sessions %}
@@ -19,22 +19,22 @@
             <div>
                 <h3 style="margin: 0 0 10px 0;">{{ session.subject }}</h3>
                             <p style="color: #7b7268; margin: 5px 0;">
-                    <strong>Ngày:</strong> {{ session.date|date:"d/m/Y" }} |
-                    <strong>Thời gian:</strong> {{ session.duration_minutes }} phút
+                    <strong>Date:</strong> {{ session.date|date:"d/m/Y" }} |
+                    <strong>Duration:</strong> {{ session.duration_minutes }} min
                 </p>
                 {% if session.description %}
                 <p style="margin: 10px 0;">{{ session.description }}</p>
                 {% endif %}
                 {% if session.notes %}
                 <div style="background-color: #f8f9fa; padding: 10px; border-radius: 5px; margin-top: 10px;">
-                    <strong>Ghi chú:</strong>
+                    <strong>Notes:</strong>
                     <p style="margin: 5px 0;">{{ session.notes }}</p>
                 </div>
                 {% endif %}
             </div>
             <div style="display: flex; gap: 10px;">
-                <a href="{% url 'tasks:study_session_update' session.pk %}" class="btn">Sửa</a>
-                <a href="{% url 'tasks:study_session_delete' session.pk %}" class="btn btn-danger">Xóa</a>
+                <a href="{% url 'tasks:study_session_update' session.pk %}" class="btn">Edit</a>
+                <a href="{% url 'tasks:study_session_delete' session.pk %}" class="btn btn-danger">Delete</a>
             </div>
         </div>
     </div>
@@ -44,24 +44,24 @@
         <div class="card" style="text-align: center;">
             <div style="display: flex; gap: 10px; justify-content: center;">
                 {% if page_obj.has_previous %}
-                    <a href="?page=1" class="btn">Đầu</a>
-                    <a href="?page={{ page_obj.previous_page_number }}" class="btn">Trước</a>
+                    <a href="?page=1" class="btn">First</a>
+                    <a href="?page={{ page_obj.previous_page_number }}" class="btn">Previous</a>
                 {% endif %}
 
                 <span style="padding: 10px;">
-                    Trang {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+                    Page {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
                 </span>
 
                 {% if page_obj.has_next %}
-                    <a href="?page={{ page_obj.next_page_number }}" class="btn">Tiếp</a>
-                    <a href="?page={{ page_obj.paginator.num_pages }}" class="btn">Cuối</a>
+                    <a href="?page={{ page_obj.next_page_number }}" class="btn">Next</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}" class="btn">Last</a>
                 {% endif %}
             </div>
         </div>
     {% endif %}
 {% else %}
     <div class="card">
-        <p>Chưa có phiên học tập nào.</p>
+        <p>No study sessions yet.</p>
     </div>
 {% endif %}
 {% endblock %}

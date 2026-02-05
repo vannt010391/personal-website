@@ -4,7 +4,7 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.urls import reverse_lazy
-from .models import Task, StudySession
+from .models import Task, StudySession, List100Item
 from .forms import TaskForm, StudySessionForm
 from datetime import date
 from django.utils import timezone
@@ -148,4 +148,57 @@ class StudySessionDeleteView(LoginRequiredMixin, DeleteView):
 
     def delete(self, request, *args, **kwargs):
         messages.success(request, 'Phiên học đã được xóa!')
+        return super().delete(request, *args, **kwargs)
+
+
+# List100 Admin Views
+@login_required
+def list100_admin(request):
+    """Admin page for managing 100 list items"""
+    items = List100Item.objects.all()
+    stats = {
+        'total': items.count(),
+        'not_started': items.filter(status='not_started').count(),
+        'in_progress': items.filter(status='in_progress').count(),
+        'completed': items.filter(status='completed').count(),
+    }
+    return render(request, 'admin_portal/list100_admin.html', {
+        'items': items,
+        'stats': stats,
+    })
+
+
+class List100ItemCreateView(LoginRequiredMixin, CreateView):
+    model = List100Item
+    fields = ['title', 'description', 'status', 'order']
+    template_name = 'admin_portal/list100_form.html'
+    success_url = reverse_lazy('tasks:list100_admin')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Mục tiêu đã được thêm!')
+        return super().form_valid(form)
+
+
+class List100ItemUpdateView(LoginRequiredMixin, UpdateView):
+    model = List100Item
+    fields = ['title', 'description', 'status', 'order']
+    template_name = 'admin_portal/list100_form.html'
+    success_url = reverse_lazy('tasks:list100_admin')
+
+    def form_valid(self, form):
+        if form.cleaned_data['status'] == 'completed' and not self.object.completed_at:
+            form.instance.completed_at = timezone.now()
+        elif form.cleaned_data['status'] != 'completed' and self.object.completed_at:
+            form.instance.completed_at = None
+        messages.success(self.request, 'Mục tiêu đã được cập nhật!')
+        return super().form_valid(form)
+
+
+class List100ItemDeleteView(LoginRequiredMixin, DeleteView):
+    model = List100Item
+    template_name = 'admin_portal/list100_confirm_delete.html'
+    success_url = reverse_lazy('tasks:list100_admin')
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, 'Mục tiêu đã được xóa!')
         return super().delete(request, *args, **kwargs)

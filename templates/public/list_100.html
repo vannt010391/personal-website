@@ -1,142 +1,156 @@
 {% extends 'public/base.html' %}
 {% load static %}
 
-{% block title %}List 100 - Vân Nguyễn{% endblock %}
+{% block title %}100 Things To Do - Van Nguyen{% endblock %}
 
 {% block content %}
 <div class="zen-blog">
     <!-- Hero Section -->
     <div class="zen-hero">
         <div class="zen-hero-content">
-            <h1>📋 List 100</h1>
-            <p>Curated lists of valuable resources, ideas, and inspirations</p>
+            <h1>100 Things To Do</h1>
+            <p class="zen-hero-subtitle">Goals and challenges I set for myself</p>
         </div>
     </div>
 
-    <!-- Introduction -->
-    <div style="max-width: 900px; margin: 40px auto; padding: 0 20px;">
-        <div style="background: white; border-radius: 16px; padding: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); text-align: center;">
-            <div style="font-size: 4rem; margin-bottom: 20px;">💯</div>
-            <h2 style="font-weight: 300; margin: 0 0 20px; font-size: 2rem;">The Power of 100</h2>
-            <p style="color: #7b7268; font-size: 1.1rem; line-height: 1.8; margin: 0;">
-                "List 100" is a collection of carefully curated lists, each containing 100 items 
-                that have shaped my journey in tech, learning, and life. From books that changed 
-                my perspective to tools that boosted my productivity - explore these treasured collections.
+    <!-- Stats Section -->
+    <div style="max-width: 1200px; margin: 40px auto; padding: 0 20px;">
+        <div style="background: white; border-radius: 12px; padding: 30px; box-shadow: 0 4px 20px var(--zen-shadow); margin-bottom: 40px;">
+            <div style="display: flex; justify-content: space-around; align-items: center; gap: 30px; flex-wrap: wrap;">
+                <div style="text-align: center;">
+                    <div style="font-size: 2.5rem; font-weight: 600; color: var(--zen-primary);">{{ stats.total }}</div>
+                    <div style="color: var(--zen-text-light); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em;">Total</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 2.5rem; font-weight: 600; color: #7b7268;">{{ stats.not_started }}</div>
+                    <div style="color: var(--zen-text-light); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em;">Not started</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 2.5rem; font-weight: 600; color: #F59E0B;">{{ stats.in_progress }}</div>
+                    <div style="color: var(--zen-text-light); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em;">In progress</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 2.5rem; font-weight: 600; color: #059669;">{{ stats.completed }}</div>
+                    <div style="color: var(--zen-text-light); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em;">Completed</div>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            {% if stats.total > 0 %}
+            <div style="margin-top: 30px; padding-top: 30px; border-top: 1px solid var(--zen-bg);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <span style="font-size: 1rem; font-weight: 500; color: var(--zen-text);">Completion progress</span>
+                    <span style="font-size: 1.1rem; font-weight: 600; color: var(--zen-primary);">
+                        {{ stats.completed }}/{{ stats.total }} ({% widthratio stats.completed stats.total 100 %}%)
+                    </span>
+                </div>
+                <div style="background: var(--zen-bg); height: 16px; border-radius: 8px; overflow: hidden;">
+                    <div style="background: linear-gradient(135deg, #C9B59C 0%, #D9CFC7 100%); height: 100%; width: {% widthratio stats.completed stats.total 100 %}%; transition: width 0.5s ease;"></div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Items List -->
+    <div style="max-width: 1200px; margin: 0 auto 60px; padding: 0 20px;">
+        <div style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px var(--zen-shadow);">
+            <h2 style="font-weight: 300; font-size: 1.8rem; margin: 0; padding: 40px 40px 20px; color: var(--zen-primary); letter-spacing: 0.03em;">List 100 Items</h2>
+            
+            {% if items %}
+                <style>
+                    .list100-table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        font-size: 0.95rem;
+                    }
+                    
+                    .list100-table thead {
+                        background: var(--zen-bg);
+                    }
+                    
+                    .list100-table th {
+                        padding: 15px 20px;
+                        text-align: left;
+                        font-weight: 600;
+                        color: var(--zen-text);
+                        border-bottom: 1px solid #D9CFC7;
+                    }
+                    
+                    .list100-table td {
+                        padding: 15px 20px;
+                        border-bottom: 1px solid #FAFAFA;
+                    }
+                    
+                    .list100-table tbody tr:hover {
+                        background: #FAFAFA;
+                    }
+                    
+                    .list100-status-badge {
+                        display: inline-block;
+                        padding: 4px 10px;
+                        border-radius: 14px;
+                        font-size: 0.75rem;
+                        font-weight: 500;
+                    }
+                    
+                    .list100-status-not_started {
+                        background: #EFE9E3;
+                        color: #7b7268;
+                    }
+                    
+                    .list100-status-in_progress {
+                        background: #FFF4E6;
+                        color: #F59E0B;
+                    }
+                    
+                    .list100-status-completed {
+                        background: #D1FAE5;
+                        color: #059669;
+                    }
+                </style>
+                
+                <table class="list100-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 60px;">Order</th>
+                            <th>Title</th>
+                            <th style="width: 140px;">Status</th>
+                            <th style="width: 80px;">Updated</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in items %}
+                        <tr>
+                            <td style="color: var(--zen-text-light);"><strong>{{ item.order }}</strong></td>
+                            <td>{{ item.title }}</td>
+                            <td>
+                                <span class="list100-status-badge list100-status-{{ item.status }}">
+                                    {{ item.get_status_display }}
+                                </span>
+                            </td>
+                            <td style="color: var(--zen-text-light); font-size: 0.85rem;">
+                                {{ item.updated_at|date:"d/m/Y" }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div style="text-align: center; padding: 80px 20px; color: var(--zen-text-light);">
+                    <p style="font-size: 1.1rem; margin: 0;">No items yet.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Motivation Quote -->
+    <div style="max-width: 1200px; margin: 0 auto 60px; padding: 0 20px;">
+        <div style="background: linear-gradient(135deg, #C9B59C 0%, #D9CFC7 100%); border-radius: 12px; padding: 50px; text-align: center; color: white;">
+            <p style="font-size: 1.3rem; font-weight: 400; line-height: 1.7; margin: 0; font-style: italic;">
+                "Every small step leads to a big journey. Start today!"
             </p>
         </div>
-    </div>
-
-    <!-- Lists Grid -->
-    <div style="max-width: 1200px; margin: 60px auto; padding: 0 20px;">
-        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px;">
-            <!-- 100 Books -->
-            <div class="zen-post-card" style="border-left: 4px solid #C9B59C;">
-                <div style="font-size: 3rem; margin-bottom: 20px;">📚</div>
-                <h3 style="font-weight: 300; font-size: 1.8rem; margin: 0 0 15px;">100 Books That Changed My Life</h3>
-                <p style="color: #7b7268; margin: 0 0 20px; line-height: 1.8;">
-                    From technical masterpieces to life-changing philosophies, 
-                    these are the books that shaped my thinking and skills.
-                </p>
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span style="color: #C9B59C; font-weight: 600;">Coming Soon</span>
-                    <span style="background: #F9F8F6; padding: 5px 15px; border-radius: 15px; font-size: 0.9rem;">0/100</span>
-                </div>
-            </div>
-
-            <!-- 100 Tools -->
-            <div class="zen-post-card" style="border-left: 4px solid #D9CFC7;">
-                <div style="font-size: 3rem; margin-bottom: 20px;">🛠️</div>
-                <h3 style="font-weight: 300; font-size: 1.8rem; margin: 0 0 15px;">100 Tools for Developers</h3>
-                <p style="color: #7b7268; margin: 0 0 20px; line-height: 1.8;">
-                    Essential development tools, libraries, frameworks, and utilities 
-                    that every developer should know about.
-                </p>
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span style="color: #D9CFC7; font-weight: 600;">Coming Soon</span>
-                    <span style="background: #F9F8F6; padding: 5px 15px; border-radius: 15px; font-size: 0.9rem;">0/100</span>
-                </div>
-            </div>
-
-            <!-- 100 Lessons -->
-            <div class="zen-post-card" style="border-left: 4px solid #C9B59C;">
-                <div style="font-size: 3rem; margin-bottom: 20px;">💡</div>
-                <h3 style="font-weight: 300; font-size: 1.8rem; margin: 0 0 15px;">100 Lessons Learned</h3>
-                <p style="color: #7b7268; margin: 0 0 20px; line-height: 1.8;">
-                    Hard-earned lessons from years of coding, debugging, 
-                    and building software. Learn from my mistakes!
-                </p>
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span style="color: #C9B59C; font-weight: 600;">Coming Soon</span>
-                    <span style="background: #F9F8F6; padding: 5px 15px; border-radius: 15px; font-size: 0.9rem;">0/100</span>
-                </div>
-            </div>
-
-            <!-- 100 Resources -->
-            <div class="zen-post-card" style="border-left: 4px solid #D9CFC7;">
-                <div style="font-size: 3rem; margin-bottom: 20px;">🎯</div>
-                <h3 style="font-weight: 300; font-size: 1.8rem; margin: 0 0 15px;">100 Learning Resources</h3>
-                <p style="color: #7b7268; margin: 0 0 20px; line-height: 1.8;">
-                    Courses, tutorials, documentation, and learning platforms 
-                    that helped me level up my skills.
-                </p>
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span style="color: #D9CFC7; font-weight: 600;">Coming Soon</span>
-                    <span style="background: #F9F8F6; padding: 5px 15px; border-radius: 15px; font-size: 0.9rem;">0/100</span>
-                </div>
-            </div>
-
-            <!-- 100 Ideas -->
-            <div class="zen-post-card" style="border-left: 4px solid #C9B59C;">
-                <div style="font-size: 3rem; margin-bottom: 20px;">💭</div>
-                <h3 style="font-weight: 300; font-size: 1.8rem; margin: 0 0 15px;">100 Project Ideas</h3>
-                <p style="color: #7b7268; margin: 0 0 20px; line-height: 1.8;">
-                    Inspiring project ideas for beginners to advanced developers. 
-                    Build, learn, and grow your portfolio!
-                </p>
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span style="color: #C9B59C; font-weight: 600;">Coming Soon</span>
-                    <span style="background: #F9F8F6; padding: 5px 15px; border-radius: 15px; font-size: 0.9rem;">0/100</span>
-                </div>
-            </div>
-
-            <!-- 100 Tips -->
-            <div class="zen-post-card" style="border-left: 4px solid #D9CFC7;">
-                <div style="font-size: 3rem; margin-bottom: 20px;">⚡</div>
-                <h3 style="font-weight: 300; font-size: 1.8rem; margin: 0 0 15px;">100 Productivity Tips</h3>
-                <p style="color: #7b7268; margin: 0 0 20px; line-height: 1.8;">
-                    Proven strategies and techniques to boost productivity, 
-                    manage time, and maintain work-life balance.
-                </p>
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span style="color: #D9CFC7; font-weight: 600;">Coming Soon</span>
-                    <span style="background: #F9F8F6; padding: 5px 15px; border-radius: 15px; font-size: 0.9rem;">0/100</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Call to Action -->
-    <div style="max-width: 900px; margin: 60px auto; padding: 0 20px;">
-        <div style="background: linear-gradient(135deg, #C9B59C 0%, #D9CFC7 100%); border-radius: 16px; padding: 60px 40px; text-align: center; color: white;">
-            <h2 style="color: white; margin: 0 0 20px; font-weight: 300; font-size: 2.5rem;">
-                🚀 Want to suggest a list?
-            </h2>
-            <p style="opacity: 0.95; font-size: 1.2rem; margin: 0 0 30px; line-height: 1.8;">
-                Have an idea for a "List 100" topic? I'd love to hear from you!<br>
-                Let me know what kind of curated lists would be most valuable for your learning journey.
-            </p>
-            <a href="{% url 'contact' %}" style="padding: 15px 40px; background: white; color: #C9B59C; border-radius: 30px; text-decoration: none; font-weight: 600; display: inline-block;">
-                Send your suggestion →
-            </a>
-        </div>
-    </div>
-
-    <!-- Note -->
-    <div style="max-width: 900px; margin: 40px auto 0; padding: 0 20px; text-align: center;">
-        <p style="color: #7b7268; font-style: italic;">
-            💡 These lists are continuously updated as I discover new resources and insights. 
-            Check back regularly for updates!
-        </p>
     </div>
 </div>
 {% endblock %}

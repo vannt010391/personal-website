@@ -1,7 +1,7 @@
 {% extends 'public/base.html' %}
 {% load static %}
 
-{% block title %}Vân Nguyễn{% endblock %}
+{% block title %}Van Nguyen{% endblock %}
 
 {% block content %}
 <div class="zen-blog">
@@ -9,47 +9,49 @@
     <section class="zen-hero" style="padding: 80px 20px; background: white;">
         <div class="container" style="max-width: 700px; text-align: center;">
             <h2 style="font-size: 2rem; margin-bottom: 20px; color: #3f372f; font-weight: 300;">
-                Khám phá
+                Explore
             </h2>
             <p class="zen-hero-subtitle" style="font-size: 1.1rem; color: #7b7268; line-height: 1.8; margin-bottom: 40px;">
-                Blog, ghi chú, danh sách, và những công cụ giúp bạn học tập hiệu quả hơn.
+                Blog, notes, and lists, plus tools that help you learn more effectively.
             </p>
         </div>
     </section>
 
     <!-- Features Section (Simplified Grid) -->
-    <section style="padding: 60px 20px; background: #F9F8F6; border-top: 1px solid #D9CFC7;">
-        <div class="container" style="max-width: 900px;">
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px;">
+    <section style="padding: 60px 20px; background: #F9F8F6; border-top: 1px solid #D9CFC7; border-bottom: 3px solid #C9B59C;">
+        <div class="container" style="max-width: 1200px;">
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; max-width: 800px; margin: 0 auto;">
                 <!-- Blog Card -->
                 <a href="{% url 'blog:post_list' %}" style="text-decoration: none; color: inherit;">
-                    <div style="padding: 30px; background: white; border: 1px solid #D9CFC7; border-radius: 8px; transition: all 0.3s; cursor: pointer;">
-                        <div style="font-size: 2.5rem; margin-bottom: 15px;">📖</div>
+                    <div style="padding: 40px 30px; background: white; border: 1px solid #D9CFC7; border-radius: 8px; transition: all 0.3s; cursor: pointer; display: flex; flex-direction: column; height: 100%;">
+                        <div style="width: 50px; height: 50px; margin-bottom: 15px; background: var(--zen-primary); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                            </svg>
+                        </div>
                         <h3 style="font-size: 1.4rem; margin: 0 0 10px 0; color: #3f372f; font-weight: 500;">Blog</h3>
-                        <p style="color: #7b7268; margin: 0; line-height: 1.6; font-size: 0.95rem;">
-                            Bài viết chi tiết về công nghệ, lập trình và những trải nghiệm.
+                        <p style="color: #7b7268; margin: 0; line-height: 1.6; font-size: 0.95rem; flex-grow: 1;">
+                            In-depth posts about technology, programming, and real-world experiences.
                         </p>
                     </div>
                 </a>
 
                 <!-- Note-Taking Card -->
                 <a href="{% url 'note_taking' %}" style="text-decoration: none; color: inherit;">
-                    <div style="padding: 30px; background: white; border: 1px solid #D9CFC7; border-radius: 8px; transition: all 0.3s; cursor: pointer;">
-                        <div style="font-size: 2.5rem; margin-bottom: 15px;">📔</div>
-                        <h3 style="font-size: 1.4rem; margin: 0 0 10px 0; color: #3f372f; font-weight: 500;">Ghi chú</h3>
-                        <p style="color: #7b7268; margin: 0; line-height: 1.6; font-size: 0.95rem;">
-                            Ý tưởng, ghi chú nhanh, những điều cần nhớ.
-                        </p>
-                    </div>
-                </a>
-
-                <!-- List 100 Card -->
-                <a href="{% url 'list_100' %}" style="text-decoration: none; color: inherit;">
-                    <div style="padding: 30px; background: white; border: 1px solid #D9CFC7; border-radius: 8px; transition: all 0.3s; cursor: pointer;">
-                        <div style="font-size: 2.5rem; margin-bottom: 15px;">📋</div>
-                        <h3 style="font-size: 1.4rem; margin: 0 0 10px 0; color: #3f372f; font-weight: 500;">Danh sách</h3>
-                        <p style="color: #7b7268; margin: 0; line-height: 1.6; font-size: 0.95rem;">
-                            100 cuốn sách, 100 ý tưởng, 100 bài học.
+                    <div style="padding: 40px 30px; background: white; border: 1px solid #D9CFC7; border-radius: 8px; transition: all 0.3s; cursor: pointer; display: flex; flex-direction: column; height: 100%;">
+                        <div style="width: 50px; height: 50px; margin-bottom: 15px; background: var(--zen-secondary); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                <line x1="16" y1="17" x2="8" y2="17"/>
+                                <polyline points="10 9 9 9 8 9"/>
+                            </svg>
+                        </div>
+                        <h3 style="font-size: 1.4rem; margin: 0 0 10px 0; color: #3f372f; font-weight: 500;">Notes</h3>
+                        <p style="color: #7b7268; margin: 0; line-height: 1.6; font-size: 0.95rem; flex-grow: 1;">
+                            Ideas, quick notes, and things to remember.
                         </p>
                     </div>
                 </a>
@@ -61,7 +63,7 @@
     {% if recent_posts %}
     <section style="padding: 60px 20px; background: white; border-top: 1px solid #D9CFC7;">
         <div class="container" style="max-width: 900px;">
-            <h2 style="font-size: 1.8rem; color: #3f372f; font-weight: 300; margin: 0 0 40px 0;">Bài viết mới nhất</h2>
+            <h2 style="font-size: 1.8rem; color: #3f372f; font-weight: 300; margin: 0 0 40px 0;">Latest posts</h2>
             
             <div style="display: flex; flex-direction: column; gap: 30px;">
                 {% for post in recent_posts|slice:":3" %}
@@ -84,7 +86,7 @@
                     {% endif %}
                     
                     <a href="{% url 'blog:post_detail' post.slug %}" style="color: #C9B59C; text-decoration: none; font-weight: 500; font-size: 0.95rem; transition: color 0.3s; display: inline-block;">
-                        Đọc tiếp →
+                        Read more →
                     </a>
                 </article>
                 {% endfor %}
@@ -92,7 +94,7 @@
 
             <div style="text-align: center; margin-top: 50px;">
                 <a href="{% url 'blog:post_list' %}" style="padding: 12px 30px; background: white; color: #C9B59C; border: 1px solid #C9B59C; border-radius: 20px; text-decoration: none; font-weight: 600; display: inline-block; transition: all 0.3s; font-size: 0.95rem;">
-                    Xem tất cả bài viết →
+                    View all posts →
                 </a>
             </div>
         </div>
@@ -103,17 +105,21 @@
     <section style="padding: 60px 20px; background: #EFE9E3; border-top: 1px solid #D9CFC7;">
         <div class="container" style="max-width: 700px; text-align: center;">
             <h2 style="font-size: 1.8rem; color: #3f372f; font-weight: 300; margin: 0 0 15px 0;">
-                Hãy kết nối
+                Let's connect
             </h2>
             <p style="color: #7b7268; font-size: 1rem; line-height: 1.7; margin: 0 0 30px 0;">
-                Theo dõi để cập nhật những bài viết mới và chia sẻ kiến thức cùng nhau.
+                Follow along for new posts and shared knowledge.
             </p>
             <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-                <a href="{% url 'contact' %}" style="padding: 12px 30px; background: #C9B59C; color: white; border-radius: 20px; text-decoration: none; font-weight: 600; display: inline-block; font-size: 0.95rem; transition: all 0.3s;">
-                    📧 Liên hệ
+                <a href="{% url 'contact' %}" style="padding: 12px 30px; background: #C9B59C; color: white; border-radius: 20px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; font-size: 0.95rem; transition: all 0.3s;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                        <polyline points="22,6 12,13 2,6"/>
+                    </svg>
+                    Contact
                 </a>
                 <a href="{% url 'blog:post_list' %}" style="padding: 12px 30px; background: white; color: #3f372f; border: 1px solid #D9CFC7; border-radius: 20px; text-decoration: none; font-weight: 600; display: inline-block; font-size: 0.95rem; transition: all 0.3s;">
-                    Đọc bài viết
+                    Read posts
                 </a>
             </div>
         </div>

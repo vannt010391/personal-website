@@ -217,13 +217,22 @@ class KnowledgeEntryCreateView(LoginRequiredMixin, CreateView):
         print(f"Title: {form.cleaned_data.get('title')}")
         print(f"Parent: {form.cleaned_data.get('parent')}")
         print(f"Topic: {form.cleaned_data.get('topic')}")
-        messages.success(self.request, 'Entry đã được tạo thành công!')
+        messages.success(self.request, 'Page created successfully!', extra_tags='success')
         return super().form_valid(form)
 
     def form_invalid(self, form):
         print(f"=== FORM INVALID ===")
         print(f"Errors: {form.errors}")
         print(f"Data: {form.data}")
+        # Add error message for topic field
+        if 'topic' in form.errors:
+            for error in form.errors['topic']:
+                messages.error(self.request, f'Topic: {error}', extra_tags='error')
+        # Add any other form errors
+        for field, errors in form.errors.items():
+            if field != 'topic':
+                for error in errors:
+                    messages.error(self.request, f'{field}: {error}', extra_tags='error')
         return super().form_invalid(form)
 
 
@@ -244,7 +253,7 @@ class KnowledgeEntryUpdateView(LoginRequiredMixin, UpdateView):
         return kwargs
 
     def form_valid(self, form):
-        messages.success(self.request, 'Entry đã được cập nhật!')
+        messages.success(self.request, 'Page updated successfully!', extra_tags='success')
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):

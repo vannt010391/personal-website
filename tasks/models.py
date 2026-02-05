@@ -53,3 +53,26 @@ class StudySession(models.Model):
 
     def __str__(self):
         return f"{self.subject} - {self.date}"
+
+class List100Item(models.Model):
+    STATUS_CHOICES = [
+        ('not_started', 'Not Started'),
+        ('in_progress', 'In Progress'),
+        ('completed', 'Completed'),
+    ]
+
+    title = models.CharField(max_length=300, verbose_name='Title')
+    description = models.TextField(blank=True, verbose_name='Description')
+    status = models.CharField(max_length=15, choices=STATUS_CHOICES, default='not_started', verbose_name='Status')
+    order = models.IntegerField(default=0, verbose_name='Order')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    completed_at = models.DateTimeField(null=True, blank=True, verbose_name='Completed At')
+
+    class Meta:
+        ordering = ['order', 'created_at']
+        verbose_name = 'List 100 Item'
+        verbose_name_plural = 'List 100 Items'
+
+    def __str__(self):
+        return f"{self.order}. {self.title}"

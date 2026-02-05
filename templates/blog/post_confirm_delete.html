@@ -1,23 +1,23 @@
 {% extends 'base.html' %}
 
-{% block title %}Xóa Bài viết{% endblock %}
+{% block title %}Delete Post{% endblock %}
 
 {% block content %}
 <div class="card">
-    <h1>Xác nhận xóa bài viết</h1>
-    <a href="{% url 'blog:post_detail' object.slug %}">&larr; Quay lại</a>
+    <h1>Confirm post deletion</h1>
+    <a href="{% url 'blog:post_detail' object.slug %}">&larr; Back</a>
 </div>
 
 <div class="card" style="background-color: #EFE9E3; border-left: 4px solid #C9B59C;">
     <h2>{{ object.title }}</h2>
-    <p><strong>Cảnh báo:</strong> Bạn có chắc chắn muốn xóa bài viết này?</p>
-    <p>Hành động này không thể hoàn tác!</p>
+    <p><strong>Warning:</strong> Are you sure you want to delete this post?</p>
+    <p>This action cannot be undone!</p>
 
     <form method="post" style="margin-top: 20px;">
         {% csrf_token %}
         <div style="display: flex; gap: 10px;">
-            <button type="submit" class="btn btn-danger">Xác nhận xóa</button>
-            <a href="{% url 'blog:post_detail' object.slug %}" class="btn">Hủy</a>
+            <button type="submit" class="btn btn-danger">Confirm Delete</button>
+            <a href="{% url 'blog:post_detail' object.slug %}" class="btn">Cancel</a>
         </div>
     </form>
 </div>

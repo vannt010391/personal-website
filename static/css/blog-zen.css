@@ -13,21 +13,23 @@
     --zen-bg-alt: #EFE9E3;
     --zen-shadow: rgba(0, 0, 0, 0.08);
     --zen-shadow-lg: rgba(0, 0, 0, 0.12);
+    --zen-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --zen-font-mono: 'Monaco', 'Courier New', monospace;
 }
 
 /* Global Typography */
 .zen-blog {
-    font-family: 'Georgia', 'Times New Roman', serif;
+    font-family: var(--zen-font);
     color: var(--zen-text);
-    line-height: 1.8;
+    line-height: 1.6;
     background: var(--zen-bg);
 }
 
 .zen-blog h1, .zen-blog h2, .zen-blog h3 {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    font-weight: 300;
-    letter-spacing: -0.02em;
-    line-height: 1.2;
+    font-family: var(--zen-font);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
     color: var(--zen-primary);
 }
 
@@ -152,7 +154,7 @@
     font-size: 0.85rem;
     color: var(--zen-text-light);
     margin-bottom: 20px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: var(--zen-font);
 }
 
 .zen-post-meta-item {
@@ -205,7 +207,7 @@
     text-decoration: none;
     font-weight: 500;
     font-size: 0.95rem;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: var(--zen-font);
     transition: gap 0.3s ease;
 }
 
@@ -353,7 +355,7 @@
     font-size: 0.95rem;
     font-weight: 500;
     transition: all 0.3s ease;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: var(--zen-font);
 }
 
 .zen-category-btn:hover,

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Website Cá Nhân{% endblock %}</title>
+    <title>{% block title %}Personal Website{% endblock %}</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     {% block extra_css %}{% endblock %}
@@ -12,23 +12,38 @@
     <header style="background: #F9F8F6; border-bottom: 1px solid #D9CFC7;">
         <nav>
             <div class="container" style="display: flex; justify-content: space-between; align-items: center; padding: 14px 0;">
-                <h1 style="margin: 0; font-weight: 300; color: #3f372f;">Website Cá Nhân</h1>
-                <ul style="list-style: none; display: flex; gap: 16px; margin: 0; padding: 0; flex-wrap: wrap;">
-                    <li><a href="/" style="color: #3f372f; text-decoration: none; padding: 6px 12px; border-radius: 10px;">Trang Chủ</a></li>
-                    <li><a href="{% url 'blog:post_list' %}" style="color: #3f372f; text-decoration: none; padding: 6px 12px; border-radius: 10px;">Blog</a></li>
-                    <li><a href="{% url 'tasks:task_list' %}" style="color: #3f372f; text-decoration: none; padding: 6px 12px; border-radius: 10px;">Công Việc</a></li>
-                    <li><a href="{% url 'knowledge:entry_list' %}" style="color: #3f372f; text-decoration: none; padding: 6px 12px; border-radius: 10px;">Kiến Thức</a></li>
+                <a href="{% url 'admin_portal' %}" style="text-decoration: none; display: flex; align-items: center; gap: 8px;" title="Admin Portal">
+                    <div style="position: relative; display: inline-flex; align-items: center; justify-content: center;">
+                        <svg width="90" height="60" viewBox="-1 -1 54 42" fill="none" style="display: block; overflow: visible;">
+                            <path d="M12 28C6.373 28 1 22.627 1 16C1 9.373 6.373 4 12 4C13.5 4 14.9 4.3 16.2 4.8C18.4 1.7 22.5 0 27.5 0C34.956 0 41 6.044 41 13.5C41 14.2 40.95 14.9 40.85 15.6C46.2 16.4 50.5 21.1 50.5 26.8C50.5 33.1 45.4 38.2 39.1 38.2H14" stroke="#87CEEB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="#E0F4FF"/>
+                        </svg>
+                        <h1 style="position: absolute; color: #3f372f; font-weight: 500; font-size: 1.4rem; margin: 0; cursor: pointer; top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none;">
+                            Vân
+                        </h1>
+                    </div>
+                </a>
+                <ul style="list-style: none; display: flex; gap: 16px; margin: 0; padding: 0; flex-wrap: wrap; align-items: center;">
+                    <li><a href="{% url 'admin_portal' %}" style="color: #3f372f; text-decoration: none; padding: 6px 12px; border-radius: 10px; {% if request.path == '/portal/' %}background: #EFE9E3;{% endif %}">Dashboard</a></li>
+                    <li><a href="{% url 'blog:admin_blog_list' %}" style="color: #3f372f; text-decoration: none; padding: 6px 12px; border-radius: 10px; {% if '/blog/admin' in request.path %}background: #EFE9E3;{% endif %}">Blog</a></li>
+                    <li><a href="{% url 'tasks:task_list' %}" style="color: #3f372f; text-decoration: none; padding: 6px 12px; border-radius: 10px; {% if '/tasks/' in request.path and 'list100' not in request.path %}background: #EFE9E3;{% endif %}">Tasks</a></li>
+                    <li><a href="{% url 'knowledge:entry_list' %}" style="color: #3f372f; text-decoration: none; padding: 6px 12px; border-radius: 10px; {% if '/knowledge/' in request.path %}background: #EFE9E3;{% endif %}">Knowledge</a></li>
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url 'tasks:list100_admin' %}" style="color: #3f372f; text-decoration: none; padding: 6px 12px; border-radius: 10px; {% if 'list100' in request.path %}background: #EFE9E3;{% endif %}">List 100</a></li>
+                    {% endif %}
+                    <li style="border-left: 1px solid #D9CFC7; padding-left: 16px; margin-left: 8px;">
+                        <a href="/" style="color: white; background: #87CEEB; text-decoration: none; padding: 8px 16px; border-radius: 10px; font-size: 0.9rem; font-weight: 600; transition: all 0.2s;" onmouseover="this.style.background='#5DADE2';" onmouseout="this.style.background='#87CEEB';">Public Site</a>
+                    </li>
                     {% if user.is_authenticated %}
                         <li>
                             <form method="post" action="{% url 'logout' %}" style="display: inline; margin: 0;">
                                 {% csrf_token %}
                                 <button type="submit" style="background: #EFE9E3; border: none; color: #3f372f; cursor: pointer; padding: 6px 12px; border-radius: 10px;">
-                                    Đăng Xuất
+                                    Logout
                                 </button>
                             </form>
                         </li>
                     {% else %}
-                        <li><a href="/login/" style="color: #3f372f; text-decoration: none; padding: 6px 12px; border-radius: 10px;">Đăng Nhập</a></li>
+                        <li><a href="/login/" style="color: #3f372f; text-decoration: none; padding: 6px 12px; border-radius: 10px;">Login</a></li>
                     {% endif %}
                 </ul>
             </div>
@@ -52,7 +67,7 @@
 
     <footer>
         <div class="container">
-            <p>&copy; 2026 Website Cá Nhân. All rights reserved.</p>
+            <p>&copy; 2026 Personal Website. All rights reserved.</p>
         </div>
     </footer>
 

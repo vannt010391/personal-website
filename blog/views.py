@@ -9,7 +9,34 @@ import markdown
 from django.utils import timezone
 
 
-class PostListView(ListView):
+# Admin Blog Management - All posts with CRUD
+class AdminBlogListView(LoginRequiredMixin, ListView):
+    model = Post
+    template_name = 'blog/admin_blog_list.html'
+    context_object_name = 'posts'
+    paginate_by = 20
+
+    def get_queryset(self):
+        queryset = Post.objects.all().select_related('author', 'category').order_by('-created_at')
+        category_slug = self.kwargs.get('category_slug')
+        if category_slug:
+            queryset = queryset.filter(category__slug=category_slug)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = Category.objects.all()
+        context['total_posts'] = Post.objects.count()
+        context['published_posts'] = Post.objects.filter(status='published').count()
+        context['draft_posts'] = Post.objects.filter(status='draft').count()
+        category_slug = self.kwargs.get('category_slug')
+        if category_slug:
+            context['current_category'] = get_object_or_404(Category, slug=category_slug)
+        return context
+
+
+# Public Blog - Only published posts
+class PublicBlogListView(ListView):
     model = Post
     template_name = 'blog/post_list.html'
     context_object_name = 'posts'
@@ -29,6 +56,10 @@ class PostListView(ListView):
         if category_slug:
             context['current_category'] = get_object_or_404(Category, slug=category_slug)
         return context
+
+
+# Backward compatibility alias
+PostListView = PublicBlogListView
 
 
 class PostDetailView(DetailView):

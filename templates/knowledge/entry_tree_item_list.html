@@ -1,0 +1,37 @@
+{% load knowledge_extras %}
+
+<li class="knowledge-tree-item">
+    <div class="knowledge-tree-node">
+        {% if entry.children.all %}
+            <button class="tree-toggle-btn" onclick="toggleTreeNode(this)" style="background: none; border: none; color: #7b7268; cursor: pointer; font-size: 0.85rem; padding: 0 6px 0 0; margin: 0;">▶</button>
+        {% endif %}
+        <a href="{% url 'knowledge:entry_detail' entry.slug %}" class="knowledge-tree-link">
+            {{ entry.title }}
+            {% if entry.is_favorite %}<span style="color: #C9B59C; margin-left: 4px;">⭐</span>{% endif %}
+        </a>
+        <div class="knowledge-tree-meta">
+            {% if entry.entry_type %}{{ entry.get_entry_type_display }} • {% endif %}{{ entry.updated_at|date:"d/m/Y" }}
+            {% if entry.tags %}
+            •
+            {% for tag in entry.tags|split:"," %}
+                #{{ tag|trim }}{% if not forloop.last %}, {% endif %}
+            {% endfor %}
+            {% endif %}
+        </div>
+        {% if entry.summary %}
+        <div class="knowledge-tree-meta" style="margin-top: 6px;">
+            {{ entry.summary|truncatewords:20 }}
+        </div>
+        {% endif %}
+    </div>
+
+    {% if entry.children.all %}
+    <ul class="knowledge-tree-children" style="display: none;">
+        {% for child in entry.children.all %}
+            {% if child in allowed_entries %}
+                {% include "knowledge/entry_tree_item_list.html" with entry=child allowed_entries=allowed_entries %}
+            {% endif %}
+        {% endfor %}
+    </ul>
+    {% endif %}
+</li>

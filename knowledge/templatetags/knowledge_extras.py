@@ -17,3 +17,9 @@ def trim(value):
     if value:
         return value.strip()
     return value
+
+
+@register.filter
+def filter_root_entries(entries):
+    """Filter entries to only include root entries (those without a parent)."""
+    return [entry for entry in entries if not entry.parent]

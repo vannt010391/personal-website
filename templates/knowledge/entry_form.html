@@ -2,7 +2,7 @@
 {% load static %}
 {% load knowledge_tree %}
 
-{% block title %}{% if object %}Chỉnh sửa{% else %}Tạo mới{% endif %} Entry{% endblock %}
+{% block title %}{% if object %}Edit{% else %}Create{% endif %} Entry{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/forms.css' %}">
@@ -22,156 +22,111 @@ main.container {
 }
 </style>
 
+<!-- Messages Display -->
+{% if messages %}
+<div style="position: fixed; top: 80px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 90%; max-width: 600px;">
+    {% for message in messages %}
+    <div class="alert-message {{ message.tags }}" style="padding: 15px 20px; margin-bottom: 10px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); animation: slideDown 0.3s ease-out; font-weight: 500; {% if 'success' in message.tags %}background-color: #D4EDDA !important; border: 1px solid #C3E6CB !important; color: #155724 !important;{% elif 'error' in message.tags %}background-color: #F8D7DA !important; border: 1px solid #F5C6CB !important; color: #721C24 !important;{% elif 'warning' in message.tags %}background-color: #FFF3CD !important; border: 1px solid #FFEAA7 !important; color: #856404 !important;{% endif %}">
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+<style>
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.alert-message.success {
+    background-color: #D4EDDA !important;
+    border: 1px solid #C3E6CB !important;
+    color: #155724 !important;
+}
+.alert-message.error {
+    background-color: #F8D7DA !important;
+    border: 1px solid #F5C6CB !important;
+    color: #721C24 !important;
+}
+.alert-message.warning {
+    background-color: #FFF3CD !important;
+    border: 1px solid #FFEAA7 !important;
+    color: #856404 !important;
+}
+</style>
+{% endif %}
+
 <div style="min-height: 100vh; background: #F9F8F6; margin: 0; padding: 0;">
     <div style="display: flex; margin-top: 20px; width: 100%; box-sizing: border-box;">
-        <!-- Left Sidebar -->
-        <aside style="width: 280px; min-height: calc(100vh - 100px); background: #F9F8F6; border-right: 1px solid #D9CFC7; padding: 20px; overflow-y: auto;">
+        <!-- Left Sidebar - Management -->
+        <aside style="width: 230px; min-height: calc(100vh - 100px); background: #F9F8F6; border-right: 1px solid #D9CFC7; padding: 20px; overflow-y: auto;">
             {% if object %}
             {% with entry=object %}
             <div style="margin-bottom: 20px;">
                 <a href="{% url 'knowledge:entry_list' %}"
                    style="display: block; padding: 10px; background: white; border: 1px solid #D9CFC7; color: #7b7268; text-align: center; border-radius: 6px; text-decoration: none; font-weight: 600; transition: all 0.2s;">
-                    ← Danh sách tất cả
+                    ← All Entries
                 </a>
             </div>
 
-            {% if entry.topic %}
-            <div style="margin-bottom: 20px; padding: 12px; background: #EFE9E3; border-radius: 6px;">
-                <div style="font-size: 0.85rem; color: #7b7268; margin-bottom: 4px;">📚 Chủ đề:</div>
-                <div style="font-weight: 600; color: #3f372f;">{{ entry.topic.name }}</div>
-            </div>
-            {% endif %}
-
-            <h3>📄 Cấu trúc trang</h3>
-
-            <div style="margin-bottom: 15px;">
-                <input type="text" id="page-search" placeholder="🔍 Tìm kiếm trang..."
-                       style="width: 100%; padding: 10px 12px; border: 1px solid #D9CFC7; border-radius: 6px; font-size: 0.9rem; color: #3f372f; background: white; transition: all 0.2s;"
-                       onkeyup="filterPages(this.value)"
-                       onfocus="this.style.borderColor='#C9B59C'; this.style.boxShadow='0 0 0 3px rgba(201, 181, 156, 0.1)';"
-                       onblur="this.style.borderColor='#D9CFC7'; this.style.boxShadow='none';">
+            <!-- This Page Section -->
+            <h3 style="font-size: 0.9rem; font-weight: 700; color: #3f372f; margin-bottom: 12px;">This Page</h3>
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 25px;">
+                <button type="button" onclick="toggleSettings()" class="gitbook-sidebar-item" style="background: transparent; border: none; width: 100%; text-align: left; cursor: pointer; padding: 8px 12px; border-radius: 4px; transition: all 0.2s;" onmouseover="this.style.background='#EFE9E3';" onmouseout="this.style.background='transparent';">
+                    Settings
+                </button>
+                <a href="{% url 'knowledge:entry_detail' entry.slug %}" class="gitbook-sidebar-item" style="padding: 8px 12px; border-radius: 4px; transition: all 0.2s; text-decoration: none; color: #7b7268;" onmouseover="this.style.background='#EFE9E3';" onmouseout="this.style.background='transparent';">Cancel</a>
+                <button type="submit" form="entry-form" id="top-submit-btn" class="gitbook-sidebar-item" style="background: linear-gradient(135deg, #C9B59C 0%, #D9CFC7 100%); border: none; width: 100%; text-align: left; cursor: pointer; font-weight: 600; color: white; padding: 10px 12px; border-radius: 6px; transition: all 0.3s;" onmouseover="this.style.opacity='0.9';" onmouseout="this.style.opacity='1';">
+                    Update
+                </button>
             </div>
 
-            <div class="entry-tree-container">
-                {% if entry.parent %}
-                    <div class="page-item" style="margin-bottom: 10px;">
-                        <a href="{% url 'knowledge:entry_detail' entry.parent.slug %}"
-                           class="gitbook-sidebar-item"
-                           style="font-size: 0.9rem; opacity: 0.8;"
-                           data-page-title="{{ entry.parent.title|lower }}">
-                            ⬆️ {{ entry.parent.title|truncatewords:5 }}
-                        </a>
-                    </div>
-                {% endif %}
-
-                <div class="page-item current-page" style="margin: 10px 0; padding: 12px; background: linear-gradient(135deg, rgba(201, 181, 156, 0.15) 0%, rgba(217, 207, 199, 0.15) 100%); border-left: 3px solid #C9B59C; border-radius: 6px;">
-                    <div style="font-weight: 600; color: #3f372f; margin-bottom: 8px;">
-                        📄 {{ entry.title }}{% if entry.is_favorite %} ⭐{% endif %}
-                    </div>
-                    <a href="{% url 'knowledge:entry_create' %}?parent={{ entry.id }}"
-                       style="display: inline-block; padding: 6px 12px; background: #C9B59C; color: white; border-radius: 4px; text-decoration: none; font-size: 0.85rem; font-weight: 600; transition: all 0.2s;"
-                       onmouseover="this.style.background='#B8A58B';"
-                       onmouseout="this.style.background='#C9B59C';">
-                        ➕ Thêm trang con
-                    </a>
-                </div>
-
-                {% if entry.children.all %}
-                    <div class="children-section" style="margin-left: 15px; border-left: 2px solid #D9CFC7; padding-left: 10px;">
-                        <div style="font-size: 0.85rem; color: #7b7268; margin-bottom: 8px; font-weight: 600;">
-                            Trang con: <span class="children-count">({{ entry.children.all|length }})</span>
-                        </div>
-                        <div class="children-list">
-                            {% for child in entry.children.all %}
-                                <a href="{% url 'knowledge:entry_detail' child.slug %}"
-                                   class="page-item gitbook-sidebar-item {% if forloop.counter > 10 %}hidden-item{% endif %}"
-                                   style="margin-bottom: 4px; {% if forloop.counter > 10 %}display: none;{% endif %}"
-                                   data-page-title="{{ child.title|lower }}">
-                                    📄 {{ child.title|truncatewords:5 }}
-                                    {% if child.is_favorite %} ⭐{% endif %}
-                                </a>
-                            {% endfor %}
-                        </div>
-                        {% if entry.children.all|length > 10 %}
-                        <button onclick="showMoreChildren(this)"
-                                style="margin-top: 8px; padding: 6px 10px; background: #EFE9E3; border: 1px solid #D9CFC7; border-radius: 4px; color: #7b7268; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;"
-                                onmouseover="this.style.background='#D9CFC7';"
-                                onmouseout="this.style.background='#EFE9E3';">
-                            ➕ Hiện thêm {{ entry.children.all|length|add:"-10" }} trang
-                        </button>
-                        {% endif %}
-                    </div>
-                {% endif %}
-
-                {% if sibling_pages %}
-                    <div class="siblings-section" style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #D9CFC7;">
-                        <div style="font-size: 0.85rem; color: #7b7268; margin-bottom: 8px; font-weight: 600;">
-                            {% if entry.parent %}Trang cùng cấp:{% else %}Trang khác trong chủ đề:{% endif %}
-                            <span class="siblings-count">({{ sibling_pages|length }})</span>
-                        </div>
-                        <div class="siblings-list">
-                            {% for page in sibling_pages %}
-                                <a href="{% url 'knowledge:entry_detail' page.slug %}"
-                                   class="page-item gitbook-sidebar-item {% if forloop.counter > 10 %}hidden-item{% endif %}"
-                                   style="margin-bottom: 4px; opacity: 0.8; {% if forloop.counter > 10 %}display: none;{% endif %}"
-                                   data-page-title="{{ page.title|lower }}">
-                                    📄 {{ page.title|truncatewords:5 }}
-                                    {% if page.is_favorite %} ⭐{% endif %}
-                                </a>
-                            {% endfor %}
-                        </div>
-                        {% if sibling_pages|length > 10 %}
-                        <button onclick="showMoreSiblings(this)"
-                                style="margin-top: 8px; padding: 6px 10px; background: #EFE9E3; border: 1px solid #D9CFC7; border-radius: 4px; color: #7b7268; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;"
-                                onmouseover="this.style.background='#D9CFC7';"
-                                onmouseout="this.style.background='#EFE9E3';">
-                            ➕ Hiện thêm {{ sibling_pages|length|add:"-10" }} trang
-                        </button>
-                        {% endif %}
-                    </div>
-                {% endif %}
+            <!-- Quick Actions -->
+            <h3 style="font-size: 0.9rem; font-weight: 700; color: #3f372f; margin-bottom: 12px;">Quick Actions</h3>
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 25px;">
+                <a href="{% url 'knowledge:entry_create' %}?parent={{ entry.id }}" style="padding: 10px 12px; background: white; border: 1px solid #D9CFC7; color: #7b7268; text-decoration: none; border-radius: 6px; font-size: 0.9rem; font-weight: 600; transition: all 0.2s; text-align: center;" onmouseover="this.style.background='#EFE9E3'; this.style.borderColor='#C9B59C';" onmouseout="this.style.background='white'; this.style.borderColor='#D9CFC7';">
+                    Add Child Page
+                </a>
             </div>
 
-            <h3 style="margin-top: 25px;">⚙️ Quản lý</h3>
-            <a href="{% url 'knowledge:search' %}" class="gitbook-sidebar-item">🔍 Tìm kiếm</a>
-            <a href="{% url 'knowledge:topic_list' %}" class="gitbook-sidebar-item">📌 Chủ đề</a>
-            <a href="{% url 'knowledge:resource_list' %}" class="gitbook-sidebar-item">📖 Tài liệu</a>
-
-            <h3 style="margin-top: 20px;">✏️ Trang này</h3>
-            <button type="button" onclick="toggleSettings()" class="gitbook-sidebar-item" style="background: transparent; border: none; width: 100%; text-align: left; cursor: pointer;">
-                ⚙️ Cài đặt
-            </button>
-            <a href="{% url 'knowledge:entry_detail' entry.slug %}" class="gitbook-sidebar-item">↩️ Hủy</a>
-            <button type="submit" form="entry-form" id="top-submit-btn" class="gitbook-sidebar-item" style="background: transparent; border: none; width: 100%; text-align: left; cursor: pointer; font-weight: 600; color: #C9B59C;">
-                💾 Cập nhật
-            </button>
+            <!-- Management Section -->
+            <h3 style="font-size: 0.9rem; font-weight: 700; color: #3f372f; margin-bottom: 12px;">Management</h3>
+            <div style="display: flex; flex-direction: column; gap: 4px; margin-bottom: 25px;">
+                <a href="{% url 'knowledge:search' %}" style="padding: 8px 12px; color: #7b7268; text-decoration: none; border-radius: 4px; transition: all 0.2s;" onmouseover="this.style.background='#EFE9E3';" onmouseout="this.style.background='transparent';">Search</a>
+                <a href="{% url 'knowledge:topic_list' %}" style="padding: 8px 12px; color: #7b7268; text-decoration: none; border-radius: 4px; transition: all 0.2s;" onmouseover="this.style.background='#EFE9E3';" onmouseout="this.style.background='transparent';">Topics</a>
+                <a href="{% url 'knowledge:resource_list' %}" style="padding: 8px 12px; color: #7b7268; text-decoration: none; border-radius: 4px; transition: all 0.2s;" onmouseover="this.style.background='#EFE9E3';" onmouseout="this.style.background='transparent';">Resources</a>
+            </div>
             {% endwith %}
             {% elif parent_entry and not object %}
             <div style="margin-bottom: 20px;">
                 <a href="{% url 'knowledge:entry_list' %}"
                    style="display: block; padding: 10px; background: white; border: 1px solid #D9CFC7; color: #7b7268; text-align: center; border-radius: 6px; text-decoration: none; font-weight: 600; transition: all 0.2s;">
-                    ← Danh sách tất cả
+                    ← All Entries
                 </a>
             </div>
 
             {% if parent_entry.topic %}
             <div style="margin-bottom: 20px; padding: 12px; background: #EFE9E3; border-radius: 6px;">
-                <div style="font-size: 0.85rem; color: #7b7268; margin-bottom: 4px;">📚 Chủ đề:</div>
+                <div style="font-size: 0.85rem; color: #7b7268; margin-bottom: 4px;">Topic:</div>
                 <div style="font-weight: 600; color: #3f372f;">{{ parent_entry.topic.name }}</div>
             </div>
             {% endif %}
 
-            <h3>📄 Cấu trúc trang</h3>
+            <h3>Page Structure</h3>
 
             <div style="margin-bottom: 15px;">
-                <input type="text" id="page-search" placeholder="🔍 Tìm trang..."
+                <input type="text" id="page-search" placeholder="Find page..."
                        style="width: 100%; padding: 10px 12px; border: 1px solid #D9CFC7; border-radius: 6px; font-size: 0.9rem; color: #3f372f; background: white; transition: all 0.2s;"
                        onkeyup="filterSidebarPages(this.value)"
                        onfocus="this.style.borderColor='#C9B59C'; this.style.boxShadow='0 0 0 3px rgba(201, 181, 156, 0.1)';"
                        onblur="this.style.borderColor='#D9CFC7'; this.style.boxShadow='none';">
             </div>
 
-            <div style="font-size: 0.85rem; color: #7b7268; margin-bottom: 6px; font-weight: 600;">Trang cha:</div>
+            <div style="font-size: 0.85rem; color: #7b7268; margin-bottom: 6px; font-weight: 600;">Parent Page:</div>
             <div class="entry-tree-container">
                 <div class="sidebar-tree-item" style="margin-bottom: 2px;">
                     <div class="sidebar-tree-node" style="display: flex; align-items: center; gap: 4px;">
@@ -179,7 +134,7 @@ main.container {
                         {% if children %}
                             <button class="sidebar-tree-toggle" onclick="toggleSidebarEntry(this)" data-collapsed="false"
                                     style="width: 16px; height: 16px; border: none; background: none; cursor: pointer; font-size: 10px; padding: 0; color: #7b7268; transition: transform 0.2s;">
-                                ▼
+                                v
                             </button>
                         {% else %}
                             <span style="width: 16px; display: inline-block;"></span>
@@ -189,9 +144,8 @@ main.container {
                                 <a href="{% url 'knowledge:entry_detail' parent_entry.slug %}"
                                     class="sidebar-tree-link"
                            style="flex: 1; padding: 6px 8px; text-decoration: none; color: #7b7268; border-radius: 4px; transition: all 0.2s; font-size: 0.9rem; display: block;">
-                            <span style="margin-right: 6px;">📄</span>
                             {{ parent_entry.title|truncatewords:5 }}
-                            {% if parent_entry.is_favorite %}<span style="margin-left: 4px; font-size: 0.85rem;">⭐</span>{% endif %}
+                            {% if parent_entry.is_favorite %}<span style="margin-left: 4px; font-size: 0.85rem;">★</span>{% endif %}
                         </a>
                     </div>
 
@@ -199,8 +153,8 @@ main.container {
                         <div class="sidebar-tree-item" style="margin-bottom: 2px;">
                             <div class="sidebar-tree-node" style="display: flex; align-items: center; gap: 4px;">
                                 <span style="width: 16px; display: inline-block;"></span>
-                                <span data-page-title="dang tao trang con moi" style="flex: 1; padding: 6px 8px; border-radius: 4px; border: 1px dashed #C9B59C; background: #FAF7F2; color: #7b7268; font-size: 0.85rem; display: block;">
-                                    ✨ Đang tạo trang con mới
+                                <span data-page-title="creating new child page" style="flex: 1; padding: 6px 8px; border-radius: 4px; border: 1px dashed #C9B59C; background: #FAF7F2; color: #7b7268; font-size: 0.85rem; display: block;">
+                                    Creating new child page
                                 </span>
                             </div>
                         </div>
@@ -213,9 +167,8 @@ main.container {
                                    class="sidebar-tree-link"
                                    data-page-title="{{ child.title|lower }}"
                                    style="flex: 1; padding: 6px 8px; text-decoration: none; color: #7b7268; border-radius: 4px; transition: all 0.2s; font-size: 0.9rem; display: block;">
-                                    <span style="margin-right: 6px;">📄</span>
                                     {{ child.title|truncatewords:5 }}
-                                    {% if child.is_favorite %}<span style="margin-left: 4px; font-size: 0.85rem;">⭐</span>{% endif %}
+                                    {% if child.is_favorite %}<span style="margin-left: 4px; font-size: 0.85rem;">★</span>{% endif %}
                                 </a>
                             </div>
                         </div>
@@ -224,10 +177,19 @@ main.container {
                 </div>
             </div>
 
-            <h3 style="margin-top: 25px;">⚙️ Quản lý</h3>
-            <a href="{% url 'knowledge:search' %}" class="gitbook-sidebar-item">🔍 Tìm kiếm</a>
-            <a href="{% url 'knowledge:topic_list' %}" class="gitbook-sidebar-item">📌 Chủ đề</a>
-            <a href="{% url 'knowledge:resource_list' %}" class="gitbook-sidebar-item">📖 Tài liệu</a>
+            <h3 style="margin-top: 25px;">Management</h3>
+            <a href="{% url 'knowledge:search' %}" class="gitbook-sidebar-item">Search</a>
+            <a href="{% url 'knowledge:topic_list' %}" class="gitbook-sidebar-item">Topics</a>
+            <a href="{% url 'knowledge:resource_list' %}" class="gitbook-sidebar-item">Resources</a>
+
+            <h3 style="margin-top: 20px;">This Page</h3>
+            <button type="button" onclick="toggleSettings()" class="gitbook-sidebar-item" style="background: transparent; border: none; width: 100%; text-align: left; cursor: pointer;">
+                Settings
+            </button>
+            <a href="{% url 'knowledge:entry_detail' parent_entry.slug %}" class="gitbook-sidebar-item">Cancel</a>
+            <button type="submit" form="entry-form" id="top-submit-btn" class="gitbook-sidebar-item" style="background: transparent; border: none; width: 100%; text-align: left; cursor: pointer; font-weight: 600; color: #C9B59C;">
+                Create Page
+            </button>
 
             <style>
                 .sidebar-tree-link:hover {
@@ -267,154 +229,99 @@ main.container {
                 }
             </style>
             {% else %}
-            <!-- Search Box -->
-            <div style="margin-bottom: 20px;">
-                <input type="text" id="sidebar-search" placeholder="Tìm kiếm..."
-                       style="width: 100%; padding: 10px 12px; border: 1px solid #D9CFC7; border-radius: 6px; font-size: 0.9rem; color: #3f372f; background: white; transition: all 0.2s;"
-                       onfocus="this.style.borderColor='#C9B59C'; this.style.boxShadow='0 0 0 3px rgba(201, 181, 156, 0.1)';"
-                       onblur="this.style.borderColor='#D9CFC7'; this.style.boxShadow='none';">
-            </div>
-
-            <!-- Topics Section -->
-            <div style="margin-bottom: 25px;">
-                <h3 style="font-size: 0.8rem; font-weight: 700; color: #7b7268; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
-                    <span style="font-size: 1rem;">📌</span> CHỦ ĐỀ
-                </h3>
-                <div style="display: flex; flex-direction: column; gap: 4px;">
-                    <a href="{% url 'knowledge:entry_list' %}" style="padding: 8px 12px; color: #7b7268; text-decoration: none; border-radius: 4px; font-size: 0.9rem; transition: all 0.2s; display: flex; align-items: center; gap: 8px;" onmouseover="this.style.background='#EFE9E3'; this.style.color='#3f372f';" onmouseout="this.style.background='transparent'; this.style.color='#7b7268';">
-                        <span>📄</span> Tất cả
-                    </a>
-                    {% for topic in topics %}
-                    <a href="{% url 'knowledge:entry_list' %}?topic={{ topic.id }}" style="padding: 8px 12px; color: #7b7268; text-decoration: none; border-radius: 4px; font-size: 0.9rem; transition: all 0.2s; display: flex; align-items: center; gap: 8px;" onmouseover="this.style.background='#EFE9E3'; this.style.color='#3f372f';" onmouseout="this.style.background='transparent'; this.style.color='#7b7268';">
-                        <span>📌</span> {{ topic.name }}
-                    </a>
-                    {% endfor %}
-                </div>
-            </div>
-
-            <!-- Types Section -->
-            <div style="margin-bottom: 25px;">
-                <h3 style="font-size: 0.8rem; font-weight: 700; color: #7b7268; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
-                    <span style="font-size: 1rem;">🔖</span> LOẠI
-                </h3>
-                <div style="display: flex; flex-direction: column; gap: 4px;">
-                    <a href="{% url 'knowledge:entry_list' %}" style="padding: 8px 12px; color: #7b7268; text-decoration: none; border-radius: 4px; font-size: 0.9rem; transition: all 0.2s;" onmouseover="this.style.background='#EFE9E3'; this.style.color='#3f372f';" onmouseout="this.style.background='transparent'; this.style.color='#7b7268';">
-                        Tất cả
-                    </a>
-                    <a href="{% url 'knowledge:entry_list' %}?type=note" style="padding: 8px 12px; color: #7b7268; text-decoration: none; border-radius: 4px; font-size: 0.9rem; transition: all 0.2s;" onmouseover="this.style.background='#EFE9E3'; this.style.color='#3f372f';" onmouseout="this.style.background='transparent'; this.style.color='#7b7268';">
-                        Ghi chú
-                    </a>
-                    <a href="{% url 'knowledge:entry_list' %}?type=research" style="padding: 8px 12px; color: #7b7268; text-decoration: none; border-radius: 4px; font-size: 0.9rem; transition: all 0.2s;" onmouseover="this.style.background='#EFE9E3'; this.style.color='#3f372f';" onmouseout="this.style.background='transparent'; this.style.color='#7b7268';">
-                        Nghiên cứu
-                    </a>
-                    <a href="{% url 'knowledge:entry_list' %}?type=article" style="padding: 8px 12px; color: #7b7268; text-decoration: none; border-radius: 4px; font-size: 0.9rem; transition: all 0.2s;" onmouseover="this.style.background='#EFE9E3'; this.style.color='#3f372f';" onmouseout="this.style.background='transparent'; this.style.color='#7b7268';">
-                        Bài viết
-                    </a>
-                    <a href="{% url 'knowledge:entry_list' %}?type=reference" style="padding: 8px 12px; color: #7b7268; text-decoration: none; border-radius: 4px; font-size: 0.9rem; transition: all 0.2s;" onmouseover="this.style.background='#EFE9E3'; this.style.color='#3f372f';" onmouseout="this.style.background='transparent'; this.style.color='#7b7268';">
-                        Tham khảo
-                    </a>
-                </div>
-            </div>
-
-            <!-- Favorites Section -->
-            <div style="margin-bottom: 25px;">
-                <h3 style="font-size: 0.8rem; font-weight: 700; color: #7b7268; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
-                    <span style="font-size: 1rem;">⭐</span> YÊU THÍCH
-                </h3>
-                <div style="display: flex; flex-direction: column; gap: 4px;">
-                    <a href="{% url 'knowledge:entry_list' %}?favorite=true" style="padding: 8px 12px; color: #7b7268; text-decoration: none; border-radius: 4px; font-size: 0.9rem; transition: all 0.2s;" onmouseover="this.style.background='#EFE9E3'; this.style.color='#3f372f';" onmouseout="this.style.background='transparent'; this.style.color='#7b7268';">
-                        Ghi chú yêu thích
-                    </a>
-                </div>
-            </div>
-
             <!-- Management Section -->
             <div style="margin-bottom: 25px;">
                 <h3 style="font-size: 0.8rem; font-weight: 700; color: #7b7268; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
-                    <span style="font-size: 1rem;">⚙️</span> QUẢN LÝ
+                    MANAGEMENT
                 </h3>
                 <div style="display: flex; flex-direction: column; gap: 8px;">
                     <a href="{% url 'knowledge:entry_create' %}" style="padding: 10px 14px; background: white; border: 1px solid #D9CFC7; color: #7b7268; text-decoration: none; border-radius: 6px; font-size: 0.9rem; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; gap: 8px;" onmouseover="this.style.background='#EFE9E3'; this.style.borderColor='#C9B59C';" onmouseout="this.style.background='white'; this.style.borderColor='#D9CFC7';">
-                        <span>➕</span> Tạo ghi chú
+                        Create Note
                     </a>
                     <a href="{% url 'knowledge:topic_create' %}" style="padding: 10px 14px; background: white; border: 1px solid #D9CFC7; color: #7b7268; text-decoration: none; border-radius: 6px; font-size: 0.9rem; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; gap: 8px;" onmouseover="this.style.background='#EFE9E3'; this.style.borderColor='#C9B59C';" onmouseout="this.style.background='white'; this.style.borderColor='#D9CFC7';">
-                        <span>📁</span> Tạo chủ đề
+                        Create Topic
                     </a>
                 </div>
             </div>
 
-            <h3 style="margin-top: 20px;">✏️ Trang này</h3>
+            <h3 style="margin-top: 20px;">This Page</h3>
             <button type="button" onclick="toggleSettings()" class="gitbook-sidebar-item" style="background: transparent; border: none; width: 100%; text-align: left; cursor: pointer;">
-                ⚙️ Cài đặt
+                Settings
             </button>
-            <a href="{% url 'knowledge:entry_list' %}" class="gitbook-sidebar-item">↩️ Hủy</a>
+            <a href="{% url 'knowledge:entry_list' %}" class="gitbook-sidebar-item">Cancel</a>
             <button type="submit" form="entry-form" id="top-submit-btn" class="gitbook-sidebar-item" style="background: transparent; border: none; width: 100%; text-align: left; cursor: pointer; font-weight: 600; color: #C9B59C;">
-                ✨ Tạo trang
+                Create Page
             </button>
             {% endif %}
 
         </aside>
 
         <!-- Main Content Area -->
-        <main style="flex: 1; padding: 40px; max-width: 900px; margin: 0 auto;">
+        <main style="flex: 1; padding: 20px 40px 40px 40px; max-width: 1200px; margin: 0 auto;">
             <!-- Form starts here -->
             <form method="post" id="entry-form">
             {% csrf_token %}
 
             <!-- Settings Sidebar - Sliding from right -->
             <div id="settings-sidebar" style="position: fixed; top: 60px; right: -350px; width: 320px; height: calc(100vh - 60px); background: white; border-left: 1px solid #D9CFC7; padding: 20px; overflow-y: auto; transition: right 0.3s; z-index: 999; box-shadow: -2px 0 10px rgba(0,0,0,0.1); box-sizing: border-box;">
-                <h3 style="margin: 0 0 20px 0; color: #3f372f; font-size: 1.1rem;">⚙️ Cài đặt nâng cao</h3>
+                <h3 style="margin: 0 0 20px 0; color: #3f372f; font-size: 1.1rem;">Advanced Settings</h3>
             <div style="display: grid; gap: 20px;">
                 <div>
                     <label style="display: block; font-size: 0.85rem; color: #7b7268; margin-bottom: 6px; font-weight: 500;">Slug (URL)</label>
                     {{ form.slug }}
-                    <small style="color: #7b7268; font-size: 0.75rem; display: block; margin-top: 4px;">Để trống để tự động tạo</small>
+                    <small style="color: #7b7268; font-size: 0.75rem; display: block; margin-top: 4px;">Leave blank to auto-generate</small>
                 </div>
 
                 <div>
-                    <label style="display: block; font-size: 0.85rem; color: #7b7268; margin-bottom: 6px; font-weight: 500;">Chủ đề</label>
+                    <label style="display: block; font-size: 0.85rem; color: #7b7268; margin-bottom: 6px; font-weight: 500;">Topic</label>
                     {{ form.topic }}
                 </div>
 
                 <div>
-                    <label style="display: block; font-size: 0.85rem; color: #7b7268; margin-bottom: 6px; font-weight: 500;">Loại</label>
+                    <label style="display: block; font-size: 0.85rem; color: #7b7268; margin-bottom: 6px; font-weight: 500;">Status</label>
+                    {{ form.status }}
+                    <small style="color: #7b7268; font-size: 0.75rem; display: block; margin-top: 4px;">Private or Public</small>
+                </div>
+
+                <div>
+                    <label style="display: block; font-size: 0.85rem; color: #7b7268; margin-bottom: 6px; font-weight: 500;">Type</label>
                     {{ form.entry_type }}
                 </div>
 
                 <div>
-                    <label style="display: block; font-size: 0.85rem; color: #7b7268; margin-bottom: 6px; font-weight: 500;">Trang cha</label>
+                    <label style="display: block; font-size: 0.85rem; color: #7b7268; margin-bottom: 6px; font-weight: 500;">Parent Page</label>
                     {{ form.parent }}
-                    <small style="color: #7b7268; font-size: 0.75rem; display: block; margin-top: 4px;">Tạo phân cấp</small>
+                    <small style="color: #7b7268; font-size: 0.75rem; display: block; margin-top: 4px;">Create hierarchy</small>
                 </div>
 
                 <div>
-                    <label style="display: block; font-size: 0.85rem; color: #7b7268; margin-bottom: 6px; font-weight: 500;">Thứ tự</label>
+                    <label style="display: block; font-size: 0.85rem; color: #7b7268; margin-bottom: 6px; font-weight: 500;">Order</label>
                     {{ form.order }}
-                    <small style="color: #7b7268; font-size: 0.75rem; display: block; margin-top: 4px;">Số nhỏ trước</small>
+                    <small style="color: #7b7268; font-size: 0.75rem; display: block; margin-top: 4px;">Lower numbers first</small>
                 </div>
 
                 <div>
-                    <label style="display: block; font-size: 0.85rem; color: #7b7268; margin-bottom: 6px; font-weight: 500;">Nguồn (URL)</label>
+                    <label style="display: block; font-size: 0.85rem; color: #7b7268; margin-bottom: 6px; font-weight: 500;">Source (URL)</label>
                     {{ form.source_url }}
                 </div>
 
                 <div>
                     <label style="display: block; font-size: 0.85rem; color: #7b7268; margin-bottom: 6px; font-weight: 500;">Tags</label>
                     {{ form.tags }}
-                    <small style="color: #7b7268; font-size: 0.75rem; display: block; margin-top: 4px;">Phân cách bằng dấu phẩy</small>
+                    <small style="color: #7b7268; font-size: 0.75rem; display: block; margin-top: 4px;">Separate with commas</small>
                 </div>
 
                 <div>
                     <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
                         {{ form.is_favorite }}
-                        <span style="font-size: 0.85rem; color: #7b7268; font-weight: 500;">⭐ Đánh dấu yêu thích</span>
+                        <span style="font-size: 0.85rem; color: #7b7268; font-weight: 500;">Mark as favorite</span>
                     </label>
                 </div>
             </div>
             </div>
 
             <!-- Main Editor -->
-            <main style="max-width: 900px; margin: 0 auto; padding: 0 60px 40px 60px; padding-top: 0; min-height: 100vh;">
+            <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px 40px 20px; padding-top: 0; min-height: 100vh;">
                 <!-- Title Field -->
             <div style="margin-bottom: 4px;">
                 <input type="text"
@@ -422,8 +329,7 @@ main.container {
                        value="{{ form.title.value|default:'' }}"
                        placeholder="Untitled"
                        style="width: 100%; border: none; font-size: 2.8rem; font-weight: 700; padding: 0; outline: none; color: #3f372f; background: transparent; font-family: inherit;"
-                       id="{{ form.title.id_for_label }}"
-                       required>
+                       id="{{ form.title.id_for_label }}">
             </div>
 
             <!-- Summary Field -->
@@ -431,7 +337,7 @@ main.container {
                 <input type="text"
                        name="{{ form.summary.name }}"
                        value="{{ form.summary.value|default:'' }}"
-                       placeholder="Mô tả trang (tùy chọn)..."
+                       placeholder="Page description (optional)..."
                        style="width: 100%; border: none; font-size: 0.95rem; padding: 0; outline: none; color: #9B9B9B; background: transparent; font-family: inherit;"
                        id="{{ form.summary.id_for_label }}">
             </div>
@@ -442,19 +348,182 @@ main.container {
                       style="display: none;">{{ form.content.value|default:'' }}</textarea>
 
             <!-- Editor Container -->
-            <div id="editorjs" style="min-height: 500px; outline: none; background: white; border-radius: 8px; padding: 20px;">
+            <div id="editorjs" style="min-height: 700px; outline: none; background: white; border-radius: 8px; padding: 30px;">
                 <div id="editor-loading" style="text-align: center; padding: 40px; color: #7b7268;">
-                    <div style="font-size: 2rem; margin-bottom: 10px;">⏳</div>
-                    <div>Đang tải editor...</div>
+                    <div style="font-size: 2rem; margin-bottom: 10px;"></div>
+                    <div>Loading editor...</div>
                 </div>
             </div>
 
             </form>
+            </div>
         </main>
+
+        <!-- Right Sidebar - Page Structure -->
+        <aside id="right-sidebar" style="width: 320px; position: fixed; right: 0; top: 100px; height: calc(100vh - 100px); background: #F9F8F6; border-left: 1px solid #D9CFC7; padding: 20px; overflow-y: auto; transition: transform 0.3s ease; transform: translateX(0); z-index: 90;">
+            {% if object %}
+            {% with entry=object %}
+            <!-- Topic Info -->
+            {% if entry.topic %}
+            <div style="margin-bottom: 25px; padding: 15px; background: linear-gradient(135deg, rgba(201, 181, 156, 0.1) 0%, rgba(217, 207, 199, 0.1) 100%); border-radius: 8px; border-left: 3px solid #C9B59C;">
+                <div style="font-size: 0.85rem; color: #7b7268; margin-bottom: 6px; font-weight: 600;">Topic</div>
+                <div style="font-weight: 600; color: #3f372f; font-size: 1.05rem;">{{ entry.topic.name }}</div>
+            </div>
+            {% endif %}
+
+            <!-- Page Structure -->
+            <div style="margin-bottom: 20px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                    <h3 style="font-size: 0.9rem; font-weight: 700; color: #3f372f; margin: 0;">Page Structure</h3>
+                    <button onclick="toggleRightSidebar()" style="background: #EFE9E3; border: 1px solid #D9CFC7; color: #7b7268; cursor: pointer; font-size: 0.85rem; padding: 6px 10px; border-radius: 6px; transition: all 0.2s;" onmouseover="this.style.background='#D9CFC7';" onmouseout="this.style.background='#EFE9E3';" title="Hide/Show structure">
+                        Hide Structure
+                    </button>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <input type="text" id="page-search" placeholder="Find page..."
+                           style="width: 100%; padding: 8px 10px; border: 1px solid #D9CFC7; border-radius: 6px; font-size: 0.85rem; color: #3f372f; background: white; transition: all 0.2s;"
+                           onkeyup="filterPages(this.value)"
+                           onfocus="this.style.borderColor='#C9B59C'; this.style.boxShadow='0 0 0 3px rgba(201, 181, 156, 0.1)';"
+                           onblur="this.style.borderColor='#D9CFC7'; this.style.boxShadow='none';">
+                </div>
+
+                <div class="entry-tree-container" style="max-height: calc(100vh - 350px); overflow-y: auto;">
+                    {% if entry.parent %}
+                        <div class="page-item" style="margin-bottom: 8px;">
+                            <a href="{% url 'knowledge:entry_detail' entry.parent.slug %}"
+                               class="gitbook-sidebar-item"
+                               style="font-size: 0.85rem; opacity: 0.7; padding: 6px 8px;"
+                               data-page-title="{{ entry.parent.title|lower }}">
+                                {{ entry.parent.title|truncatewords:4 }}
+                            </a>
+                        </div>
+                    {% endif %}
+
+                    <div class="page-item current-page" style="margin: 8px 0; padding: 10px; background: linear-gradient(135deg, rgba(201, 181, 156, 0.15) 0%, rgba(217, 207, 199, 0.15) 100%); border-left: 3px solid #C9B59C; border-radius: 6px;">
+                        <div style="font-weight: 600; color: #3f372f; font-size: 0.9rem;">
+                            {{ entry.title }}{% if entry.is_favorite %} ★{% endif %}
+                        </div>
+                    </div>
+
+                    {% if entry.children.all %}
+                        <div class="children-section" style="margin-left: 12px; border-left: 2px solid #D9CFC7; padding-left: 8px;">
+                            <div style="font-size: 0.8rem; color: #7b7268; margin-bottom: 8px; font-weight: 600; display: flex; align-items: center; justify-content: space-between;">
+                                <span>Child Pages ({{ entry.children.all|length }})</span>
+                                {% if entry.children.all|length > 5 %}
+                                <button onclick="toggleAllChildren(this)" data-expanded="false"
+                                        style="padding: 3px 6px; background: #EFE9E3; border: 1px solid #D9CFC7; border-radius: 4px; color: #7b7268; font-size: 0.75rem; cursor: pointer; transition: all 0.2s;"
+                                        onmouseover="this.style.background='#D9CFC7';"
+                                        onmouseout="this.style.background='#EFE9E3';">
+                                    All
+                                </button>
+                                {% endif %}
+                            </div>
+                            <div class="children-list">
+                                {% for child in entry.children.all %}
+                                    <div class="tree-item {% if forloop.counter > 5 %}hidden-item{% endif %}" style="margin-bottom: 2px; {% if forloop.counter > 5 %}display: none;{% endif %}">
+                                        <div style="display: flex; align-items: center; gap: 4px;">
+                                            {% if child.children.all %}
+                                            <button class="tree-toggle" onclick="toggleTreeNode(this)" data-collapsed="true"
+                                                    style="width: 14px; height: 14px; border: none; background: none; cursor: pointer; font-size: 9px; padding: 0; color: #7b7268; transition: transform 0.2s;">
+                                                >
+                                            </button>
+                                            {% else %}
+                                            <span style="width: 14px; display: inline-block;"></span>
+                                            {% endif %}
+                                            <a href="{% url 'knowledge:entry_detail' child.slug %}"
+                                               class="page-item gitbook-sidebar-item"
+                                               style="flex: 1; padding: 5px 6px; margin: 0; border-radius: 4px; font-size: 0.85rem;"
+                                               data-page-title="{{ child.title|lower }}">
+                                                {{ child.title|truncatewords:4 }}
+                                                {% if child.is_favorite %} ★{% endif %}
+                                                {% if child.children.all %}<span style="margin-left: 4px; font-size: 0.7rem; color: #7b7268;">({{ child.children.all|length }})</span>{% endif %}
+                                            </a>
+                                        </div>
+                                        {% if child.children.all %}
+                                        <div class="tree-children" style="display: none; margin-left: 18px; border-left: 2px solid #E5DDD5; padding-left: 5px; margin-top: 2px;">
+                                            {% for grandchild in child.children.all %}
+                                            <a href="{% url 'knowledge:entry_detail' grandchild.slug %}"
+                                               class="page-item gitbook-sidebar-item"
+                                               style="display: block; padding: 4px 6px; margin-bottom: 2px; border-radius: 4px; font-size: 0.8rem; opacity: 0.9;"
+                                               data-page-title="{{ grandchild.title|lower }}">
+                                                {{ grandchild.title|truncatewords:3 }}
+                                                {% if grandchild.is_favorite %} ★{% endif %}
+                                            </a>
+                                            {% endfor %}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            {% if entry.children.all|length > 5 %}
+                            <button onclick="showMoreChildren(this)"
+                                    style="margin-top: 8px; padding: 5px 8px; background: #EFE9E3; border: 1px solid #D9CFC7; border-radius: 4px; color: #7b7268; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; width: 100%;"
+                                    onmouseover="this.style.background='#D9CFC7';"
+                                    onmouseout="this.style.background='#EFE9E3';">
+                                Show {{ entry.children.all|length|add:"-5" }} pages
+                            </button>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+
+                    {% if sibling_pages %}
+                        <div class="siblings-section" style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #D9CFC7;">
+                            <div style="font-size: 0.8rem; color: #7b7268; margin-bottom: 8px; font-weight: 600;">
+                                {% if entry.parent %}Siblings{% else %}Same Topic{% endif %} ({{ sibling_pages|length }})
+                            </div>
+                            <div class="siblings-list">
+                                {% for page in sibling_pages %}
+                                    <a href="{% url 'knowledge:entry_detail' page.slug %}"
+                                       class="page-item gitbook-sidebar-item {% if forloop.counter > 5 %}hidden-item{% endif %}"
+                                       style="margin-bottom: 3px; opacity: 0.8; padding: 5px 6px; font-size: 0.85rem; {% if forloop.counter > 5 %}display: none;{% endif %}"
+                                       data-page-title="{{ page.title|lower }}">
+                                        {{ page.title|truncatewords:4 }}
+                                        {% if page.is_favorite %} ★{% endif %}
+                                    </a>
+                                {% endfor %}
+                            </div>
+                            {% if sibling_pages|length > 5 %}
+                            <button onclick="showMoreSiblings(this)"
+                                    style="margin-top: 8px; padding: 5px 8px; background: #EFE9E3; border: 1px solid #D9CFC7; border-radius: 4px; color: #7b7268; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; width: 100%;"
+                                    onmouseover="this.style.background='#D9CFC7';"
+                                    onmouseout="this.style.background='#EFE9E3';">
+                                Show {{ sibling_pages|length|add:"-5" }} pages
+                            </button>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endwith %}
+            {% endif %}
+        </aside>
+
+        <!-- Toggle Right Sidebar Button (when collapsed) -->
+        <button id="show-right-sidebar" onclick="toggleRightSidebar()" style="position: fixed; right: 12px; top: 140px; background: linear-gradient(135deg, #C9B59C 0%, #D9CFC7 100%); color: white; border: none; border-radius: 999px; padding: 10px 14px; cursor: pointer; box-shadow: 0 6px 16px rgba(0,0,0,0.12); transition: all 0.3s; z-index: 100; font-size: 0.85rem; font-weight: 600;" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='translateY(0)';">
+            Structure
+        </button>
     </div>
 </div>
 
 <script>
+function toggleRightSidebar() {
+    const sidebar = document.getElementById('right-sidebar');
+    const button = document.getElementById('show-right-sidebar');
+
+    const isHidden = sidebar.style.transform === 'translateX(100%)';
+
+    if (isHidden) {
+        sidebar.style.transform = 'translateX(0)';
+        sidebar.style.borderLeft = '1px solid #D9CFC7';
+        button.textContent = 'Structure';
+    } else {
+        sidebar.style.transform = 'translateX(100%)';
+        sidebar.style.borderLeft = 'none';
+        button.textContent = 'Show Structure';
+    }
+}
+
 function toggleSidebarEntry(button) {
     const item = button.closest('.sidebar-tree-item');
     const children = item.querySelector('.sidebar-tree-children');
@@ -508,7 +577,7 @@ function filterPages(searchTerm) {
             const noResults = document.createElement('div');
             noResults.className = 'no-results';
             noResults.style.cssText = 'padding: 10px; color: #7b7268; font-size: 0.85rem; text-align: center;';
-            noResults.textContent = 'Không tìm thấy trang nào';
+            noResults.textContent = 'No pages found';
             document.querySelector('.entry-tree-container').appendChild(noResults);
         }
     }
@@ -532,6 +601,48 @@ function showMoreSiblings(button) {
         item.classList.remove('hidden-item');
     });
     button.style.display = 'none';
+}
+
+function toggleTreeNode(button) {
+    const treeItem = button.closest('.tree-item');
+    const childrenContainer = treeItem.querySelector('.tree-children');
+    
+    if (!childrenContainer) return;
+    
+    const isCollapsed = button.dataset.collapsed === 'true';
+    button.dataset.collapsed = !isCollapsed;
+    
+    if (isCollapsed) {
+        childrenContainer.style.display = 'block';
+        button.textContent = 'v';
+    } else {
+        childrenContainer.style.display = 'none';
+        button.textContent = '>';
+    }
+}
+
+function toggleAllChildren(button) {
+    const isExpanded = button.dataset.expanded === 'true';
+    const childrenSection = button.closest('.children-section');
+    const allToggles = childrenSection.querySelectorAll('.tree-toggle');
+    
+    allToggles.forEach(toggle => {
+        const childrenContainer = toggle.closest('.tree-item').querySelector('.tree-children');
+        if (childrenContainer) {
+            if (isExpanded) {
+                childrenContainer.style.display = 'none';
+                toggle.textContent = '>';
+                toggle.dataset.collapsed = 'true';
+            } else {
+                childrenContainer.style.display = 'block';
+                toggle.textContent = 'v';
+                toggle.dataset.collapsed = 'false';
+            }
+        }
+    });
+    
+    button.dataset.expanded = !isExpanded;
+    button.textContent = isExpanded ? 'Expand All' : 'Collapse All';
 }
 
 function toggleSettings() {
@@ -812,14 +923,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
         editor = new EditorJS({
             holder: 'editorjs',
-            placeholder: 'Nhấn Tab để bắt đầu viết hoặc nhập / để chọn block...',
+            placeholder: 'Press Tab to start writing or type / to choose a block...',
             autofocus: true,
 
             tools: {
                 header: {
                     class: Header,
                     config: {
-                        placeholder: 'Tiêu đề',
+                        placeholder: 'Heading',
                         levels: [1, 2, 3, 4],
                         defaultLevel: 2
                     }
@@ -839,13 +950,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     class: Quote,
                     inlineToolbar: true,
                     config: {
-                        quotePlaceholder: 'Nhập trích dẫn',
-                        captionPlaceholder: 'Tác giả'
+                        quotePlaceholder: 'Enter quote',
+                        captionPlaceholder: 'Author'
                     }
                 },
                 code: {
                     class: CodeTool,
-                    placeholder: 'Nhập code'
+                    placeholder: 'Enter code'
                 },
                 delimiter: Delimiter,
                 inlineCode: {
@@ -889,11 +1000,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const editorContainer = document.getElementById('editorjs');
         editorContainer.innerHTML = `
             <div style="text-align: center; padding: 40px; color: #C9B59C;">
-                <div style="font-size: 2rem; margin-bottom: 10px;">⚠️</div>
-                <div style="font-weight: 600; margin-bottom: 10px;">Không thể tải editor</div>
+                <div style="font-size: 2rem; margin-bottom: 10px;"></div>
+                <div style="font-weight: 600; margin-bottom: 10px;">Unable to load editor</div>
                 <div style="font-size: 0.9rem; color: #7b7268;">${error.message}</div>
                 <div style="margin-top: 20px; font-size: 0.85rem; color: #7b7268;">
-                    Vui lòng kiểm tra kết nối internet và tải lại trang
+                    Please check your internet connection and reload the page
                 </div>
             </div>
         `;
@@ -1111,7 +1222,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (!form) {
         console.error('CRITICAL: Form not found!');
-        alert('Lỗi: Không tìm thấy form element!');
+        alert('Error: Form element not found!');
         return;
     }
 
@@ -1122,9 +1233,17 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('!!! FORM SUBMIT EVENT !!!');
         e.preventDefault(); // Prevent immediate submission
 
+        // Validate title field
+        const titleField = form.querySelector('input[name="{{ form.title.name }}"]');
+        if (titleField && !titleField.value.trim()) {
+            alert('Please enter a title for this page');
+            titleField.focus();
+            return;
+        }
+
         if (!editor) {
             console.error('Editor not initialized');
-            alert('Editor chưa được khởi tạo. Vui lòng tải lại trang.');
+            alert('Editor not initialized. Please reload the page.');
             return;
         }
 
@@ -1152,7 +1271,7 @@ document.addEventListener('DOMContentLoaded', function() {
             form.submit(); // This will do a real POST to Django
         } catch (error) {
             console.error('Error saving editor content:', error);
-            alert('Có lỗi khi lưu nội dung: ' + error.message);
+            alert('Error saving content: ' + error.message);
         }
     });
 
