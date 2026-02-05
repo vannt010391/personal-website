@@ -1,4 +1,5 @@
 from django import forms
+from django.utils.text import slugify
 from .models import Topic, KnowledgeEntry, Resource
 
 
@@ -18,6 +19,27 @@ class TopicForm(forms.ModelForm):
 
 
 class KnowledgeEntryForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        if self.user:
+            self.fields['parent'].queryset = KnowledgeEntry.objects.filter(user=self.user).order_by('title')
+        if 'content' in self.fields:
+            self.fields['content'].required = False
+
+    def clean_slug(self):
+        slug = self.cleaned_data.get('slug')
+        title = self.cleaned_data.get('title')
+
+        if not slug and title:
+            base_slug = slugify(title)
+            slug = base_slug
+            counter = 1
+            while KnowledgeEntry.objects.filter(slug=slug).exclude(pk=self.instance.pk).exists():
+                slug = f"{base_slug}-{counter}"
+                counter += 1
+
+        return slug
     class Meta:
         model = KnowledgeEntry
         fields = ['title', 'slug', 'topic', 'parent', 'order', 'entry_type', 'content', 'summary', 'source_url', 'tags', 'is_favorite']

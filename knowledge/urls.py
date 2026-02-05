@@ -1,11 +1,12 @@
 from django.urls import path
 from . import views
+from .search_views import KnowledgeSearchView
 
 app_name = 'knowledge'
 
 urlpatterns = [
     path('', views.KnowledgeEntryListView.as_view(), name='entry_list'),
-    path('search/', views.KnowledgeSearchView.as_view(), name='search'),
+    path('search/', KnowledgeSearchView.as_view(), name='search'),
     path('entry/new/', views.KnowledgeEntryCreateView.as_view(), name='entry_create'),
     path('entry/<str:slug>/', views.KnowledgeEntryDetailView.as_view(), name='entry_detail'),
     path('entry/<str:slug>/edit/', views.KnowledgeEntryUpdateView.as_view(), name='entry_update'),

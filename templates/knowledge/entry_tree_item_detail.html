@@ -1,0 +1,95 @@
+{% load static %}
+
+<div class="sidebar-tree-item" style="margin-bottom: 2px;">
+    <div class="sidebar-tree-node" style="display: flex; align-items: center; gap: 4px;">
+        {% with children=entry.children.all %}
+        {% if children %}
+            <button class="sidebar-tree-toggle" onclick="toggleSidebarEntry(this)" data-collapsed="false"
+                    style="width: 16px; height: 16px; border: none; background: none; cursor: pointer; font-size: 10px; padding: 0; color: #7b7268; transition: transform 0.2s;">
+                ▼
+            </button>
+        {% else %}
+            <span style="width: 16px; display: inline-block;"></span>
+        {% endif %}
+        {% endwith %}
+
+        <a href="{% url 'knowledge:entry_detail' entry.slug %}"
+           class="sidebar-tree-link {% if entry.slug == current_slug %}active-page{% endif %}"
+           style="flex: 1; padding: 6px 8px; text-decoration: none; color: #7b7268; border-radius: 4px; transition: all 0.2s; font-size: 0.9rem; display: block;">
+            <span style="margin-right: 6px;">📄</span>
+            {{ entry.title|truncatewords:5 }}
+            {% if entry.is_favorite %}<span style="margin-left: 4px; font-size: 0.85rem;">⭐</span>{% endif %}
+        </a>
+    </div>
+
+    {% with children=entry.children.all %}
+    {% if children %}
+    <div class="sidebar-tree-children" style="margin-left: 20px; border-left: 2px solid #D9CFC7; padding-left: 5px;">
+        {% for child in children %}
+            {% include "knowledge/entry_tree_item_detail.html" with entry=child current_slug=current_slug %}
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+</div>
+
+<style>
+    .sidebar-tree-link:hover {
+        background: #EFE9E3;
+        color: #C9B59C;
+    }
+
+    .sidebar-tree-link.active-page {
+        background: linear-gradient(135deg, rgba(201, 181, 156, 0.2) 0%, rgba(217, 207, 199, 0.2) 100%);
+        color: #C9B59C;
+        font-weight: 600;
+        border-left: 3px solid #C9B59C;
+        padding-left: 5px;
+    }
+
+    .sidebar-tree-toggle.collapsed {
+        transform: rotate(-90deg);
+    }
+
+    .sidebar-tree-children.collapsed {
+        display: none;
+    }
+
+    /* Entry Tree Container Scrollbar */
+    .entry-tree-container {
+        max-height: calc(100vh - 450px);
+        overflow-y: auto;
+        padding-right: 5px;
+    }
+
+    .entry-tree-container::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .entry-tree-container::-webkit-scrollbar-track {
+        background: #F9F8F6;
+    }
+
+    .entry-tree-container::-webkit-scrollbar-thumb {
+        background: #D9CFC7;
+        border-radius: 3px;
+    }
+
+    .entry-tree-container::-webkit-scrollbar-thumb:hover {
+        background: #C9B59C;
+    }
+</style>
+
+<script>
+function toggleSidebarEntry(button) {
+    const item = button.closest('.sidebar-tree-item');
+    const children = item.querySelector('.sidebar-tree-children');
+
+    if (!children) return;
+
+    const isCollapsed = button.dataset.collapsed === 'true';
+    button.dataset.collapsed = !isCollapsed;
+    button.classList.toggle('collapsed');
+    children.classList.toggle('collapsed');
+}
+</script>

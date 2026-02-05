@@ -11,42 +11,125 @@
 
 {% block content %}
 <div class="gitbook-container">
-    <!-- Left Sidebar -->
+    <!-- Left Sidebar with Page Structure -->
     <aside class="gitbook-sidebar">
-        <h3>📚 Chủ đề</h3>
+        <div style="margin-bottom: 20px;">
+            <a href="{% url 'knowledge:entry_list' %}"
+               style="display: block; padding: 10px; background: white; border: 1px solid #D9CFC7; color: #7b7268; text-align: center; border-radius: 6px; text-decoration: none; font-weight: 600; transition: all 0.2s;">
+                ← Danh sách tất cả
+            </a>
+        </div>
+
         {% if entry.topic %}
-        <div class="gitbook-sidebar-item" style="background: #D9CFC7; color: #3f372f;">
-            📌 {{ entry.topic.name }}
+        <div style="margin-bottom: 20px; padding: 12px; background: #EFE9E3; border-radius: 6px;">
+            <div style="font-size: 0.85rem; color: #7b7268; margin-bottom: 4px;">📚 Chủ đề:</div>
+            <div style="font-weight: 600; color: #3f372f;">{{ entry.topic.name }}</div>
         </div>
         {% endif %}
 
-        <h3>📄 Pages</h3>
-        {% if entry.parent or sibling_pages %}
-            {% if entry.parent %}
-                <a href="{% url 'knowledge:entry_detail' entry.parent.slug %}" class="gitbook-sidebar-item">
-                    ← {{ entry.parent.title }}
-                </a>
-                <div style="padding-left: 15px;">
-                    {% for child in entry.parent.children.all %}
-                        <a href="{% url 'knowledge:entry_detail' child.slug %}" 
-                           class="gitbook-sidebar-item {% if child.id == entry.id %}active{% endif %}">
-                            {{ child.title|truncatewords:3 }}
-                        </a>
-                    {% endfor %}
-                </div>
-            {% else %}
-                {% for page in sibling_pages %}
-                    <a href="{% url 'knowledge:entry_detail' page.slug %}" class="gitbook-sidebar-item">
-                        {{ page.title|truncatewords:3 }}
-                    </a>
-                {% endfor %}
-            {% endif %}
-        {% endif %}
+        <h3>📄 Cấu trúc trang</h3>
 
-        <h3>⚙️ Quản lý</h3>
-        <a href="{% url 'knowledge:entry_list' %}" class="gitbook-sidebar-item">← Danh sách</a>
+        <!-- Search Box for Filtering -->
+        <div style="margin-bottom: 15px;">
+            <input type="text" id="page-search" placeholder="🔍 Tìm kiếm trang..."
+                   style="width: 100%; padding: 10px 12px; border: 1px solid #D9CFC7; border-radius: 6px; font-size: 0.9rem; color: #3f372f; background: white; transition: all 0.2s;"
+                   onkeyup="filterPages(this.value)"
+                   onfocus="this.style.borderColor='#C9B59C'; this.style.boxShadow='0 0 0 3px rgba(201, 181, 156, 0.1)';"
+                   onblur="this.style.borderColor='#D9CFC7'; this.style.boxShadow='none';">
+        </div>
+
+        <div class="entry-tree-container">
+            <!-- Parent Page -->
+            {% if entry.parent %}
+                <div class="page-item" style="margin-bottom: 10px;">
+                    <a href="{% url 'knowledge:entry_detail' entry.parent.slug %}"
+                       class="gitbook-sidebar-item"
+                       style="font-size: 0.9rem; opacity: 0.8;"
+                       data-page-title="{{ entry.parent.title|lower }}">
+                        ⬆️ {{ entry.parent.title|truncatewords:5 }}
+                    </a>
+                </div>
+            {% endif %}
+
+            <!-- Current Page (Highlighted) -->
+            <div class="page-item current-page" style="margin: 10px 0; padding: 12px; background: linear-gradient(135deg, rgba(201, 181, 156, 0.15) 0%, rgba(217, 207, 199, 0.15) 100%); border-left: 3px solid #C9B59C; border-radius: 6px;">
+                <div style="font-weight: 600; color: #3f372f; margin-bottom: 8px;">
+                    📄 {{ entry.title }}{% if entry.is_favorite %} ⭐{% endif %}
+                </div>
+                <a href="{% url 'knowledge:entry_create' %}?parent={{ entry.id }}"
+                   style="display: inline-block; padding: 6px 12px; background: #C9B59C; color: white; border-radius: 4px; text-decoration: none; font-size: 0.85rem; font-weight: 600; transition: all 0.2s;"
+                   onmouseover="this.style.background='#B8A58B';"
+                   onmouseout="this.style.background='#C9B59C';">
+                    ➕ Thêm trang con
+                </a>
+            </div>
+
+            <!-- Child Pages -->
+            {% if entry.children.all %}
+                <div class="children-section" style="margin-left: 15px; border-left: 2px solid #D9CFC7; padding-left: 10px;">
+                    <div style="font-size: 0.85rem; color: #7b7268; margin-bottom: 8px; font-weight: 600;">
+                        Trang con: <span class="children-count">({{ entry.children.all|length }})</span>
+                    </div>
+                    <div class="children-list">
+                        {% for child in entry.children.all %}
+                            <a href="{% url 'knowledge:entry_detail' child.slug %}"
+                               class="page-item gitbook-sidebar-item {% if forloop.counter > 10 %}hidden-item{% endif %}"
+                               style="margin-bottom: 4px; {% if forloop.counter > 10 %}display: none;{% endif %}"
+                               data-page-title="{{ child.title|lower }}">
+                                📄 {{ child.title|truncatewords:5 }}
+                                {% if child.is_favorite %} ⭐{% endif %}
+                            </a>
+                        {% endfor %}
+                    </div>
+                    {% if entry.children.all|length > 10 %}
+                    <button onclick="showMoreChildren(this)"
+                            style="margin-top: 8px; padding: 6px 10px; background: #EFE9E3; border: 1px solid #D9CFC7; border-radius: 4px; color: #7b7268; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;"
+                            onmouseover="this.style.background='#D9CFC7';"
+                            onmouseout="this.style.background='#EFE9E3';">
+                        ➕ Hiện thêm {{ entry.children.all|length|add:"-10" }} trang
+                    </button>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            <!-- Sibling Pages -->
+            {% if sibling_pages %}
+                <div class="siblings-section" style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #D9CFC7;">
+                    <div style="font-size: 0.85rem; color: #7b7268; margin-bottom: 8px; font-weight: 600;">
+                        {% if entry.parent %}Trang cùng cấp:{% else %}Trang khác trong chủ đề:{% endif %}
+                        <span class="siblings-count">({{ sibling_pages|length }})</span>
+                    </div>
+                    <div class="siblings-list">
+                        {% for page in sibling_pages %}
+                            <a href="{% url 'knowledge:entry_detail' page.slug %}"
+                               class="page-item gitbook-sidebar-item {% if forloop.counter > 10 %}hidden-item{% endif %}"
+                               style="margin-bottom: 4px; opacity: 0.8; {% if forloop.counter > 10 %}display: none;{% endif %}"
+                               data-page-title="{{ page.title|lower }}">
+                                📄 {{ page.title|truncatewords:5 }}
+                                {% if page.is_favorite %} ⭐{% endif %}
+                            </a>
+                        {% endfor %}
+                    </div>
+                    {% if sibling_pages|length > 10 %}
+                    <button onclick="showMoreSiblings(this)"
+                            style="margin-top: 8px; padding: 6px 10px; background: #EFE9E3; border: 1px solid #D9CFC7; border-radius: 4px; color: #7b7268; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;"
+                            onmouseover="this.style.background='#D9CFC7';"
+                            onmouseout="this.style.background='#EFE9E3';">
+                        ➕ Hiện thêm {{ sibling_pages|length|add:"-10" }} trang
+                    </button>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+
+        <h3 style="margin-top: 25px;">⚙️ Quản lý</h3>
+        <a href="{% url 'knowledge:search' %}" class="gitbook-sidebar-item">🔍 Tìm kiếm</a>
+        <a href="{% url 'knowledge:topic_list' %}" class="gitbook-sidebar-item">📌 Chủ đề</a>
+        <a href="{% url 'knowledge:resource_list' %}" class="gitbook-sidebar-item">📖 Tài liệu</a>
+
+        <h3 style="margin-top: 20px;">✏️ Trang này</h3>
         <a href="{% url 'knowledge:entry_update' entry.slug %}" class="gitbook-sidebar-item">✏️ Chỉnh sửa</a>
-        <a href="{% url 'knowledge:entry_delete' entry.slug %}" class="gitbook-sidebar-item" onclick="return confirm('Bạn chắc chắn?')">🗑️ Xóa</a>
+        <a href="{% url 'knowledge:entry_delete' entry.slug %}" class="gitbook-sidebar-item" onclick="return confirm('Bạn chắc chắn muốn xóa?')">🗑️ Xóa</a>
     </aside>
 
     <!-- Main Content -->
@@ -250,4 +333,105 @@
         }
     }
 </style>
+
+<script>
+// Filter pages based on search input
+function filterPages(searchTerm) {
+    const term = searchTerm.toLowerCase().trim();
+    const pageItems = document.querySelectorAll('.page-item');
+    const currentPage = document.querySelector('.current-page');
+    let visibleChildrenCount = 0;
+    let visibleSiblingsCount = 0;
+
+    pageItems.forEach(item => {
+        // Skip the current page, always show it
+        if (item === currentPage) {
+            return;
+        }
+
+        const link = item.querySelector('a[data-page-title]');
+        if (!link) return;
+
+        const title = link.getAttribute('data-page-title') || '';
+
+        if (term === '' || title.includes(term)) {
+            item.style.display = '';
+
+            // Count visible items for each section
+            if (item.closest('.children-list')) {
+                visibleChildrenCount++;
+            } else if (item.closest('.siblings-list')) {
+                visibleSiblingsCount++;
+            }
+        } else {
+            item.style.display = 'none';
+        }
+    });
+
+    // Update counts
+    const childrenCount = document.querySelector('.children-count');
+    if (childrenCount && term !== '') {
+        childrenCount.textContent = `(${visibleChildrenCount})`;
+    }
+
+    const siblingsCount = document.querySelector('.siblings-count');
+    if (siblingsCount && term !== '') {
+        siblingsCount.textContent = `(${visibleSiblingsCount})`;
+    }
+
+    // Hide "show more" buttons when filtering
+    const showMoreButtons = document.querySelectorAll('.children-section button, .siblings-section button');
+    showMoreButtons.forEach(btn => {
+        btn.style.display = term === '' ? '' : 'none';
+    });
+
+    // Show no results message if needed
+    const childrenSection = document.querySelector('.children-section');
+    const siblingsSection = document.querySelector('.siblings-section');
+
+    if (term !== '' && visibleChildrenCount === 0 && visibleSiblingsCount === 0) {
+        // Show a "no results" message if one doesn't exist
+        let noResults = document.getElementById('no-results-message');
+        if (!noResults) {
+            noResults = document.createElement('div');
+            noResults.id = 'no-results-message';
+            noResults.style.cssText = 'padding: 15px; text-align: center; color: #7b7268; font-size: 0.9rem; background: #F9F8F6; border-radius: 6px; margin-top: 10px;';
+            noResults.textContent = 'Không tìm thấy trang nào';
+            document.querySelector('.entry-tree-container').appendChild(noResults);
+        }
+        noResults.style.display = '';
+    } else {
+        const noResults = document.getElementById('no-results-message');
+        if (noResults) {
+            noResults.style.display = 'none';
+        }
+    }
+}
+
+// Show more children
+function showMoreChildren(button) {
+    const childrenList = button.closest('.children-section').querySelector('.children-list');
+    const hiddenItems = childrenList.querySelectorAll('.hidden-item');
+
+    hiddenItems.forEach(item => {
+        item.style.display = '';
+        item.classList.remove('hidden-item');
+    });
+
+    button.style.display = 'none';
+}
+
+// Show more siblings
+function showMoreSiblings(button) {
+    const siblingsList = button.closest('.siblings-section').querySelector('.siblings-list');
+    const hiddenItems = siblingsList.querySelectorAll('.hidden-item');
+
+    hiddenItems.forEach(item => {
+        item.style.display = '';
+        item.classList.remove('hidden-item');
+    });
+
+    button.style.display = 'none';
+}
+</script>
 {% endblock %}

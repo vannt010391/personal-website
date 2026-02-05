@@ -68,18 +68,18 @@ class KnowledgeEntryDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         entry = self.get_object()
-        
+
         # Use toc extension to generate IDs for headings
         content_html = markdown.markdown(
             entry.content,
             extensions=['extra', 'codehilite', 'toc']
         )
         context['content_html'] = content_html
-        
+
         # Extract headings for TOC
         headings = extract_headings_from_html(content_html)
         context['toc_items'] = headings
-        
+
         # Get related pages (siblings and children)
         if entry.parent:
             context['sibling_pages'] = entry.parent.children.exclude(id=entry.id).order_by('order', 'title')
@@ -88,7 +88,15 @@ class KnowledgeEntryDetailView(LoginRequiredMixin, DetailView):
                 topic=entry.topic,
                 parent__isnull=True
             ).exclude(id=entry.id).order_by('order', 'title')
-        
+
+        # Get all entries for sidebar (only root entries - no parent)
+        all_entries = KnowledgeEntry.objects.filter(
+            user=self.request.user,
+            parent__isnull=True
+        ).select_related('topic').prefetch_related('children').order_by('topic__name', 'order', 'title')
+        context['all_entries'] = all_entries
+        context['current_slug'] = entry.slug
+
         return context
 
 
@@ -119,33 +127,104 @@ class KnowledgeEntryCreateView(LoginRequiredMixin, CreateView):
     model = KnowledgeEntry
     form_class = KnowledgeEntryForm
     template_name = 'knowledge/entry_form.html'
-    success_url = reverse_lazy('knowledge:entry_list')
 
     def get_initial(self):
         initial = super().get_initial()
         topic_id = self.request.GET.get('topic')
+        parent_id = self.request.GET.get('parent')
+
         if topic_id:
             initial['topic'] = topic_id
+        if parent_id:
+            initial['parent'] = parent_id
+            try:
+                parent_entry = KnowledgeEntry.objects.get(id=parent_id, user=self.request.user)
+                if parent_entry.topic_id:
+                    initial['topic'] = parent_entry.topic_id
+            except KnowledgeEntry.DoesNotExist:
+                pass
+
         return initial
+
+    def get_success_url(self):
+        # If creating a child page, redirect to parent page to see the new child
+        if self.object.parent:
+            return reverse_lazy('knowledge:entry_detail', kwargs={'slug': self.object.parent.slug})
+        # Otherwise redirect to the newly created page
+        return reverse_lazy('knowledge:entry_detail', kwargs={'slug': self.object.slug})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['topics'] = Topic.objects.all()
-        selected_topic_id = self.request.GET.get('topic') or self.request.POST.get('topic')
-        if selected_topic_id:
-            context['selected_topic_id'] = str(selected_topic_id)
-            context['sidebar_entries'] = KnowledgeEntry.objects.filter(
-                user=self.request.user,
-                topic_id=selected_topic_id,
-            ).order_by('order', 'title')
+
+        # Check if creating a child page
+        parent_id = self.request.GET.get('parent')
+
+        if parent_id:
+            try:
+                parent_entry = KnowledgeEntry.objects.get(id=parent_id, user=self.request.user)
+                context['parent_entry'] = parent_entry
+
+                # Get siblings (other children of the same parent, or same topic if no parent)
+                if parent_entry.parent:
+                    context['sidebar_entries'] = parent_entry.parent.children.exclude(id=parent_entry.id).order_by('order', 'title')
+                else:
+                    context['sidebar_entries'] = KnowledgeEntry.objects.filter(
+                        user=self.request.user,
+                        topic=parent_entry.topic,
+                        parent__isnull=True
+                    ).exclude(id=parent_entry.id).order_by('order', 'title')
+            except KnowledgeEntry.DoesNotExist:
+                context['parent_entry'] = None
+                context['sidebar_entries'] = []
         else:
-            context['sidebar_entries'] = []
+            selected_topic_id = self.request.GET.get('topic') or self.request.POST.get('topic')
+            if selected_topic_id:
+                context['selected_topic_id'] = str(selected_topic_id)
+                context['sidebar_entries'] = KnowledgeEntry.objects.filter(
+                    user=self.request.user,
+                    topic_id=selected_topic_id,
+                ).order_by('order', 'title')
+            else:
+                context['sidebar_entries'] = []
+
+        # Get all entries for sidebar (only root entries - no parent)
+        all_entries = KnowledgeEntry.objects.filter(
+            user=self.request.user,
+            parent__isnull=True
+        ).select_related('topic').prefetch_related('children').order_by('topic__name', 'order', 'title')
+        context['all_entries'] = all_entries
+
         return context
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
     def form_valid(self, form):
         form.instance.user = self.request.user
+        parent_id = self.request.GET.get('parent')
+        if parent_id and form.instance.parent is None:
+            try:
+                parent_entry = KnowledgeEntry.objects.get(id=parent_id, user=self.request.user)
+                form.instance.parent = parent_entry
+                if form.instance.topic_id is None and parent_entry.topic_id:
+                    form.instance.topic = parent_entry.topic
+            except KnowledgeEntry.DoesNotExist:
+                pass
+        print(f"=== FORM VALID ===")
+        print(f"Title: {form.cleaned_data.get('title')}")
+        print(f"Parent: {form.cleaned_data.get('parent')}")
+        print(f"Topic: {form.cleaned_data.get('topic')}")
         messages.success(self.request, 'Entry đã được tạo thành công!')
         return super().form_valid(form)
+
+    def form_invalid(self, form):
+        print(f"=== FORM INVALID ===")
+        print(f"Errors: {form.errors}")
+        print(f"Data: {form.data}")
+        return super().form_invalid(form)
 
 
 class KnowledgeEntryUpdateView(LoginRequiredMixin, UpdateView):
@@ -159,6 +238,11 @@ class KnowledgeEntryUpdateView(LoginRequiredMixin, UpdateView):
     def get_success_url(self):
         return reverse_lazy('knowledge:entry_detail', kwargs={'slug': self.object.slug})
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
     def form_valid(self, form):
         messages.success(self.request, 'Entry đã được cập nhật!')
         return super().form_valid(form)
@@ -166,6 +250,7 @@ class KnowledgeEntryUpdateView(LoginRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['topics'] = Topic.objects.all()
+        context['entry'] = self.object
         selected_topic_id = self.object.topic_id
         if selected_topic_id:
             context['selected_topic_id'] = str(selected_topic_id)
@@ -175,6 +260,23 @@ class KnowledgeEntryUpdateView(LoginRequiredMixin, UpdateView):
             ).order_by('order', 'title')
         else:
             context['sidebar_entries'] = []
+
+        if self.object.parent:
+            context['sibling_pages'] = self.object.parent.children.exclude(id=self.object.id).order_by('order', 'title')
+        else:
+            context['sibling_pages'] = KnowledgeEntry.objects.filter(
+                topic=self.object.topic,
+                parent__isnull=True
+            ).exclude(id=self.object.id).order_by('order', 'title')
+
+        # Get all entries for sidebar (only root entries - no parent)
+        all_entries = KnowledgeEntry.objects.filter(
+            user=self.request.user,
+            parent__isnull=True
+        ).select_related('topic').prefetch_related('children').order_by('topic__name', 'order', 'title')
+        context['all_entries'] = all_entries
+        context['current_slug'] = self.object.slug
+
         return context
 
 
